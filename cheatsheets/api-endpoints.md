@@ -43,6 +43,8 @@ Variables:
 | Unlock ADOM | `exec` | `/dvmdb/adom/{adom}/workspace/unlock` |
 | Commit ADOM | `exec` | `/dvmdb/adom/{adom}/workspace/commit` |
 
+> **Workspace Mode**: When enabled, you MUST lock the ADOM before making changes, then commit and unlock. Failure to lock will result in error `-10147` (no write permission).
+
 ---
 
 ## Firewall Addresses

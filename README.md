@@ -383,7 +383,8 @@ Each section demonstrates CRUD operations on:
 | -6 | Permission denied | Check user permissions |
 | -10 | Object in use | Remove references first |
 | -11 | Invalid session | Re-authenticate |
-| -20 | Session expired | Re-authenticate |
+| -20 | Invalid URL/Syntax | Check endpoint path |
+| -10147 | No write permission | Lock ADOM (workspace mode) |
 
 ### Debug Mode
 

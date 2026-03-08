@@ -20,6 +20,63 @@
 | **-11** | Invalid Session | Auth failure | Session expired or invalid |
 | **-20** | Invalid Syntax | JSON parse error | Malformed JSON body |
 | **-21** | Invalid Method | Unknown method | Typo in method name |
+| **-10147** | No Write Permission | ADOM locked (workspace) | Lock ADOM before changes |
+
+---
+
+## Workspace Mode Errors
+
+### No Write Permission (-10147)
+
+```json
+{
+  "result": [{
+    "status": {
+      "code": -10147,
+      "message": "no write permission"
+    }
+  }]
+}
+```
+
+**Causes:**
+- Trying to modify objects in a locked ADOM (workspace mode enabled)
+- ADOM not locked before making changes
+
+**Solutions:**
+
+```json
+// 1. Lock ADOM before changes
+{
+  "method": "exec",
+  "params": [{
+    "url": "/dvmdb/adom/root/workspace/lock"
+  }]
+}
+
+// 2. Make your changes...
+
+// 3. Commit changes
+{
+  "method": "exec",
+  "params": [{
+    "url": "/dvmdb/adom/root/workspace/commit"
+  }]
+}
+
+// 4. Unlock ADOM
+{
+  "method": "exec",
+  "params": [{
+    "url": "/dvmdb/adom/root/workspace/unlock"
+  }]
+}
+```
+
+**Workflow:**
+```
+Lock ADOM → Make Changes → Commit → Unlock ADOM
+```
 
 ---
 

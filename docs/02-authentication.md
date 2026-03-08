@@ -166,6 +166,8 @@ Add the `Authorization` header to your HTTP request:
 Authorization: Bearer your_api_key_here
 ```
 
+> **Important**: The URL query string method (`?access_token=key`) is **deprecated** since FMG 7.4.7 and 7.6.2. Always use the `Authorization: Bearer` header instead.
+
 **No session field needed in the JSON body:**
 
 ```json
