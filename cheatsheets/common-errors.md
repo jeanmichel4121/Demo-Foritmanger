@@ -387,10 +387,10 @@ EOF
 
 | Field | Wrong | Correct |
 |-------|-------|---------|
-| subnet | `"10.0.0.0/24"` | `"10.0.0.0 255.255.255.0"` |
-| action | `"allow"` | `"accept"` |
-| srcaddr | `"all"` | `["all"]` |
-| logtraffic | `"enable"` | `"all"` |
+| **subnet** | `"10.0.0.0/24"` | `"10.0.0.0 255.255.255.0"` |
+| **action** | `"allow"` | `"accept"` |
+| **srcaddr** | `"all"` | `["all"]` |
+| **logtraffic** | `"enable"` | `"all"` |
 
 ---
 
@@ -423,10 +423,10 @@ EOF
 
 | Operation | Required Permission |
 |-----------|---------------------|
-| Read objects | Policy Objects (Read) |
-| Modify objects | Policy Objects (Read/Write) |
-| Install policies | Policy Package + Device Manager |
-| Manage devices | Device Manager (Read/Write) |
+| **Read objects** | *Policy Objects (Read)* |
+| **Modify objects** | *Policy Objects (Read/Write)* |
+| **Install policies** | *Policy Package + Device Manager* |
+| **Manage devices** | *Device Manager (Read/Write)* |
 
 ---
 
@@ -551,8 +551,8 @@ Error: SSL certificate problem: unable to get local issuer certificate
 
 | Environment | Solution |
 |-------------|----------|
-| Lab/Dev | Disable verification |
-| Production | Add FMG CA certificate |
+| **Lab/Dev** | *Disable verification* |
+| **Production** | *Add FMG CA certificate* |
 
 ```python
 # Python (Lab only!)
@@ -669,6 +669,6 @@ for r in result.get('result', []):
 
 | Resource | Link |
 |----------|------|
-| API Endpoints | [api-endpoints.md](api-endpoints.md) |
-| cURL Examples | [curl-examples.md](curl-examples.md) |
-| Authentication | [../docs/02-authentication.md](../docs/02-authentication.md) |
+| **API Endpoints** | [api-endpoints.md](api-endpoints.md) |
+| **cURL Examples** | [curl-examples.md](curl-examples.md) |
+| **Authentication** | [../docs/02-authentication.md](../docs/02-authentication.md) |

@@ -58,18 +58,18 @@ FortiManager serves as a centralized management platform for FortiGate devices. 
 
 | Requirement | Version |
 |-------------|---------|
-| FortiManager | 7.2.x - 7.6.x |
-| API Access | Admin with API permissions or API Key |
-| Network | HTTPS access (port 443) |
+| **FortiManager** | *7.2.x - 7.6.x* |
+| **API Access** | *Admin with API permissions or API Key* |
+| **Network** | *HTTPS access (port 443)* |
 
 ### Local Environment
 
 | Tool | Version | Required For |
 |------|---------|--------------|
-| PowerShell | 7.0+ | Section 01 |
-| Python | 3.8+ | Sections 02-03 |
-| Ansible | 2.15+ | Section 04 |
-| pip | Latest | Python dependencies |
+| **PowerShell** | *7.0+* | Section 01 |
+| **Python** | *3.8+* | Sections 02-03 |
+| **Ansible** | *2.15+* | Section 04 |
+| **pip** | *Latest* | Python dependencies |
 
 ### Python Dependencies
 
@@ -151,7 +151,7 @@ This repository is organized as a progressive learning path. Each level builds o
 
 ### Level 1: Raw HTTP (PowerShell/cURL)
 
-**Folder:** `01-powershell-curl/`
+**Folder:** `01-powershell-curl/` (Windows) | `01-bash-curl/` (Linux)
 
 Start here to understand the fundamentals:
 - HTTP POST mechanics
@@ -160,6 +160,11 @@ Start here to understand the fundamentals:
 - Raw error handling
 
 **Best for:** Understanding "what happens under the hood"
+
+| Platform | Folder | Requirements |
+|----------|--------|--------------|
+| **Windows** | `01-powershell-curl/` | *PowerShell 7.0+* |
+| **Linux/macOS** | `01-bash-curl/` | *bash 4.0+, curl, jq* |
 
 ### Level 2: Abstraction (Python + requests)
 
@@ -203,50 +208,56 @@ Declarative configuration management:
 
 ```
 Demo-FortiManager/
-├── .env.example              # Environment template
-├── .gitignore                # Git ignore rules
-├── README.md                 # This file
 │
-├── 01-powershell-curl/       # Level 1: Raw HTTP
-│   ├── config/               # Configuration loading
-│   ├── utils/                # Helper functions
-│   ├── 01-auth/              # Authentication examples
-│   ├── 02-addresses/         # Address CRUD
-│   ├── 03-services/          # Service CRUD
-│   ├── 04-schedules/         # Schedule CRUD
-│   ├── 05-nat-vip/           # NAT/VIP CRUD
-│   ├── 06-security-profiles/ # Security profile CRUD
-│   └── 07-firewall-policies/ # Policy CRUD + install
+├── 📄 .env.example                 # Environment template
+├── 📄 .gitignore                   # Git ignore rules
+├── 📄 README.md                    # This file
 │
-├── 02-python-requests/       # Level 2: Python abstraction
-│   ├── config/               # Settings management
-│   ├── utils/                # FMG client and exceptions
-│   └── 01-07_*/              # Feature demonstrations
+├── 📁 01-powershell-curl/          # 🪟 Level 1: Raw HTTP (Windows)
+│   ├── 📁 config/                  # ⚙️ Configuration loading
+│   ├── 📁 utils/                   # 🔧 Helper functions
+│   ├── 📁 01-auth/                 # 🔐 Authentication examples
+│   ├── 📁 02-addresses/            # 🏠 Address CRUD
+│   ├── 📁 03-services/             # 🔌 Service CRUD
+│   ├── 📁 04-schedules/            # 📅 Schedule CRUD
+│   ├── 📁 05-nat-vip/              # 🔀 NAT/VIP CRUD
+│   ├── 📁 06-security-profiles/    # 🛡️ Security profile CRUD
+│   └── 📁 07-firewall-policies/    # 🔥 Policy CRUD + install
 │
-├── 03-python-pyfmg/          # Level 3: Official SDK
-│   ├── 01_auth/              # Authentication demos
-│   ├── 02_addresses/         # Address operations
-│   └── 07_firewall_policies/ # Complete workflow
+├── 📁 01-bash-curl/                # 🐧 Level 1: Raw HTTP (Linux/macOS)
+│   ├── 📁 config/                  # ⚙️ Configuration loading
+│   ├── 📁 utils/                   # 🔧 Helper functions
+│   └── 📁 01-07_*/                 # Same structure as PowerShell
 │
-├── 04-ansible/               # Level 4: Infrastructure as Code
-│   ├── inventory/            # Host definitions
-│   ├── playbooks/            # Automation playbooks
-│   ├── vars/                 # Variable files
-│   └── requirements.yml      # Collection dependencies
+├── 📁 02-python-requests/          # 🐍 Level 2: Python abstraction
+│   ├── 📁 config/                  # ⚙️ Settings management
+│   ├── 📁 utils/                   # 🔧 FMG client and exceptions
+│   └── 📁 01-07_*/                 # Feature demonstrations
 │
-├── docs/                     # Documentation
-│   ├── 00-introduction.md    # FortiManager overview
-│   ├── 01-concepts-json-rpc.md # JSON-RPC deep dive
-│   └── 02-authentication.md  # Auth methods explained
+├── 📁 03-python-pyfmg/             # 📦 Level 3: Official SDK
+│   ├── 📁 01_auth/                 # 🔐 Authentication demos
+│   ├── 📁 02_addresses/            # 🏠 Address operations
+│   └── 📁 07_firewall_policies/    # 🔥 Complete workflow
 │
-├── cheatsheets/              # Quick reference guides
-│   ├── api-endpoints.md      # Endpoint reference
-│   ├── common-errors.md      # Error code guide
-│   └── curl-examples.md      # cURL examples
+├── 📁 04-ansible/                  # 🅰️ Level 4: Infrastructure as Code
+│   ├── 📁 inventory/               # 📋 Host definitions
+│   ├── 📁 playbooks/               # 📜 Automation playbooks
+│   ├── 📁 vars/                    # 📝 Variable files
+│   └── 📄 requirements.yml         # Collection dependencies
 │
-└── diagrams/                 # Visual documentation
-    ├── *.d2                  # D2 source files
-    └── *.png                 # Generated images
+├── 📁 docs/                        # 📚 Documentation
+│   ├── 📄 00-introduction.md       # FortiManager overview
+│   ├── 📄 01-concepts-json-rpc.md  # JSON-RPC deep dive
+│   └── 📄 02-authentication.md     # Auth methods explained
+│
+├── 📁 cheatsheets/                 # 📋 Quick reference guides
+│   ├── 📄 api-endpoints.md         # Endpoint reference
+│   ├── 📄 common-errors.md         # Error code guide
+│   └── 📄 curl-examples.md         # cURL examples
+│
+└── 📁 diagrams/                    # 🖼️ Visual documentation
+    ├── 📄 *.d2                     # D2 source files
+    └── 🖼️ *.png                    # Generated images
 ```
 
 ---
@@ -259,10 +270,10 @@ FortiManager uses **JSON-RPC**, not REST. Key differences:
 
 | Aspect | REST | JSON-RPC (FortiManager) |
 |--------|------|-------------------------|
-| Endpoints | Multiple (`/users`, `/posts`) | Single (`/jsonrpc`) |
-| HTTP Method | GET, POST, PUT, DELETE | Always POST |
-| Routing | URL path | `method` field in body |
-| Resource | In URL | `url` field in params |
+| **Endpoints** | *Multiple* (`/users`, `/posts`) | *Single* (`/jsonrpc`) |
+| **HTTP Method** | *GET, POST, PUT, DELETE* | *Always POST* |
+| **Routing** | *URL path* | *`method` field in body* |
+| **Resource** | *In URL* | *`url` field in params* |
 
 ### Request Structure
 
@@ -304,12 +315,12 @@ FortiManager uses **JSON-RPC**, not REST. Key differences:
 
 | Method | Purpose | REST Equivalent |
 |--------|---------|-----------------|
-| `get` | Read objects | GET |
-| `add` | Create new | POST |
-| `set` | Create or replace | PUT |
-| `update` | Partial update | PATCH |
-| `delete` | Remove | DELETE |
-| `exec` | Execute actions | POST (action) |
+| **`get`** | *Read objects* | GET |
+| **`add`** | *Create new* | POST |
+| **`set`** | *Create or replace* | PUT |
+| **`update`** | *Partial update* | PATCH |
+| **`delete`** | *Remove* | DELETE |
+| **`exec`** | *Execute actions* | POST (action) |
 
 ---
 
@@ -321,26 +332,26 @@ Each section demonstrates CRUD operations on:
 
 | Object Type | Operations | API Path |
 |-------------|------------|----------|
-| IPv4 Addresses | CRUD | `/pm/config/adom/{adom}/obj/firewall/address` |
-| IPv6 Addresses | CRUD | `/pm/config/adom/{adom}/obj/firewall/address6` |
-| Address Groups | CRUD | `/pm/config/adom/{adom}/obj/firewall/addrgrp` |
-| Services | CRUD | `/pm/config/adom/{adom}/obj/firewall/service/custom` |
-| Service Groups | CRUD | `/pm/config/adom/{adom}/obj/firewall/service/group` |
-| Schedules | CRUD | `/pm/config/adom/{adom}/obj/firewall/schedule/onetime` |
+| **IPv4 Addresses** | *CRUD* | `/pm/config/adom/{adom}/obj/firewall/address` |
+| **IPv6 Addresses** | *CRUD* | `/pm/config/adom/{adom}/obj/firewall/address6` |
+| **Address Groups** | *CRUD* | `/pm/config/adom/{adom}/obj/firewall/addrgrp` |
+| **Services** | *CRUD* | `/pm/config/adom/{adom}/obj/firewall/service/custom` |
+| **Service Groups** | *CRUD* | `/pm/config/adom/{adom}/obj/firewall/service/group` |
+| **Schedules** | *CRUD* | `/pm/config/adom/{adom}/obj/firewall/schedule/onetime` |
 
 ### NAT Configuration
 
 | Object Type | Operations | API Path |
 |-------------|------------|----------|
-| Virtual IPs | CRUD | `/pm/config/adom/{adom}/obj/firewall/vip` |
-| IP Pools | CRUD | `/pm/config/adom/{adom}/obj/firewall/ippool` |
+| **Virtual IPs** | *CRUD* | `/pm/config/adom/{adom}/obj/firewall/vip` |
+| **IP Pools** | *CRUD* | `/pm/config/adom/{adom}/obj/firewall/ippool` |
 
 ### Security Policies
 
 | Object Type | Operations | API Path |
 |-------------|------------|----------|
-| Firewall Policies | CRUD | `/pm/config/adom/{adom}/pkg/{pkg}/firewall/policy` |
-| Policy Installation | Execute | `/securityconsole/install/package` |
+| **Firewall Policies** | *CRUD* | `/pm/config/adom/{adom}/pkg/{pkg}/firewall/policy` |
+| **Policy Installation** | *Execute* | `/securityconsole/install/package` |
 
 ---
 
@@ -377,14 +388,14 @@ Each section demonstrates CRUD operations on:
 
 | Code | Meaning | Solution |
 |------|---------|----------|
-| 0 | Success | - |
-| -2 | Object not found | Check name/path/ADOM |
-| -3 | Object exists | Use `set` or `update` |
-| -6 | Permission denied | Check user permissions |
-| -10 | Object in use | Remove references first |
-| -11 | Invalid session | Re-authenticate |
-| -20 | Invalid URL/Syntax | Check endpoint path |
-| -10147 | No write permission | Lock ADOM (workspace mode) |
+| **0** | *Success* | - |
+| **-2** | *Object not found* | Check name/path/ADOM |
+| **-3** | *Object exists* | Use `set` or `update` |
+| **-6** | *Permission denied* | Check user permissions |
+| **-10** | *Object in use* | Remove references first |
+| **-11** | *Invalid session* | Re-authenticate |
+| **-20** | *Invalid URL/Syntax* | Check endpoint path |
+| **-10147** | *No write permission* | Lock ADOM (workspace mode) |
 
 ### Debug Mode
 

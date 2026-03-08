@@ -35,33 +35,34 @@ $PSVersionTable.PSVersion
 
 ```
 01-powershell-curl/
-├── README.md                 # This file
-├── config/
-│   └── fmg-config.ps1        # Configuration loader
-├── utils/
-│   └── Invoke-FMGRequest.ps1 # JSON-RPC helper function
-├── 01-auth/
-│   ├── login-session.ps1     # Session-based login
-│   ├── login-bearer.ps1      # API Key test
-│   └── logout.ps1            # Session cleanup
-├── 02-addresses/
-│   ├── create-address.ps1    # Create IPv4 address
-│   ├── read-addresses.ps1    # List/filter addresses
-│   ├── update-address.ps1    # Modify address
-│   ├── delete-address.ps1    # Delete address
-│   └── manage-groups.ps1     # Address group operations
-├── 03-services/
-│   └── crud-services.ps1     # Service CRUD operations
-├── 04-schedules/
-│   └── crud-schedules.ps1    # Schedule CRUD operations
-├── 05-nat-vip/
-│   ├── crud-vip.ps1          # Virtual IP (DNAT) operations
-│   └── crud-ippool.ps1       # IP Pool (SNAT) operations
-├── 06-security-profiles/
-│   └── crud-app-groups.ps1   # Application group operations
-└── 07-firewall-policies/
-    ├── crud-policies.ps1     # Policy CRUD operations
-    └── install-package.ps1   # Policy installation
+│
+├── 📄 README.md                    # This file
+├── 📁 config/
+│   └── 📄 fmg-config.ps1           # ⚙️ Configuration loader
+├── 📁 utils/
+│   └── 📄 Invoke-FMGRequest.ps1    # 🔧 JSON-RPC helper function
+├── 📁 01-auth/                     # 🔐 Authentication
+│   ├── 📄 login-session.ps1        # Session-based login
+│   ├── 📄 login-bearer.ps1         # API Key test
+│   └── 📄 logout.ps1               # Session cleanup
+├── 📁 02-addresses/                # 🏠 Address management
+│   ├── 📄 create-address.ps1       # Create IPv4 address
+│   ├── 📄 read-addresses.ps1       # List/filter addresses
+│   ├── 📄 update-address.ps1       # Modify address
+│   ├── 📄 delete-address.ps1       # Delete address
+│   └── 📄 manage-groups.ps1        # Address group operations
+├── 📁 03-services/                 # 🔌 Service management
+│   └── 📄 crud-services.ps1        # Service CRUD operations
+├── 📁 04-schedules/                # 📅 Schedule management
+│   └── 📄 crud-schedules.ps1       # Schedule CRUD operations
+├── 📁 05-nat-vip/                  # 🔀 NAT configuration
+│   ├── 📄 crud-vip.ps1             # Virtual IP (DNAT) operations
+│   └── 📄 crud-ippool.ps1          # IP Pool (SNAT) operations
+├── 📁 06-security-profiles/        # 🛡️ Security profiles
+│   └── 📄 crud-app-groups.ps1      # Application group operations
+└── 📁 07-firewall-policies/        # 🔥 Firewall policies
+    ├── 📄 crud-policies.ps1        # Policy CRUD operations
+    └── 📄 install-package.ps1      # Policy installation
 ```
 
 ---
@@ -123,10 +124,10 @@ Every request follows this pattern:
 
 | Field | Description |
 |-------|-------------|
-| `id` | Request identifier (for correlation) |
-| `method` | Operation: get, add, set, update, delete, exec |
-| `params` | Array containing URL and data |
-| `session` | Authentication token (from login) |
+| **`id`** | *Request identifier (for correlation)* |
+| **`method`** | *Operation: get, add, set, update, delete, exec* |
+| **`params`** | *Array containing URL and data* |
+| **`session`** | *Authentication token (from login)* |
 
 ### Authentication Flow
 
@@ -319,12 +320,12 @@ $result = Invoke-FMGRequest -Method "exec" `
 
 | Code | Meaning | Action |
 |------|---------|--------|
-| 0 | Success | Process data |
-| -2 | Object not found | Check name/path |
-| -3 | Object exists | Use update instead |
-| -6 | Permission denied | Check user permissions |
-| -10 | Object in use | Remove references first |
-| -11 | Auth failed | Check credentials |
+| **0** | *Success* | Process data |
+| **-2** | *Object not found* | Check name/path |
+| **-3** | *Object exists* | Use update instead |
+| **-6** | *Permission denied* | Check user permissions |
+| **-10** | *Object in use* | Remove references first |
+| **-11** | *Auth failed* | Check credentials |
 
 ### Error Handling Example
 

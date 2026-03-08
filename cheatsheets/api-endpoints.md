@@ -23,11 +23,11 @@ Variables:
 
 | Action | Method | Endpoint |
 |--------|--------|----------|
-| Login | `exec` | `/sys/login/user` |
-| Logout | `exec` | `/sys/logout` |
-| System Status | `get` | `/sys/status` |
-| Admin Profile | `get` | `/cli/global/system/admin/profile` |
-| List Admins | `get` | `/cli/global/system/admin/user` |
+| **Login** | `exec` | `/sys/login/user` |
+| **Logout** | `exec` | `/sys/logout` |
+| **System Status** | `get` | `/sys/status` |
+| **Admin Profile** | `get` | `/cli/global/system/admin/profile` |
+| **List Admins** | `get` | `/cli/global/system/admin/user` |
 
 ---
 
@@ -35,13 +35,13 @@ Variables:
 
 | Action | Method | Endpoint |
 |--------|--------|----------|
-| List all ADOMs | `get` | `/dvmdb/adom` |
-| Get ADOM details | `get` | `/dvmdb/adom/{adom}` |
-| Create ADOM | `add` | `/dvmdb/adom` |
-| Delete ADOM | `delete` | `/dvmdb/adom/{adom}` |
-| Lock ADOM (workspace) | `exec` | `/dvmdb/adom/{adom}/workspace/lock` |
-| Unlock ADOM | `exec` | `/dvmdb/adom/{adom}/workspace/unlock` |
-| Commit ADOM | `exec` | `/dvmdb/adom/{adom}/workspace/commit` |
+| **List all ADOMs** | `get` | `/dvmdb/adom` |
+| **Get ADOM details** | `get` | `/dvmdb/adom/{adom}` |
+| **Create ADOM** | `add` | `/dvmdb/adom` |
+| **Delete ADOM** | `delete` | `/dvmdb/adom/{adom}` |
+| **Lock ADOM** *(workspace)* | `exec` | `/dvmdb/adom/{adom}/workspace/lock` |
+| **Unlock ADOM** | `exec` | `/dvmdb/adom/{adom}/workspace/unlock` |
+| **Commit ADOM** | `exec` | `/dvmdb/adom/{adom}/workspace/commit` |
 
 > **Workspace Mode**: When enabled, you MUST lock the ADOM before making changes, then commit and unlock. Failure to lock will result in error `-10147` (no write permission).
 
@@ -65,12 +65,12 @@ Variables:
 
 | Type | Description | Key Field |
 |------|-------------|-----------|
-| `ipmask` | IP + subnet mask | `subnet`: "10.0.0.0 255.255.255.0" |
-| `iprange` | IP range | `start-ip`, `end-ip` |
-| `fqdn` | Domain name | `fqdn`: "example.com" |
-| `wildcard` | Wildcard | `wildcard`: "10.0.0.0 0.0.255.255" |
-| `geography` | Country | `country`: "US" |
-| `dynamic` | SDN connector | `sdn`, `filter` |
+| **`ipmask`** | *IP + subnet mask* | `subnet`: "10.0.0.0 255.255.255.0" |
+| **`iprange`** | *IP range* | `start-ip`, `end-ip` |
+| **`fqdn`** | *Domain name* | `fqdn`: "example.com" |
+| **`wildcard`** | *Wildcard mask* | `wildcard`: "10.0.0.0 0.0.255.255" |
+| **`geography`** | *Country code* | `country`: "US" |
+| **`dynamic`** | *SDN connector* | `sdn`, `filter` |
 
 ---
 
@@ -213,15 +213,15 @@ Variables:
 
 | Status | Meaning |
 |--------|---------|
-| `0` | Pending |
-| `1` | Running |
-| `2` | Cancelling |
-| `3` | Cancelled |
-| `4` | Done |
-| `5` | Error |
-| `6` | Aborting |
-| `7` | Aborted |
-| `8` | Warning |
+| **`0`** | *Pending* |
+| **`1`** | *Running* |
+| **`2`** | *Cancelling* |
+| **`3`** | *Cancelled* |
+| **`4`** | *Done* |
+| **`5`** | *Error* |
+| **`6`** | *Aborting* |
+| **`7`** | *Aborted* |
+| **`8`** | *Warning* |
 
 ---
 
@@ -364,6 +364,6 @@ Variables:
 
 | Resource | Link |
 |----------|------|
-| Common Errors | [common-errors.md](common-errors.md) |
-| cURL Examples | [curl-examples.md](curl-examples.md) |
-| JSON-RPC Concepts | [../docs/01-concepts-json-rpc.md](../docs/01-concepts-json-rpc.md) |
+| **Common Errors** | [common-errors.md](common-errors.md) |
+| **cURL Examples** | [curl-examples.md](curl-examples.md) |
+| **JSON-RPC Concepts** | [../docs/01-concepts-json-rpc.md](../docs/01-concepts-json-rpc.md) |
