@@ -8,29 +8,41 @@ This script demonstrates a complete workflow:
 3. Install to FortiGate
 """
 
-import os
+import sys
 from pathlib import Path
-from dotenv import load_dotenv
 
-# Load .env
-env_path = Path(__file__).parent.parent.parent / ".env"
-load_dotenv(env_path)
+# Add parent directory to path
+sys.path.insert(0, str(Path(__file__).parent.parent))
 
+from config import (
+    FMG_HOST, FMG_USER, FMG_PASS, FMG_ADOM, FMG_VERIFY,
+    setup_logging, get_logger
+)
 from pyFMG.fortimgr import FortiManager
 
 
+# ─────────────────────────────────────────────────────────────────────────────
+# Logging
+# ─────────────────────────────────────────────────────────────────────────────
+
+setup_logging()
+log = get_logger(__name__)
+
+
+# ─────────────────────────────────────────────────────────────────────────────
 # Configuration
-FMG_HOST = os.getenv("FMG_HOST")
-FMG_USER = os.getenv("FMG_USERNAME")
-FMG_PASS = os.getenv("FMG_PASSWORD")
-FMG_ADOM = os.getenv("FMG_ADOM", "root")
-FMG_VERIFY = os.getenv("FMG_VERIFY_SSL", "false").lower() == "true"
+# ─────────────────────────────────────────────────────────────────────────────
+
 PACKAGE = "default"
 
 
+# ─────────────────────────────────────────────────────────────────────────────
+# Workflow Functions
+# ─────────────────────────────────────────────────────────────────────────────
+
 def create_objects(fmg):
     """Create the necessary objects."""
-    print("\n--- STEP 1: Create objects ---")
+    log.info("--- STEP 1: Create objects ---")
 
     # Source address
     url = f"/pm/config/adom/{FMG_ADOM}/obj/firewall/address"
@@ -41,7 +53,10 @@ def create_objects(fmg):
         subnet="10.10.0.0 255.255.0.0",
         comment="Demo - Source network"
     )
-    print(f"  Source address: {'OK' if code == 0 else f'Code {code}'}")
+    if code == 0:
+        log.info("  Source address: OK")
+    else:
+        log.error("  Source address: Code %d", code)
 
     # Destination address
     code, _ = fmg.add(
@@ -51,12 +66,15 @@ def create_objects(fmg):
         subnet="192.168.100.0 255.255.255.0",
         comment="Demo - Destination network"
     )
-    print(f"  Destination address: {'OK' if code == 0 else f'Code {code}'}")
+    if code == 0:
+        log.info("  Destination address: OK")
+    else:
+        log.error("  Destination address: Code %d", code)
 
 
 def create_policy(fmg):
     """Create a firewall policy."""
-    print("\n--- STEP 2: Create policy ---")
+    log.info("--- STEP 2: Create policy ---")
 
     url = f"/pm/config/adom/{FMG_ADOM}/pkg/{PACKAGE}/firewall/policy"
 
@@ -77,14 +95,14 @@ def create_policy(fmg):
     )
 
     if code == 0:
-        print(f"  Policy created successfully")
+        log.info("  Policy created successfully")
     else:
-        print(f"  Error: {response}")
+        log.error("  Error: %s", response)
 
 
 def preview_install(fmg):
     """Preview installation."""
-    print("\n--- STEP 3: Installation preview ---")
+    log.info("--- STEP 3: Installation preview ---")
 
     code, response = fmg.execute(
         "/securityconsole/install/preview",
@@ -93,9 +111,9 @@ def preview_install(fmg):
     )
 
     if code == 0:
-        print("  Preview generated - Check FortiManager")
+        log.info("  Preview generated - Check FortiManager")
     else:
-        print(f"  Preview error: {response}")
+        log.error("  Preview error: %s", response)
 
 
 def install_package(fmg, device: str = None):
@@ -106,7 +124,7 @@ def install_package(fmg, device: str = None):
         fmg: FortiManager instance
         device: Target device name (optional)
     """
-    print("\n--- STEP 4: Installation ---")
+    log.info("--- STEP 4: Installation ---")
 
     data = {
         "adom": FMG_ADOM,
@@ -120,16 +138,16 @@ def install_package(fmg, device: str = None):
 
     if code == 0:
         task_id = response.get("task") if isinstance(response, dict) else None
-        print(f"  Installation started")
+        log.info("  Installation started")
         if task_id:
-            print(f"  Task ID: {task_id}")
+            log.info("  Task ID: %s", task_id)
     else:
-        print(f"  Installation error: {response}")
+        log.error("  Installation error: %s", response)
 
 
 def cleanup(fmg):
     """Clean up demo objects."""
-    print("\n--- CLEANUP ---")
+    log.info("--- CLEANUP ---")
 
     # Delete policy (find its ID first)
     url = f"/pm/config/adom/{FMG_ADOM}/pkg/{PACKAGE}/firewall/policy"
@@ -140,24 +158,28 @@ def cleanup(fmg):
             if pol.get("name") == "DEMO_POLICY_ALLOW":
                 del_url = f"{url}/{pol['policyid']}"
                 fmg.delete(del_url)
-                print(f"  Policy deleted")
+                log.info("  Policy deleted")
                 break
 
     # Delete addresses
     addr_url = f"/pm/config/adom/{FMG_ADOM}/obj/firewall/address"
     for name in ["DEMO_SRC_NET", "DEMO_DST_NET"]:
         fmg.delete(f"{addr_url}/{name}")
-        print(f"  Address {name} deleted")
+        log.info("  Address %s deleted", name)
 
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Main
+# ─────────────────────────────────────────────────────────────────────────────
 
 def demo_workflow():
     """Complete workflow demonstration."""
 
-    print("\n" + "=" * 60)
-    print("DEMO COMPLETE WORKFLOW - pyFMG")
-    print("=" * 60)
-    print(f"\nADOM: {FMG_ADOM}")
-    print(f"Package: {PACKAGE}")
+    log.info("=" * 60)
+    log.info("DEMO COMPLETE WORKFLOW - pyFMG")
+    log.info("=" * 60)
+    log.info("ADOM: %s", FMG_ADOM)
+    log.info("Package: %s", PACKAGE)
 
     with FortiManager(FMG_HOST, FMG_USER, FMG_PASS, verify_ssl=FMG_VERIFY) as fmg:
 
@@ -173,16 +195,16 @@ def demo_workflow():
         # Actual installation would be:
         # install_package(fmg, device="FGT-01")
 
-        print("\n[INFO] Actual installation disabled in demo")
-        print("To install: uncomment install_package()")
+        log.info("Actual installation disabled in demo")
+        log.info("To install: uncomment install_package()")
 
         # Cleanup
-        print("\nCleaning up demo objects...")
+        log.info("Cleaning up demo objects...")
         cleanup(fmg)
 
-    print("\n" + "=" * 60)
-    print("WORKFLOW COMPLETED")
-    print("=" * 60)
+    log.info("=" * 60)
+    log.info("WORKFLOW COMPLETED")
+    log.info("=" * 60)
 
 
 if __name__ == "__main__":

@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """
 CRUD Services with Python requests
+
+This module demonstrates CRUD operations on FortiManager service objects.
 """
 
 import sys
@@ -9,9 +11,22 @@ from typing import Optional, List, Dict, Any
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
+from config import setup_logging, get_logger
 from utils.fmg_client import FortiManagerClient
 from utils.exceptions import FMGObjectExistsError, FMGObjectNotFoundError
 
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Logging
+# ─────────────────────────────────────────────────────────────────────────────
+
+setup_logging()
+log = get_logger(__name__)
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Service Manager
+# ─────────────────────────────────────────────────────────────────────────────
 
 class ServiceManager:
     """FortiManager service manager."""
@@ -19,6 +34,7 @@ class ServiceManager:
     def __init__(self, fmg: FortiManagerClient):
         self.fmg = fmg
         self.base_url = fmg.get_adom_url("obj/firewall/service/custom")
+        self._log = get_logger(f"{__name__}.ServiceManager")
 
     def create(
         self,
@@ -51,9 +67,9 @@ class ServiceManager:
         if comment:
             data["comment"] = comment
 
-        print(f"Creating service '{name}' ({protocol}/{port})...")
+        self._log.info("Creating service '%s' (%s/%s)", name, protocol, port)
         result = self.fmg.add(self.base_url, data)
-        print("[OK] Service created")
+        self._log.info("Service '%s' created successfully", name)
         return result
 
     def read(
@@ -69,6 +85,7 @@ class ServiceManager:
             pattern = filter_pattern.replace("*", "%")
             kwargs["filter"] = [["name", "like", pattern]]
 
+        self._log.debug("Reading services from %s", url)
         result = self.fmg.get(url, **kwargs)
 
         if result is None:
@@ -80,45 +97,54 @@ class ServiceManager:
     def delete(self, name: str) -> Dict[str, Any]:
         """Delete a service."""
         url = f"{self.base_url}/{name}"
-        print(f"Deleting service '{name}'...")
+        self._log.info("Deleting service '%s'", name)
         result = self.fmg.delete(url)
-        print("[OK] Service deleted")
+        self._log.info("Service '%s' deleted successfully", name)
         return result
 
 
+# ─────────────────────────────────────────────────────────────────────────────
+# Demonstration
+# ─────────────────────────────────────────────────────────────────────────────
+
 def demo():
     """CRUD services demo."""
-    print("\n" + "=" * 60)
-    print("DEMO CRUD SERVICES")
-    print("=" * 60)
+    log.info("=" * 60)
+    log.info("DEMO CRUD SERVICES")
+    log.info("=" * 60)
 
     with FortiManagerClient() as fmg:
         mgr = ServiceManager(fmg)
 
         # CREATE
-        print("\n--- CREATE ---")
+        log.info("--- CREATE ---")
         try:
             mgr.create("DEMO_SVC_8443", "TCP", "8443", "Demo HTTPS alt")
             mgr.create("DEMO_SVC_DNS_ALT", "UDP", "5353", "Demo DNS alt")
         except FMGObjectExistsError as e:
-            print(f"[WARNING] {e}")
+            log.warning("Service already exists: %s", e)
 
         # READ
-        print("\n--- READ ---")
+        log.info("--- READ ---")
         services = mgr.read(filter_pattern="DEMO_*")
-        print(f"Services: {len(services)}")
+        log.info("Services found: %d", len(services))
         for svc in services:
             port = svc.get("tcp-portrange") or svc.get("udp-portrange") or "N/A"
-            print(f"  - {svc['name']}: {port}")
+            log.info("  - %s: %s", svc["name"], port)
 
         # DELETE
-        print("\n--- DELETE ---")
+        log.info("--- DELETE ---")
         for name in ["DEMO_SVC_8443", "DEMO_SVC_DNS_ALT"]:
             try:
                 mgr.delete(name)
             except FMGObjectNotFoundError:
-                print(f"[WARNING] {name} not found")
+                log.warning("Service not found: %s", name)
 
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Main
+# ─────────────────────────────────────────────────────────────────────────────
 
 if __name__ == "__main__":
     demo()
+    log.info("Demo completed successfully")

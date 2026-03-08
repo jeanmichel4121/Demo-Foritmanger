@@ -13,9 +13,22 @@ from typing import Optional, List, Dict, Any
 # Add parent directory to path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
+from config import setup_logging, get_logger
 from utils.fmg_client import FortiManagerClient
 from utils.exceptions import FMGObjectExistsError, FMGObjectNotFoundError
 
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Logging
+# ─────────────────────────────────────────────────────────────────────────────
+
+setup_logging()
+log = get_logger(__name__)
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Address Manager
+# ─────────────────────────────────────────────────────────────────────────────
 
 class AddressManager:
     """
@@ -33,6 +46,7 @@ class AddressManager:
         """
         self.fmg = fmg
         self.base_url = fmg.get_adom_url("obj/firewall/address")
+        self._log = get_logger(f"{__name__}.AddressManager")
 
     def create(
         self,
@@ -71,9 +85,9 @@ class AddressManager:
         if comment:
             data["comment"] = comment
 
-        print(f"Creating address '{name}'...")
+        self._log.info("Creating address '%s' with subnet %s", name, subnet)
         result = self.fmg.add(self.base_url, data)
-        print(f"[OK] Address created")
+        self._log.info("Address '%s' created successfully", name)
         return result
 
     def read(
@@ -103,6 +117,7 @@ class AddressManager:
             pattern = filter_pattern.replace("*", "%")
             kwargs["filter"] = [["name", "like", pattern]]
 
+        self._log.debug("Reading addresses from %s with kwargs: %s", url, kwargs)
         result = self.fmg.get(url, **kwargs)
 
         # Normalize to list
@@ -132,9 +147,9 @@ class AddressManager:
         if "subnet" in updates and "/" in updates["subnet"]:
             updates["subnet"] = self._cidr_to_mask(updates["subnet"])
 
-        print(f"Updating '{name}'...")
+        self._log.info("Updating address '%s' with: %s", name, updates)
         result = self.fmg.update(url, updates)
-        print(f"[OK] Address updated")
+        self._log.info("Address '%s' updated successfully", name)
         return result
 
     def delete(self, name: str) -> Dict[str, Any]:
@@ -152,9 +167,9 @@ class AddressManager:
         """
         url = f"{self.base_url}/{name}"
 
-        print(f"Deleting '{name}'...")
+        self._log.info("Deleting address '%s'", name)
         result = self.fmg.delete(url)
-        print(f"[OK] Address deleted")
+        self._log.info("Address '%s' deleted successfully", name)
         return result
 
     @staticmethod
@@ -167,22 +182,22 @@ class AddressManager:
         return f"{ip} {mask_str}"
 
 
-# =============================================================================
-# DEMONSTRATION
-# =============================================================================
+# ─────────────────────────────────────────────────────────────────────────────
+# Demonstration
+# ─────────────────────────────────────────────────────────────────────────────
 
 def demo_crud():
     """Complete CRUD operations demonstration."""
 
-    print("\n" + "=" * 60)
-    print("DEMO CRUD ADDRESSES")
-    print("=" * 60)
+    log.info("=" * 60)
+    log.info("DEMO CRUD ADDRESSES")
+    log.info("=" * 60)
 
     with FortiManagerClient() as fmg:
         mgr = AddressManager(fmg)
 
         # CREATE
-        print("\n--- CREATE ---")
+        log.info("--- CREATE ---")
         try:
             mgr.create(
                 name="DEMO_NET_WEB",
@@ -195,37 +210,41 @@ def demo_crud():
                 comment="Demo - Database servers",
             )
         except FMGObjectExistsError as e:
-            print(f"[WARNING] {e}")
+            log.warning("Address already exists: %s", e)
 
         # READ
-        print("\n--- READ ---")
+        log.info("--- READ ---")
         addresses = mgr.read(
             filter_pattern="DEMO_*",
             fields=["name", "subnet", "comment"],
         )
-        print(f"Addresses found: {len(addresses)}")
+        log.info("Addresses found: %d", len(addresses))
         for addr in addresses:
             subnet = addr.get("subnet", [])
             if isinstance(subnet, list):
                 subnet = " ".join(subnet)
-            print(f"  - {addr['name']}: {subnet}")
+            log.info("  - %s: %s", addr["name"], subnet)
 
         # UPDATE
-        print("\n--- UPDATE ---")
+        log.info("--- UPDATE ---")
         try:
             mgr.update("DEMO_NET_WEB", comment="Demo - Web servers PRODUCTION")
         except FMGObjectNotFoundError as e:
-            print(f"[WARNING] {e}")
+            log.warning("Address not found: %s", e)
 
         # DELETE
-        print("\n--- DELETE ---")
+        log.info("--- DELETE ---")
         for name in ["DEMO_NET_WEB", "DEMO_NET_DB"]:
             try:
                 mgr.delete(name)
             except FMGObjectNotFoundError as e:
-                print(f"[WARNING] {e}")
+                log.warning("Address not found: %s", e)
 
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Main
+# ─────────────────────────────────────────────────────────────────────────────
 
 if __name__ == "__main__":
     demo_crud()
-    print("\n[OK] Demo completed")
+    log.info("Demo completed successfully")

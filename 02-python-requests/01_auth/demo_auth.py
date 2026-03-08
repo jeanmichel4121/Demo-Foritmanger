@@ -13,9 +13,22 @@ from pathlib import Path
 # Add parent directory to path for imports
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
+from config import setup_logging, get_logger
 from utils.fmg_client import FortiManagerClient
 from utils.exceptions import FMGAuthError
 
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Logging
+# ─────────────────────────────────────────────────────────────────────────────
+
+setup_logging()
+log = get_logger(__name__)
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Demonstrations
+# ─────────────────────────────────────────────────────────────────────────────
 
 def demo_session_auth():
     """
@@ -23,28 +36,28 @@ def demo_session_auth():
 
     Uses context manager for automatic login/logout.
     """
-    print("\n" + "=" * 60)
-    print("DEMO: Session Authentication")
-    print("=" * 60)
+    log.info("=" * 60)
+    log.info("DEMO: Session Authentication")
+    log.info("=" * 60)
 
     try:
         # Context manager handles login/logout
         with FortiManagerClient() as fmg:
-            print(f"[OK] Connected! Session: {fmg.session[:20]}...")
+            log.info("Connected! Session: %s...", fmg.session[:20])
 
             # Test: get system status
             status = fmg.get("/sys/status")
-            print(f"\nFortiManager Info:")
-            print(f"  Hostname: {status.get('Hostname', 'N/A')}")
-            print(f"  Version:  {status.get('Version', 'N/A')}")
-            print(f"  Serial:   {status.get('Serial', 'N/A')}")
+            log.info("FortiManager Info:")
+            log.info("  Hostname: %s", status.get("Hostname", "N/A"))
+            log.info("  Version:  %s", status.get("Version", "N/A"))
+            log.info("  Serial:   %s", status.get("Serial", "N/A"))
 
-        print("\n[OK] Automatically disconnected")
+        log.info("Automatically disconnected")
 
     except FMGAuthError as e:
-        print(f"\n[ERROR] Authentication failed: {e}")
+        log.error("Authentication failed: %s", e)
     except Exception as e:
-        print(f"\n[ERROR] {e}")
+        log.exception("Unexpected error: %s", e)
 
 
 def demo_bearer_auth():
@@ -53,35 +66,35 @@ def demo_bearer_auth():
 
     No login/logout, token is sent with each request.
     """
-    print("\n" + "=" * 60)
-    print("DEMO: Bearer Token Authentication")
-    print("=" * 60)
+    log.info("=" * 60)
+    log.info("DEMO: Bearer Token Authentication")
+    log.info("=" * 60)
 
     try:
         # No context manager needed with API Key
         fmg = FortiManagerClient(use_api_key=True)
 
         if not fmg.settings.api_key:
-            print("[WARNING] FMG_API_KEY not configured in .env")
-            print("To use Bearer token:")
-            print("  1. Create an API admin on FortiManager")
-            print("  2. Add FMG_API_KEY=<your_key> to .env")
+            log.warning("FMG_API_KEY not configured in .env")
+            log.info("To use Bearer token:")
+            log.info("  1. Create an API admin on FortiManager")
+            log.info("  2. Add FMG_API_KEY=<your_key> to .env")
             return
 
         # Test: get system status
         status = fmg.get("/sys/status")
-        print(f"[OK] Bearer connection successful!")
-        print(f"\nFortiManager Info:")
-        print(f"  Hostname: {status.get('Hostname', 'N/A')}")
-        print(f"  Version:  {status.get('Version', 'N/A')}")
-        print(f"  Admin:    {status.get('Admin', 'N/A')}")
+        log.info("Bearer connection successful!")
+        log.info("FortiManager Info:")
+        log.info("  Hostname: %s", status.get("Hostname", "N/A"))
+        log.info("  Version:  %s", status.get("Version", "N/A"))
+        log.info("  Admin:    %s", status.get("Admin", "N/A"))
 
-        print("\n[INFO] No logout needed with Bearer token")
+        log.info("No logout needed with Bearer token")
 
     except FMGAuthError as e:
-        print(f"\n[ERROR] Invalid API Key: {e}")
+        log.error("Invalid API Key: %s", e)
     except Exception as e:
-        print(f"\n[ERROR] {e}")
+        log.exception("Unexpected error: %s", e)
 
 
 def demo_manual_session():
@@ -90,40 +103,44 @@ def demo_manual_session():
 
     Useful for understanding the mechanism.
     """
-    print("\n" + "=" * 60)
-    print("DEMO: Manual Session")
-    print("=" * 60)
+    log.info("=" * 60)
+    log.info("DEMO: Manual Session")
+    log.info("=" * 60)
 
     fmg = FortiManagerClient()
 
     try:
         # Explicit login
-        print("Login...")
+        log.info("Logging in...")
         session = fmg.login()
-        print(f"[OK] Session: {session[:20]}...")
+        log.info("Session: %s...", session[:20])
 
         # Perform some operations
-        print("\nRetrieving ADOMs...")
+        log.info("Retrieving ADOMs...")
         adoms = fmg.get("/dvmdb/adom")
         if adoms:
-            print(f"[OK] {len(adoms)} ADOM(s) found")
+            log.info("%d ADOM(s) found", len(adoms))
             for adom in adoms[:5]:  # Max 5
-                print(f"  - {adom.get('name')}")
+                log.info("  - %s", adom.get("name"))
 
     except Exception as e:
-        print(f"[ERROR] {e}")
+        log.exception("Error: %s", e)
 
     finally:
         # Explicit logout (important!)
-        print("\nLogout...")
+        log.info("Logging out...")
         fmg.logout()
-        print("[OK] Disconnected")
+        log.info("Disconnected")
 
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Main
+# ─────────────────────────────────────────────────────────────────────────────
 
 if __name__ == "__main__":
-    print("\n" + "#" * 60)
-    print("# FORTIMANAGER AUTHENTICATION DEMONSTRATION")
-    print("#" * 60)
+    log.info("#" * 60)
+    log.info("# FORTIMANAGER AUTHENTICATION DEMONSTRATION")
+    log.info("#" * 60)
 
     # Session-based demo
     demo_session_auth()
@@ -134,6 +151,6 @@ if __name__ == "__main__":
     # Manual session demo
     demo_manual_session()
 
-    print("\n" + "#" * 60)
-    print("# END OF DEMONSTRATION")
-    print("#" * 60)
+    log.info("#" * 60)
+    log.info("# END OF DEMONSTRATION")
+    log.info("#" * 60)

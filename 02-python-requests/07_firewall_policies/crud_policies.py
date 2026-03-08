@@ -12,9 +12,22 @@ from typing import Optional, List, Dict, Any
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
+from config import setup_logging, get_logger
 from utils.fmg_client import FortiManagerClient
 from utils.exceptions import FMGObjectExistsError, FMGObjectNotFoundError, FMGError
 
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Logging
+# ─────────────────────────────────────────────────────────────────────────────
+
+setup_logging()
+log = get_logger(__name__)
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Policy Manager
+# ─────────────────────────────────────────────────────────────────────────────
 
 class PolicyManager:
     """FortiManager policy manager."""
@@ -30,6 +43,7 @@ class PolicyManager:
         self.fmg = fmg
         self.package = package
         self.base_url = fmg.get_adom_url(f"pkg/{package}/firewall/policy")
+        self._log = get_logger(f"{__name__}.PolicyManager")
 
     def create(
         self,
@@ -76,9 +90,9 @@ class PolicyManager:
         if comment:
             data["comments"] = comment
 
-        print(f"Creating policy '{name}'...")
+        self._log.info("Creating policy '%s' (%s -> %s)", name, srcintf, dstintf)
         result = self.fmg.add(self.base_url, data)
-        print("[OK] Policy created")
+        self._log.info("Policy '%s' created successfully", name)
         return result
 
     def read(
@@ -100,6 +114,7 @@ class PolicyManager:
             "srcaddr", "dstaddr", "service", "action", "status"
         ]
 
+        self._log.debug("Reading policies from %s", url)
         result = self.fmg.get(url, fields=fields or default_fields)
 
         if result is None:
@@ -111,17 +126,17 @@ class PolicyManager:
     def update(self, policy_id: int, **updates) -> Dict[str, Any]:
         """Update a policy."""
         url = f"{self.base_url}/{policy_id}"
-        print(f"Updating policy ID {policy_id}...")
+        self._log.info("Updating policy ID %d with: %s", policy_id, updates)
         result = self.fmg.update(url, updates)
-        print("[OK] Policy updated")
+        self._log.info("Policy ID %d updated successfully", policy_id)
         return result
 
     def delete(self, policy_id: int) -> Dict[str, Any]:
         """Delete a policy."""
         url = f"{self.base_url}/{policy_id}"
-        print(f"Deleting policy ID {policy_id}...")
+        self._log.info("Deleting policy ID %d", policy_id)
         result = self.fmg.delete(url)
-        print("[OK] Policy deleted")
+        self._log.info("Policy ID %d deleted successfully", policy_id)
         return result
 
     def install(self, device: Optional[str] = None) -> Dict[str, Any]:
@@ -142,34 +157,38 @@ class PolicyManager:
         if device:
             data["scope"] = [{"name": device, "vdom": "root"}]
 
-        print(f"Installing package '{self.package}'...")
+        self._log.info("Installing package '%s' to %s", self.package, device or "all devices")
         result = self.fmg.execute("/securityconsole/install/package", data)
-        print("[OK] Installation started")
+        self._log.info("Installation started, task: %s", result)
         return result
 
 
+# ─────────────────────────────────────────────────────────────────────────────
+# Demonstration
+# ─────────────────────────────────────────────────────────────────────────────
+
 def demo():
     """CRUD policies demo."""
-    print("\n" + "=" * 60)
-    print("DEMO CRUD FIREWALL POLICIES")
-    print("=" * 60)
+    log.info("=" * 60)
+    log.info("DEMO CRUD FIREWALL POLICIES")
+    log.info("=" * 60)
 
     with FortiManagerClient() as fmg:
         mgr = PolicyManager(fmg)
 
         # READ - List existing policies
-        print("\n--- READ (existing policies) ---")
+        log.info("--- READ (existing policies) ---")
         policies = mgr.read()
-        print(f"Policies in package: {len(policies)}")
+        log.info("Policies in package: %d", len(policies))
         for pol in policies[:5]:  # Max 5
             name = pol.get("name", f"Policy {pol.get('policyid')}")
-            print(f"  - ID {pol['policyid']}: {name} [{pol.get('action', 'N/A')}]")
+            log.info("  - ID %s: %s [%s]", pol["policyid"], name, pol.get("action", "N/A"))
 
         # CREATE (if objects exist)
-        print("\n--- CREATE (example) ---")
-        print("Note: Requires existing objects (addresses, services)")
-        print("Example code:")
-        print("""
+        log.info("--- CREATE (example) ---")
+        log.info("Note: Requires existing objects (addresses, services)")
+        log.info("Example code:")
+        log.info("""
         mgr.create(
             name="Allow_Web_Access",
             srcintf=["internal"],
@@ -184,15 +203,20 @@ def demo():
         """)
 
         # INSTALL (example)
-        print("\n--- INSTALL (example) ---")
-        print("Note: Installation to FortiGate")
-        print("Example code:")
-        print("""
+        log.info("--- INSTALL (example) ---")
+        log.info("Note: Installation to FortiGate")
+        log.info("Example code:")
+        log.info("""
         # Install to a specific device
         result = mgr.install(device="FGT-01")
-        print(f"Task ID: {result.get('task')}")
+        log.info("Task ID: %s", result.get("task"))
         """)
 
 
+# ─────────────────────────────────────────────────────────────────────────────
+# Main
+# ─────────────────────────────────────────────────────────────────────────────
+
 if __name__ == "__main__":
     demo()
+    log.info("Demo completed successfully")

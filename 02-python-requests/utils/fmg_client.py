@@ -17,11 +17,13 @@ Usage:
 """
 
 import json
+import logging
 import requests
 import urllib3
 from typing import Optional, Dict, Any, List, Union
 
 from config.settings import get_settings, Settings
+from config.logging_config import get_logger, mask_sensitive
 from .exceptions import (
     FMGError,
     FMGAuthError,
@@ -30,6 +32,13 @@ from .exceptions import (
     FMGObjectExistsError,
     FMGPermissionError,
 )
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Module Logger
+# ─────────────────────────────────────────────────────────────────────────────
+
+log = get_logger(__name__)
 
 
 class FortiManagerClient:
@@ -78,7 +87,10 @@ class FortiManagerClient:
     def __enter__(self) -> "FortiManagerClient":
         """Context manager: automatic login."""
         if not self.use_api_key:
+            log.debug("Context manager: initiating session login")
             self.login()
+        else:
+            log.debug("Context manager: using API key authentication")
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb) -> None:
@@ -172,9 +184,8 @@ class FortiManagerClient:
         if not self.use_api_key and self.session:
             payload["session"] = self.session
 
-        # Debug
-        if self.settings.debug:
-            print(f"\n>>> REQUEST >>>\n{json.dumps(payload, indent=2)}")
+        # Log request (mask sensitive data)
+        log.debug("REQUEST: %s", json.dumps(mask_sensitive(payload), indent=2))
 
         # Send request
         response = requests.post(
@@ -187,9 +198,8 @@ class FortiManagerClient:
 
         result = response.json()
 
-        # Debug
-        if self.settings.debug:
-            print(f"\n<<< RESPONSE <<<\n{json.dumps(result, indent=2)}")
+        # Log response (mask sensitive data like session tokens)
+        log.debug("RESPONSE: %s", json.dumps(mask_sensitive(result), indent=2))
 
         # Check response status
         if "result" in result and result["result"]:
@@ -197,6 +207,7 @@ class FortiManagerClient:
             code = status.get("code", 0)
 
             if code != 0:
+                log.error("API error %d: %s (url: %s)", code, status.get("message", "Unknown"), url)
                 self._handle_error(code, status.get("message", "Unknown error"), url)
 
             return result["result"][0].get("data")
@@ -251,6 +262,7 @@ class FortiManagerClient:
         if not self.session:
             raise FMGAuthError("No session token in response")
 
+        log.info("Successfully authenticated to FortiManager %s", self.settings.host)
         return self.session
 
     def logout(self) -> None:
@@ -258,6 +270,7 @@ class FortiManagerClient:
         if self.session:
             try:
                 self._send_request("exec", "/sys/logout")
+                log.info("Session closed successfully")
             finally:
                 self.session = None
 

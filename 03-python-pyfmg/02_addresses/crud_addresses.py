@@ -9,26 +9,46 @@ pyFMG significantly simplifies FortiManager interaction
 by automatically managing sessions and JSON-RPC structure.
 """
 
-import os
+import sys
 from pathlib import Path
-from dotenv import load_dotenv
+from typing import Optional, List, Dict, Any
 
-# Load .env
-env_path = Path(__file__).parent.parent.parent / ".env"
-load_dotenv(env_path)
+# Add parent directory to path
+sys.path.insert(0, str(Path(__file__).parent.parent))
 
+from config import (
+    FMG_HOST, FMG_USER, FMG_PASS, FMG_ADOM, FMG_VERIFY,
+    setup_logging, get_logger
+)
 from pyFMG.fortimgr import FortiManager
 
 
-# Configuration
-FMG_HOST = os.getenv("FMG_HOST")
-FMG_USER = os.getenv("FMG_USERNAME")
-FMG_PASS = os.getenv("FMG_PASSWORD")
-FMG_ADOM = os.getenv("FMG_ADOM", "root")
-FMG_VERIFY = os.getenv("FMG_VERIFY_SSL", "false").lower() == "true"
+# ─────────────────────────────────────────────────────────────────────────────
+# Logging
+# ─────────────────────────────────────────────────────────────────────────────
+
+setup_logging()
+log = get_logger(__name__)
 
 
-def create_address(fmg, name: str, subnet: str, comment: str = "") -> dict:
+# ─────────────────────────────────────────────────────────────────────────────
+# Helper Functions
+# ─────────────────────────────────────────────────────────────────────────────
+
+def cidr_to_mask(cidr: str) -> str:
+    """Convert CIDR notation to IP MASK format."""
+    ip, bits = cidr.split("/")
+    bits = int(bits)
+    mask = (0xFFFFFFFF << (32 - bits)) & 0xFFFFFFFF
+    mask_str = ".".join(str((mask >> (8 * i)) & 0xFF) for i in range(3, -1, -1))
+    return f"{ip} {mask_str}"
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# CRUD Functions
+# ─────────────────────────────────────────────────────────────────────────────
+
+def create_address(fmg, name: str, subnet: str, comment: str = "") -> Dict[str, Any]:
     """
     Create an IPv4 address.
 
@@ -45,11 +65,9 @@ def create_address(fmg, name: str, subnet: str, comment: str = "") -> dict:
 
     # Convert CIDR if needed
     if "/" in subnet:
-        ip, bits = subnet.split("/")
-        bits = int(bits)
-        mask = (0xFFFFFFFF << (32 - bits)) & 0xFFFFFFFF
-        mask_str = ".".join(str((mask >> (8 * i)) & 0xFF) for i in range(3, -1, -1))
-        subnet = f"{ip} {mask_str}"
+        subnet = cidr_to_mask(subnet)
+
+    log.info("Creating address '%s' with subnet %s", name, subnet)
 
     # pyFMG allows passing fields as kwargs
     code, response = fmg.add(
@@ -62,14 +80,14 @@ def create_address(fmg, name: str, subnet: str, comment: str = "") -> dict:
     )
 
     if code == 0:
-        print(f"[OK] Address '{name}' created")
+        log.info("Address '%s' created successfully", name)
     else:
-        print(f"[ERROR] Code {code}: {response}")
+        log.error("Failed to create '%s': code %d - %s", name, code, response)
 
     return {"code": code, "response": response}
 
 
-def read_addresses(fmg, filter_name: str = None) -> list:
+def read_addresses(fmg, filter_name: Optional[str] = None) -> List[Dict]:
     """
     List addresses in the ADOM.
 
@@ -90,18 +108,19 @@ def read_addresses(fmg, filter_name: str = None) -> list:
         pattern = filter_name.replace("*", "%")
         kwargs["filter"] = [["name", "like", pattern]]
 
+    log.debug("Reading addresses with filter: %s", filter_name)
     code, response = fmg.get(url, **kwargs)
 
     if code == 0:
         addresses = response if isinstance(response, list) else []
-        print(f"[OK] {len(addresses)} address(es)")
+        log.info("Found %d address(es)", len(addresses))
         return addresses
     else:
-        print(f"[ERROR] Code {code}")
+        log.error("Failed to read addresses: code %d", code)
         return []
 
 
-def update_address(fmg, name: str, **updates) -> dict:
+def update_address(fmg, name: str, **updates) -> Dict[str, Any]:
     """
     Update an existing address.
 
@@ -115,17 +134,18 @@ def update_address(fmg, name: str, **updates) -> dict:
     """
     url = f"/pm/config/adom/{FMG_ADOM}/obj/firewall/address/{name}"
 
+    log.info("Updating address '%s' with: %s", name, updates)
     code, response = fmg.update(url, **updates)
 
     if code == 0:
-        print(f"[OK] Address '{name}' updated")
+        log.info("Address '%s' updated successfully", name)
     else:
-        print(f"[ERROR] Code {code}: {response}")
+        log.error("Failed to update '%s': code %d - %s", name, code, response)
 
     return {"code": code, "response": response}
 
 
-def delete_address(fmg, name: str) -> dict:
+def delete_address(fmg, name: str) -> Dict[str, Any]:
     """
     Delete an address.
 
@@ -138,55 +158,60 @@ def delete_address(fmg, name: str) -> dict:
     """
     url = f"/pm/config/adom/{FMG_ADOM}/obj/firewall/address/{name}"
 
+    log.info("Deleting address '%s'", name)
     code, response = fmg.delete(url)
 
     if code == 0:
-        print(f"[OK] Address '{name}' deleted")
+        log.info("Address '%s' deleted successfully", name)
     else:
-        print(f"[ERROR] Code {code}: {response}")
+        log.error("Failed to delete '%s': code %d - %s", name, code, response)
 
     return {"code": code, "response": response}
 
 
-# =============================================================================
-# DEMO
-# =============================================================================
+# ─────────────────────────────────────────────────────────────────────────────
+# Demonstration
+# ─────────────────────────────────────────────────────────────────────────────
 
 def demo_crud():
     """Complete CRUD demonstration with pyFMG."""
 
-    print("\n" + "=" * 60)
-    print("DEMO CRUD ADDRESSES - pyFMG")
-    print("=" * 60)
+    log.info("=" * 60)
+    log.info("DEMO CRUD ADDRESSES - pyFMG")
+    log.info("=" * 60)
 
     # Context manager = automatic login/logout
     with FortiManager(FMG_HOST, FMG_USER, FMG_PASS, verify_ssl=FMG_VERIFY) as fmg:
 
         # CREATE
-        print("\n--- CREATE ---")
+        log.info("--- CREATE ---")
         create_address(fmg, "PYFMG_NET_WEB", "192.168.10.0/24", "Demo pyFMG - Web")
         create_address(fmg, "PYFMG_NET_DB", "192.168.20.0/24", "Demo pyFMG - DB")
 
         # READ
-        print("\n--- READ ---")
+        log.info("--- READ ---")
         addresses = read_addresses(fmg, "PYFMG_*")
         for addr in addresses:
             subnet = addr.get("subnet", [])
             if isinstance(subnet, list):
                 subnet = " ".join(subnet)
-            print(f"  - {addr['name']}: {subnet}")
+            log.info("  - %s: %s", addr["name"], subnet)
 
         # UPDATE
-        print("\n--- UPDATE ---")
+        log.info("--- UPDATE ---")
         update_address(fmg, "PYFMG_NET_WEB", comment="Demo pyFMG - Web PRODUCTION")
 
         # DELETE
-        print("\n--- DELETE ---")
+        log.info("--- DELETE ---")
         delete_address(fmg, "PYFMG_NET_WEB")
         delete_address(fmg, "PYFMG_NET_DB")
 
-    print("\n[OK] Demo completed (automatic logout)")
+    log.info("Demo completed (automatic logout)")
 
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Main
+# ─────────────────────────────────────────────────────────────────────────────
 
 if __name__ == "__main__":
     demo_crud()
