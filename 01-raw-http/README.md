@@ -71,16 +71,16 @@ SESSION=$(./login-session.sh)
 ## 📁 Folder Structure
 
 ```
-01-raw-http/
-├── README.md               # This file
-├── powershell/             # Windows implementation
-│   ├── README.md           # PowerShell guide
-│   ├── config/             # Configuration loader
-│   ├── utils/              # Helper functions
-│   └── 01-auth/ ... 07-firewall-policies/
-└── bash/                   # Linux/macOS implementation
-    ├── README.md           # Bash guide
-    └── [same structure]
+📂 01-raw-http/
+├── 📝 README.md               # This file
+├── 📂 powershell/             # Windows implementation
+│   ├── 📝 README.md           # PowerShell guide
+│   ├── 📂 config/             # Configuration loader
+│   ├── 📂 utils/              # Helper functions
+│   └── 📂 01-auth/ ... 07-firewall-policies/
+└── 📂 bash/                   # Linux/macOS implementation
+    ├── 📝 README.md           # Bash guide
+    └── 📂 [same structure]
 ```
 
 ---

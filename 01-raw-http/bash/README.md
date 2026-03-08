@@ -40,16 +40,18 @@ Required variables: `FMG_HOST`, `FMG_PORT`, `FMG_USERNAME`, `FMG_PASSWORD` (or `
 ## 📁 Directory Structure
 
 ```
-01-raw-http/bash/
-├── config/fmg-config.sh         # Configuration loader
-├── utils/fmg-request.sh         # JSON-RPC helper functions
-├── 01-auth/                     # Authentication scripts
-├── 02-addresses/                # Address management
-├── 03-services/                 # Service management
-├── 04-schedules/                # Schedule management
-├── 05-nat-vip/                  # NAT configuration
-├── 06-security-profiles/        # Security profiles
-└── 07-firewall-policies/        # Policies + installation
+📂 01-raw-http/bash/
+├── 📂 config/
+│   └── 🔧 fmg-config.sh         # Configuration loader
+├── 📂 utils/
+│   └── 📜 fmg-request.sh        # JSON-RPC helper functions
+├── 📂 01-auth/                  # Authentication scripts
+├── 📂 02-addresses/             # Address management
+├── 📂 03-services/              # Service management
+├── 📂 04-schedules/             # Schedule management
+├── 📂 05-nat-vip/               # NAT configuration
+├── 📂 06-security-profiles/     # Security profiles
+└── 📂 07-firewall-policies/     # Policies + installation
 ```
 
 ---

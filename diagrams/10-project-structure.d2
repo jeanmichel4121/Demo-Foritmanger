@@ -52,7 +52,7 @@ root: "Demo-FortiManager/" {
   }
 
   # Level 1
-  level1: "01-powershell-curl/" {
+  level1: "01-raw-http/" {
     shape: package
     style: {
       fill: "#ffebee"
@@ -61,29 +61,23 @@ root: "Demo-FortiManager/" {
 
     purpose: "Level 1: Raw HTTP"
 
-    config_ps: "config/" {
-      fmg_config: "fmg-config.ps1"
+    powershell: "powershell/" {
+      style: {
+        fill: "#ffcdd2"
+      }
+      config_ps: "config/fmg-config.ps1"
+      utils_ps: "utils/Invoke-FMGRequest.ps1"
+      scripts_ps: "01-auth/ ... 07-firewall-policies/"
     }
 
-    utils_ps: "utils/" {
-      invoke: "Invoke-FMGRequest.ps1"
+    bash: "bash/" {
+      style: {
+        fill: "#ffcdd2"
+      }
+      config_sh: "config/fmg-config.sh"
+      utils_sh: "utils/fmg-request.sh"
+      scripts_sh: "01-auth/ ... 07-firewall-policies/"
     }
-
-    auth_ps: "01-auth/" {
-      login: "login-session.ps1"
-      bearer: "login-bearer.ps1"
-      logout: "logout.ps1"
-    }
-
-    addresses_ps: "02-addresses/" {
-      create: "create-address.ps1"
-      read: "read-addresses.ps1"
-      update: "update-address.ps1"
-      delete: "delete-address.ps1"
-      groups: "manage-groups.ps1"
-    }
-
-    more: "03-07: services, schedules, nat, profiles, policies"
   }
 
   # Level 2
@@ -174,6 +168,7 @@ root: "Demo-FortiManager/" {
       stroke: "#7b1fa2"
     }
 
+    docs_index: "README.md (index)"
     intro: "00-introduction.md"
     concepts: "01-concepts-json-rpc.md"
     auth: "02-authentication.md"
@@ -187,6 +182,7 @@ root: "Demo-FortiManager/" {
       stroke: "#c2185b"
     }
 
+    cheat_index: "README.md (index)"
     endpoints: "api-endpoints.md"
     errors: "common-errors.md"
     curl: "curl-examples.md"
@@ -200,6 +196,7 @@ root: "Demo-FortiManager/" {
       stroke: "#00838f"
     }
 
+    diag_index: "README.md (index)"
     d2_files: "*.d2 source files"
     png_files: "*.png generated images"
   }
@@ -216,7 +213,7 @@ flow: Learning Flow {
   label: |md
   **Recommended Order:**
   1. Read docs/ and README.md
-  2. Start with 01-powershell-curl
+  2. Start with 01-raw-http
   3. Progress to 02-python-requests
   4. Master 03-python-pyfmg
   5. Apply with 04-ansible

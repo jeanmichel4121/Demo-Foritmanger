@@ -62,24 +62,35 @@ FMG_VERIFY_SSL=false
 
 ```
 Demo-FortiManager/
-├── .env.example              # Environment template
-├── README.md                 # This file
+├── 🔧 .env.example              # Environment template
+├── 📝 README.md                 # This file
 │
-├── 01-raw-http/              # Level 1: Raw HTTP
-│   ├── powershell/           #   Windows (PowerShell 7.0+)
-│   └── bash/                 #   Linux/macOS (bash, curl, jq)
-├── 02-python-requests/       # Level 2: Python abstraction
-├── 03-python-pyfmg/          # Level 3: Official SDK
-├── 04-ansible/               # Level 4: Infrastructure as Code
+├── 📂 01-raw-http/              # Level 1: Raw HTTP
+│   ├── 📂 powershell/           #   Windows (PowerShell 7.0+)
+│   └── 📂 bash/                 #   Linux/macOS (bash, curl, jq)
+├── 📂 02-python-requests/       # Level 2: Python abstraction
+├── 📂 03-python-pyfmg/          # Level 3: Official SDK
+├── 📂 04-ansible/               # Level 4: Infrastructure as Code
 │
-├── docs/                     # In-depth documentation
-├── cheatsheets/              # Quick reference guides
-└── diagrams/                 # Visual documentation
+├── 📂 docs/                     # In-depth documentation
+│   └── 📝 README.md             #   Index and reading order
+├── 📂 cheatsheets/              # Quick reference guides
+│   └── 📝 README.md             #   Index and usage tips
+└── 📂 diagrams/                 # Visual documentation (D2)
+    └── 📝 README.md             #   Index and regeneration guide
 ```
 
 ---
 
 ## 📖 Documentation
+
+| Section | Description |
+|---------|-------------|
+| [docs/](docs/README.md) | In-depth conceptual guides |
+| [cheatsheets/](cheatsheets/README.md) | Quick reference guides |
+| [diagrams/](diagrams/README.md) | Visual documentation |
+
+### Key Documents
 
 | Document | Description |
 |----------|-------------|

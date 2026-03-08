@@ -66,15 +66,15 @@ python-dotenv>=1.0.0
 ## 📁 Folder Structure
 
 ```
-03-python-pyfmg/
-├── README.md               # This file
-├── requirements.txt        # Dependencies
-├── 01_auth/
-│   └── demo_auth.py        # Authentication methods demo
-├── 02_addresses/
-│   └── crud_addresses.py   # Address CRUD operations
-└── 07_firewall_policies/
-    └── complete_workflow.py # End-to-end workflow demo
+📂 03-python-pyfmg/
+├── 📝 README.md               # This file
+├── 📄 requirements.txt        # Dependencies
+├── 📂 01_auth/
+│   └── 🐍 demo_auth.py        # Authentication methods demo
+├── 📂 02_addresses/
+│   └── 🐍 crud_addresses.py   # Address CRUD operations
+└── 📂 07_firewall_policies/
+    └── 🐍 complete_workflow.py # End-to-end workflow demo
 ```
 
 ---

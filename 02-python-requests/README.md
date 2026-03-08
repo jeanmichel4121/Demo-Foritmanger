@@ -60,24 +60,24 @@ python-dotenv>=1.0.0
 ## 📁 Folder Structure
 
 ```
-02-python-requests/
-├── README.md               # This file
-├── requirements.txt        # Dependencies
-├── config/
-│   ├── __init__.py
-│   └── settings.py         # Centralized configuration (Settings dataclass)
-├── utils/
-│   ├── __init__.py
-│   ├── fmg_client.py       # FortiManagerClient class
-│   └── exceptions.py       # Custom exception hierarchy
-├── 01_auth/
-│   └── demo_auth.py        # Authentication demonstrations
-├── 02_addresses/
-│   └── crud_addresses.py   # Address CRUD with AddressManager class
-├── 03_services/
-│   └── crud_services.py    # Service CRUD operations
-└── 07_firewall_policies/
-    └── crud_policies.py    # Policy CRUD operations
+📂 02-python-requests/
+├── 📝 README.md               # This file
+├── 📄 requirements.txt        # Dependencies
+├── 📂 config/
+│   ├── 🐍 __init__.py
+│   └── 🐍 settings.py         # Centralized configuration (Settings dataclass)
+├── 📂 utils/
+│   ├── 🐍 __init__.py
+│   ├── 🐍 fmg_client.py       # FortiManagerClient class
+│   └── 🐍 exceptions.py       # Custom exception hierarchy
+├── 📂 01_auth/
+│   └── 🐍 demo_auth.py        # Authentication demonstrations
+├── 📂 02_addresses/
+│   └── 🐍 crud_addresses.py   # Address CRUD with AddressManager class
+├── 📂 03_services/
+│   └── 🐍 crud_services.py    # Service CRUD operations
+└── 📂 07_firewall_policies/
+    └── 🐍 crud_policies.py    # Policy CRUD operations
 ```
 
 ---

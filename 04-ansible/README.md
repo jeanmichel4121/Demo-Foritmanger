@@ -73,27 +73,27 @@ ansible-galaxy collection list | grep fortinet
 ## 📁 Folder Structure
 
 ```
-04-ansible/
-├── README.md               # This file
-├── ansible.cfg             # Ansible configuration
-├── requirements.yml        # Collection dependencies
-├── inventory/
-│   ├── hosts.yml           # FortiManager hosts
-│   └── group_vars/
-│       └── fortimanager.yml # Connection settings
-├── vars/
-│   ├── addresses.yml       # Address definitions
-│   ├── services.yml        # Service definitions
-│   └── policies.yml        # Policy definitions
-└── playbooks/
-    ├── 01_addresses/
-    │   └── manage_addresses.yml
-    ├── 02_services/
-    │   └── manage_services.yml
-    ├── 06_policies/
-    │   ├── manage_policies.yml
-    │   └── install_package.yml
-    └── full_deployment.yml
+📂 04-ansible/
+├── 📝 README.md               # This file
+├── 🔧 ansible.cfg             # Ansible configuration
+├── 📄 requirements.yml        # Collection dependencies
+├── 📂 inventory/
+│   ├── 📄 hosts.yml           # FortiManager hosts
+│   └── 📂 group_vars/
+│       └── 🔧 fortimanager.yml # Connection settings
+├── 📂 vars/
+│   ├── 📄 addresses.yml       # Address definitions
+│   ├── 📄 services.yml        # Service definitions
+│   └── 📄 policies.yml        # Policy definitions
+└── 📂 playbooks/
+    ├── 📂 01_addresses/
+    │   └── 🎭 manage_addresses.yml
+    ├── 📂 02_services/
+    │   └── 🎭 manage_services.yml
+    ├── 📂 06_policies/
+    │   ├── 🎭 manage_policies.yml
+    │   └── 🎭 install_package.yml
+    └── 🎭 full_deployment.yml
 ```
 
 ---

@@ -32,16 +32,18 @@ $PSVersionTable.PSVersion
 ## 📁 Directory Structure
 
 ```
-01-raw-http/powershell/
-├── config/fmg-config.ps1           # Configuration loader
-├── utils/Invoke-FMGRequest.ps1     # JSON-RPC helper function
-├── 01-auth/                        # Authentication scripts
-├── 02-addresses/                   # Address management
-├── 03-services/                    # Service management
-├── 04-schedules/                   # Schedule management
-├── 05-nat-vip/                     # NAT configuration
-├── 06-security-profiles/           # Security profiles
-└── 07-firewall-policies/           # Policies + installation
+📂 01-raw-http/powershell/
+├── 📂 config/
+│   └── 🔧 fmg-config.ps1           # Configuration loader
+├── 📂 utils/
+│   └── 📜 Invoke-FMGRequest.ps1    # JSON-RPC helper function
+├── 📂 01-auth/                     # Authentication scripts
+├── 📂 02-addresses/                # Address management
+├── 📂 03-services/                 # Service management
+├── 📂 04-schedules/                # Schedule management
+├── 📂 05-nat-vip/                  # NAT configuration
+├── 📂 06-security-profiles/        # Security profiles
+└── 📂 07-firewall-policies/        # Policies + installation
 ```
 
 ---
