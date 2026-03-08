@@ -8,7 +8,7 @@
 # Actions: create, read, update, delete, move
 #
 
-set -e
+set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/../config/fmg-config.sh"

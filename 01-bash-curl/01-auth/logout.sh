@@ -16,6 +16,8 @@
 #   Not needed if using Bearer token (API Key)
 #
 
+set -euo pipefail
+
 # Load configuration
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/../config/fmg-config.sh"

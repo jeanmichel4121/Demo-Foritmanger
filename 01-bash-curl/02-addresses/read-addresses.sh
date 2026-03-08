@@ -20,7 +20,7 @@
 #   ./read-addresses.sh -n NET_SERVERS     # Specific address
 #
 
-set -e
+set -euo pipefail
 
 # Load tools
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"

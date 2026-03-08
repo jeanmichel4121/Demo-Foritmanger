@@ -16,7 +16,7 @@
 #   Requires FMG_USERNAME and FMG_PASSWORD variables in .env
 #
 
-set -e
+set -euo pipefail
 
 # Load configuration
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"

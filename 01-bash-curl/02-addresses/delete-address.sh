@@ -18,7 +18,7 @@
 #   ./delete-address.sh -n NET_SERVERS -f
 #
 
-set -e
+set -euo pipefail
 
 # Load tools
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"

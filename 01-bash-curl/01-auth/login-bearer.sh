@@ -16,7 +16,7 @@
 #   Available since FortiManager 7.2.2+
 #
 
-set -e
+set -euo pipefail
 
 # Load configuration
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"

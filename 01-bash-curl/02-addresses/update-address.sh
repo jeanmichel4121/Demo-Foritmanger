@@ -21,7 +21,7 @@
 #   ./update-address.sh -n OLD_NAME -N NEW_NAME
 #
 
-set -e
+set -euo pipefail
 
 # Load tools
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"

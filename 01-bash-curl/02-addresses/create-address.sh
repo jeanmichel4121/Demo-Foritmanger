@@ -20,7 +20,7 @@
 #   ./create-address.sh -n HOST_WEB01 -s 10.10.10.5/32 -c "Main web server"
 #
 
-set -e
+set -euo pipefail
 
 # Load tools
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
