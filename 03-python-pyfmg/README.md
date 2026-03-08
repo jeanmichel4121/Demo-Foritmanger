@@ -2,6 +2,8 @@
 
 > **Use Fortinet's official library for simplified, production-ready automation.**
 
+[Home](../README.md) > Level 3: Python + pyFMG
+
 ---
 
 ## Overview

@@ -2,6 +2,8 @@
 
 > **Build reusable, well-structured code with proper abstractions and error handling.**
 
+[Home](../README.md) > Level 2: Python + Requests
+
 ---
 
 ## Overview

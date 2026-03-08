@@ -1,0 +1,141 @@
+# Documentation Map - FortiManager API Automation Demo
+# This diagram shows the documentation structure and reading flow
+
+direction: down
+
+title: {
+  label: Documentation Map
+  near: top-center
+  shape: text
+  style: {
+    font-size: 24
+    bold: true
+  }
+}
+
+# Entry Point
+readme: {
+  label: README.md
+  shape: document
+  style: {
+    fill: "#4CAF50"
+    font-color: white
+    bold: true
+  }
+}
+
+# Documentation Sections
+docs: {
+  label: docs/
+  style: {
+    fill: "#E3F2FD"
+  }
+
+  intro: 00-introduction.md
+  concepts: 01-concepts-json-rpc.md
+  auth: 02-authentication.md
+  operations: 03-covered-operations.md
+  practices: 04-best-practices.md
+
+  intro -> concepts -> auth
+}
+
+cheatsheets: {
+  label: cheatsheets/
+  style: {
+    fill: "#FFF3E0"
+  }
+
+  endpoints: api-endpoints.md
+  errors: common-errors.md
+  curl: curl-examples.md
+}
+
+diagrams_folder: {
+  label: diagrams/
+  style: {
+    fill: "#F3E5F5"
+  }
+
+  arch: 01-architecture-overview
+  flow: 02-json-rpc-flow
+  auth_diag: 03-authentication-methods
+  hierarchy: 04-object-hierarchy
+  install: 05-policy-installation-workflow
+  progress: 06-learning-progression
+  crud: 07-crud-methods
+  errors: 08-error-codes
+  url: 09-url-structure
+  structure: 10-project-structure
+}
+
+# Learning Levels
+levels: {
+  label: Learning Path
+  style: {
+    fill: "#ECEFF1"
+  }
+
+  l1: {
+    label: Level 1\nRaw HTTP
+    style: {
+      fill: "#FFCDD2"
+    }
+
+    ps: powershell/
+    bash: bash/
+
+    ps -> bash: {style.stroke-dash: 3}
+  }
+
+  l2: {
+    label: Level 2\nPython + requests
+    style: {
+      fill: "#C8E6C9"
+    }
+  }
+
+  l3: {
+    label: Level 3\nPython + pyFMG
+    style: {
+      fill: "#BBDEFB"
+    }
+  }
+
+  l4: {
+    label: Level 4\nAnsible
+    style: {
+      fill: "#D1C4E9"
+    }
+  }
+
+  l1 -> l2 -> l3 -> l4
+}
+
+# Connections
+readme -> docs.intro: Start Here {
+  style: {
+    stroke: "#4CAF50"
+    stroke-width: 3
+  }
+}
+
+readme -> levels: Hands-On {
+  style: {
+    stroke: "#2196F3"
+    stroke-width: 2
+  }
+}
+
+docs -> cheatsheets: Reference {
+  style.stroke-dash: 3
+}
+
+docs -> diagrams_folder: Visual Aids {
+  style.stroke-dash: 3
+}
+
+levels.l1 -> docs.auth: Auth Guide
+levels.l2 -> docs.concepts: API Concepts
+levels.l3 -> docs.practices: Best Practices
+levels.l4 -> docs.operations: Operations
