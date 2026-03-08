@@ -179,55 +179,20 @@ Declarative configuration management:
 Demo-FortiManager/
 │
 ├── 📄 .env.example                 # Environment template
-├── 📄 .gitignore                   # Git ignore rules
 ├── 📄 README.md                    # This file
 │
 ├── 📁 01-powershell-curl/          # 🪟 Level 1: Raw HTTP (Windows)
-│   ├── 📁 config/                  # ⚙️ Configuration loading
-│   ├── 📁 utils/                   # 🔧 Helper functions
-│   ├── 📁 01-auth/                 # 🔐 Authentication examples
-│   ├── 📁 02-addresses/            # 🏠 Address CRUD
-│   ├── 📁 03-services/             # 🔌 Service CRUD
-│   ├── 📁 04-schedules/            # 📅 Schedule CRUD
-│   ├── 📁 05-nat-vip/              # 🔀 NAT/VIP CRUD
-│   ├── 📁 06-security-profiles/    # 🛡️ Security profile CRUD
-│   └── 📁 07-firewall-policies/    # 🔥 Policy CRUD + install
-│
 ├── 📁 01-bash-curl/                # 🐧 Level 1: Raw HTTP (Linux/macOS)
-│   ├── 📁 config/                  # ⚙️ Configuration loading
-│   ├── 📁 utils/                   # 🔧 Helper functions
-│   └── 📁 01-07_*/                 # Same structure as PowerShell
-│
 ├── 📁 02-python-requests/          # 🐍 Level 2: Python abstraction
-│   ├── 📁 config/                  # ⚙️ Settings management
-│   ├── 📁 utils/                   # 🔧 FMG client and exceptions
-│   └── 📁 01-07_*/                 # Feature demonstrations
-│
 ├── 📁 03-python-pyfmg/             # 📦 Level 3: Official SDK
-│   ├── 📁 01_auth/                 # 🔐 Authentication demos
-│   ├── 📁 02_addresses/            # 🏠 Address operations
-│   └── 📁 07_firewall_policies/    # 🔥 Complete workflow
-│
 ├── 📁 04-ansible/                  # 🅰️ Level 4: Infrastructure as Code
-│   ├── 📁 inventory/               # 📋 Host definitions
-│   ├── 📁 playbooks/               # 📜 Automation playbooks
-│   ├── 📁 vars/                    # 📝 Variable files
-│   └── 📄 requirements.yml         # Collection dependencies
 │
 ├── 📁 docs/                        # 📚 Documentation
-│   ├── 📄 00-introduction.md       # FortiManager overview
-│   ├── 📄 01-concepts-json-rpc.md  # JSON-RPC deep dive
-│   └── 📄 02-authentication.md     # Auth methods explained
-│
 ├── 📁 cheatsheets/                 # 📋 Quick reference guides
-│   ├── 📄 api-endpoints.md         # Endpoint reference
-│   ├── 📄 common-errors.md         # Error code guide
-│   └── 📄 curl-examples.md         # cURL examples
-│
 └── 📁 diagrams/                    # 🖼️ Visual documentation
-    ├── 📄 *.d2                     # D2 source files
-    └── 🖼️ *.png                    # Generated images
 ```
+
+> **Note:** See each section's README for detailed folder structure.
 
 ---
 
