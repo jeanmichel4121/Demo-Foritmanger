@@ -1,0 +1,163 @@
+# FortiManager URL Structure
+# Diagramme montrant la structure des URLs de l'API
+
+direction: down
+
+title: {
+  label: FortiManager API URL Structure
+  near: top-center
+  shape: text
+  style: {
+    font-size: 24
+    bold: true
+  }
+}
+
+# URL Pattern
+pattern: "URL Pattern: /{scope}/{type}/{adom}/{path}" {
+  shape: document
+  style: {
+    fill: "#e3f2fd"
+    stroke: "#1976d2"
+  }
+}
+
+# URL Components
+scope: "1. Scope Prefix" {
+  shape: hexagon
+  style: {
+    fill: "#e8f5e9"
+    stroke: "#388e3c"
+  }
+}
+
+config_type: "2. Configuration Type" {
+  shape: hexagon
+  style: {
+    fill: "#fff3e0"
+    stroke: "#f57c00"
+  }
+}
+
+adom_part: "3. ADOM" {
+  shape: hexagon
+  style: {
+    fill: "#fce4ec"
+    stroke: "#c2185b"
+  }
+}
+
+object_path: "4. Object Path" {
+  shape: hexagon
+  style: {
+    fill: "#f3e5f5"
+    stroke: "#7b1fa2"
+  }
+}
+
+# Scope Options
+pm: "/pm - Policy Manager" {
+  style.fill: "#c8e6c9"
+}
+dvmdb: "/dvmdb - Device Manager" {
+  style.fill: "#c8e6c9"
+}
+sys: "/sys - System" {
+  style.fill: "#c8e6c9"
+}
+task: "/task - Task Manager" {
+  style.fill: "#c8e6c9"
+}
+securityconsole: "/securityconsole - Install" {
+  style.fill: "#c8e6c9"
+}
+
+# Config Type Options
+config: "/config" {
+  style.fill: "#ffe0b2"
+}
+obj: "/obj - Objects" {
+  style.fill: "#ffe0b2"
+}
+pkg: "/pkg - Packages" {
+  style.fill: "#ffe0b2"
+}
+
+# ADOM Options
+root: "/adom/root" {
+  style.fill: "#f8bbd9"
+}
+customer: "/adom/customer-a" {
+  style.fill: "#f8bbd9"
+}
+global: "/adom/global" {
+  style.fill: "#f8bbd9"
+}
+
+# Object Path Options
+fw_address: "/obj/firewall/address" {
+  style.fill: "#e1bee7"
+}
+fw_service: "/obj/firewall/service/custom" {
+  style.fill: "#e1bee7"
+}
+fw_policy: "/pkg/default/firewall/policy" {
+  style.fill: "#e1bee7"
+}
+
+# Common URLs Section
+common: Common API URLs {
+  shape: rectangle
+  style: {
+    fill: "#fff9c4"
+    stroke: "#f9a825"
+    font-size: 16
+    bold: true
+  }
+}
+
+auth: "Auth: /sys/login/user, /sys/logout" {
+  style.fill: "#c8e6c9"
+}
+addresses: "Addresses: .../obj/firewall/address" {
+  style.fill: "#bbdefb"
+}
+services: "Services: .../obj/firewall/service/custom" {
+  style.fill: "#ffe0b2"
+}
+policies: "Policies: .../pkg/{pkg}/firewall/policy" {
+  style.fill: "#f8bbd9"
+}
+install: "Install: /securityconsole/install/package" {
+  style.fill: "#e1bee7"
+}
+
+# Connections
+pattern -> scope
+pattern -> config_type
+pattern -> adom_part
+pattern -> object_path
+
+scope -> pm
+scope -> dvmdb
+scope -> sys
+scope -> task
+scope -> securityconsole
+
+config_type -> config
+config_type -> obj
+config_type -> pkg
+
+adom_part -> root
+adom_part -> customer
+adom_part -> global
+
+object_path -> fw_address
+object_path -> fw_service
+object_path -> fw_policy
+
+common -> auth
+common -> addresses
+common -> services
+common -> policies
+common -> install

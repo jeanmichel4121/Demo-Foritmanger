@@ -1,0 +1,121 @@
+---
+# full_deployment.yml
+#
+# Complete deployment playbook
+# Executes all steps in order
+#
+# Usage:
+#   ansible-playbook playbooks/full_deployment.yml
+#   ansible-playbook playbooks/full_deployment.yml --check  # dry-run
+
+- name: FortiManager Complete Deployment
+  hosts: fortimanager
+  gather_facts: false
+  connection: httpapi
+
+  vars_files:
+    - ../vars/addresses.yml
+    - ../vars/services.yml
+    - ../vars/policies.yml
+
+  tasks:
+    - name: "========== STEP 1: ADDRESSES =========="
+      ansible.builtin.debug:
+        msg: "Creating addresses..."
+      tags: [addresses]
+
+    - name: Create IPv4 addresses
+      fortinet.fortimanager.fmgr_firewall_address:
+        state: "{{ item.state | default('present') }}"
+        adom: "{{ fmg_adom }}"
+        firewall_address:
+          name: "{{ item.name }}"
+          type: "ipmask"
+          subnet: "{{ item.subnet }}"
+          comment: "{{ item.comment | default(omit) }}"
+      loop: "{{ addresses_ipv4 | default([]) }}"
+      tags: [addresses]
+
+    - name: Create address groups
+      fortinet.fortimanager.fmgr_firewall_addrgrp:
+        state: "{{ item.state | default('present') }}"
+        adom: "{{ fmg_adom }}"
+        firewall_addrgrp:
+          name: "{{ item.name }}"
+          member: "{{ item.members }}"
+          comment: "{{ item.comment | default(omit) }}"
+      loop: "{{ address_groups | default([]) }}"
+      tags: [addresses]
+
+    - name: "========== STEP 2: SERVICES =========="
+      ansible.builtin.debug:
+        msg: "Creating services..."
+      tags: [services]
+
+    - name: Create custom services
+      fortinet.fortimanager.fmgr_firewall_service_custom:
+        state: "{{ item.state | default('present') }}"
+        adom: "{{ fmg_adom }}"
+        firewall_service_custom:
+          name: "{{ item.name }}"
+          protocol: "TCP/UDP/SCTP"
+          tcp-portrange: "{{ item.tcp_portrange | default(omit) }}"
+          udp-portrange: "{{ item.udp_portrange | default(omit) }}"
+          comment: "{{ item.comment | default(omit) }}"
+      loop: "{{ services_custom | default([]) }}"
+      tags: [services]
+
+    - name: Create service groups
+      fortinet.fortimanager.fmgr_firewall_service_group:
+        state: "{{ item.state | default('present') }}"
+        adom: "{{ fmg_adom }}"
+        firewall_service_group:
+          name: "{{ item.name }}"
+          member: "{{ item.members }}"
+          comment: "{{ item.comment | default(omit) }}"
+      loop: "{{ service_groups | default([]) }}"
+      tags: [services]
+
+    - name: "========== STEP 3: POLICIES =========="
+      ansible.builtin.debug:
+        msg: "Creating policies..."
+      tags: [policies]
+
+    - name: Create firewall policies
+      fortinet.fortimanager.fmgr_pkg_firewall_policy:
+        state: "{{ item.state | default('present') }}"
+        adom: "{{ fmg_adom }}"
+        pkg: "{{ fmg_package }}"
+        pkg_firewall_policy:
+          name: "{{ item.name }}"
+          srcintf: "{{ item.srcintf }}"
+          dstintf: "{{ item.dstintf }}"
+          srcaddr: "{{ item.srcaddr }}"
+          dstaddr: "{{ item.dstaddr }}"
+          service: "{{ item.service }}"
+          action: "{{ item.action | default('accept') }}"
+          nat: "{{ item.nat | default('disable') }}"
+          logtraffic: "{{ item.logtraffic | default('all') }}"
+          comments: "{{ item.comments | default(omit) }}"
+      loop: "{{ firewall_policies | default([]) }}"
+      tags: [policies]
+
+    - name: "========== DEPLOYMENT COMPLETED =========="
+      ansible.builtin.debug:
+        msg: |
+          ============================================
+          DEPLOYMENT COMPLETED
+          ============================================
+          ADOM: {{ fmg_adom }}
+          Package: {{ fmg_package }}
+
+          Addresses: {{ addresses_ipv4 | default([]) | length }}
+          Address Groups: {{ address_groups | default([]) | length }}
+          Services: {{ services_custom | default([]) | length }}
+          Service Groups: {{ service_groups | default([]) | length }}
+          Policies: {{ firewall_policies | default([]) | length }}
+          ============================================
+
+          To install to FortiGate devices:
+          ansible-playbook playbooks/06_policies/install_package.yml
+      tags: [always]

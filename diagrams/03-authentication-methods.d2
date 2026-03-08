@@ -1,0 +1,184 @@
+# Authentication Methods Comparison
+# Diagramme comparant Session-based vs Bearer Token authentication
+
+direction: down
+
+title: {
+  label: FortiManager Authentication Methods
+  near: top-center
+  shape: text
+  style: {
+    font-size: 24
+    bold: true
+  }
+}
+
+# Session-Based Authentication (Left)
+session_auth: Session-Based Authentication {
+  style: {
+    fill: "#e3f2fd"
+    stroke: "#1976d2"
+  }
+
+  step1: "1. Login Request" {
+    shape: step
+    style.fill: "#bbdefb"
+
+    code: |json
+    {
+      "method": "exec",
+      "params": [{
+        "url": "/sys/login/user",
+        "data": {
+          "user": "admin",
+          "passwd": "password"
+        }
+      }]
+    }
+    |
+  }
+
+  step2: "2. Receive Token" {
+    shape: step
+    style.fill: "#bbdefb"
+
+    code: |json
+    {
+      "session": "abc123xyz...",
+      "result": [{
+        "status": {"code": 0}
+      }]
+    }
+    |
+  }
+
+  step3: "3. Use Token in Requests" {
+    shape: step
+    style.fill: "#bbdefb"
+
+    code: |json
+    {
+      "method": "get",
+      "params": [{...}],
+      "session": "abc123xyz..."
+    }
+    |
+  }
+
+  step4: "4. Logout (Important!)" {
+    shape: step
+    style.fill: "#bbdefb"
+
+    code: |json
+    {
+      "method": "exec",
+      "params": [{
+        "url": "/sys/logout"
+      }],
+      "session": "abc123xyz..."
+    }
+    |
+  }
+
+  step1 -> step2
+  step2 -> step3
+  step3 -> step4
+}
+
+# Bearer Token Authentication (Right)
+bearer_auth: Bearer Token Authentication {
+  style: {
+    fill: "#e8f5e9"
+    stroke: "#388e3c"
+  }
+
+  prereq: "0. Create API User in FMG" {
+    shape: step
+    style.fill: "#c8e6c9"
+
+    note: |md
+    FortiManager UI:
+    System Settings > Admin > Administrators
+    Create user with API Key
+    |
+  }
+
+  step1: "1. Add Authorization Header" {
+    shape: step
+    style.fill: "#c8e6c9"
+
+    code: |http
+    POST /jsonrpc HTTP/1.1
+    Host: fmg.example.com
+    Authorization: Bearer <api_key>
+    Content-Type: application/json
+    |
+  }
+
+  step2: "2. Send Request (No Session)" {
+    shape: step
+    style.fill: "#c8e6c9"
+
+    code: |json
+    {
+      "method": "get",
+      "params": [{
+        "url": "/pm/config/adom/root/obj/firewall/address"
+      }]
+    }
+    |
+  }
+
+  step3: "3. No Logout Required" {
+    shape: step
+    style.fill: "#c8e6c9"
+
+    note: |md
+    Stateless authentication
+    Each request is independent
+    |
+  }
+
+  prereq -> step1
+  step1 -> step2
+  step2 -> step3
+}
+
+# Comparison Table
+comparison: Comparison {
+  shape: sql_table
+  style: {
+    fill: "#fff3e0"
+    stroke: "#f57c00"
+  }
+
+  aspect: Aspect
+  session: Session-Based
+  bearer: Bearer Token
+
+  state: Stateful vs Stateless | Stateful | Stateless
+  fmg_version: FMG Version | All | 7.2.2+
+  security: Security | Good | Better
+  complexity: Complexity | Medium | Simple
+  use_case: Best For | Interactive scripts | Automation/CI-CD
+}
+
+# Recommendation
+recommendation: {
+  shape: callout
+  style: {
+    fill: "#f3e5f5"
+    stroke: "#7b1fa2"
+    font-size: 14
+  }
+
+  label: |md
+  **Recommendation:**
+  Use Bearer Token for automation and CI/CD pipelines.
+  Use Session-based for interactive scripts or legacy FMG.
+  |
+}
+
+session_auth -> comparison
+bearer_auth -> comparison
+comparison -> recommendation

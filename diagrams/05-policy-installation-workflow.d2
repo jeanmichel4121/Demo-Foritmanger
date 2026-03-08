@@ -1,0 +1,240 @@
+# Policy Installation Workflow
+# Diagramme montrant le processus complet d'installation de policies
+
+direction: down
+
+title: {
+  label: Policy Package Installation Workflow
+  near: top-center
+  shape: text
+  style: {
+    font-size: 24
+    bold: true
+  }
+}
+
+# Step 1: Create Objects
+step1: "Step 1: Create Objects" {
+  shape: step
+  style: {
+    fill: "#e3f2fd"
+    stroke: "#1976d2"
+  }
+
+  addresses: Create Addresses {
+    shape: document
+    style.fill: "#bbdefb"
+
+    code: |json
+    {
+      "method": "add",
+      "params": [{
+        "url": "/pm/config/adom/root/obj/firewall/address",
+        "data": {
+          "name": "SRV_WEB",
+          "type": "ipmask",
+          "subnet": "10.10.10.0 255.255.255.0"
+        }
+      }]
+    }
+    |
+  }
+
+  services: Create Services {
+    shape: document
+    style.fill: "#bbdefb"
+
+    code: |json
+    {
+      "method": "add",
+      "params": [{
+        "url": "/pm/config/adom/root/obj/firewall/service/custom",
+        "data": {
+          "name": "HTTPS_8443",
+          "tcp-portrange": "8443"
+        }
+      }]
+    }
+    |
+  }
+}
+
+# Step 2: Create Policy
+step2: "Step 2: Create Firewall Policy" {
+  shape: step
+  style: {
+    fill: "#e8f5e9"
+    stroke: "#388e3c"
+  }
+
+  policy: Create Policy {
+    shape: document
+    style.fill: "#c8e6c9"
+
+    code: |json
+    {
+      "method": "add",
+      "params": [{
+        "url": "/pm/config/adom/root/pkg/default/firewall/policy",
+        "data": {
+          "name": "Allow-Web-Access",
+          "srcintf": ["port1"],
+          "dstintf": ["port2"],
+          "srcaddr": ["all"],
+          "dstaddr": ["SRV_WEB"],
+          "service": ["HTTPS_8443"],
+          "action": "accept",
+          "logtraffic": "all",
+          "nat": "enable"
+        }
+      }]
+    }
+    |
+  }
+
+  note: |md
+  **Policy References Objects:**
+  - srcaddr/dstaddr -> Addresses
+  - service -> Services
+  - schedule -> Schedules
+  - utm profiles -> Security Profiles
+  |
+}
+
+# Step 3: Preview (Optional)
+step3: "Step 3: Preview Installation (Optional)" {
+  shape: step
+  style: {
+    fill: "#fff3e0"
+    stroke: "#f57c00"
+  }
+
+  preview: Preview Changes {
+    shape: document
+    style.fill: "#ffe0b2"
+
+    code: |json
+    {
+      "method": "exec",
+      "params": [{
+        "url": "/securityconsole/install/preview",
+        "data": {
+          "adom": "root",
+          "device": "FGT-01",
+          "flags": ["none"]
+        }
+      }]
+    }
+    |
+  }
+
+  note: |md
+  Preview shows what will be changed
+  without actually applying changes.
+  **Best Practice:** Always preview first!
+  |
+}
+
+# Step 4: Install Package
+step4: "Step 4: Install Policy Package" {
+  shape: step
+  style: {
+    fill: "#fce4ec"
+    stroke: "#c2185b"
+  }
+
+  install: Execute Installation {
+    shape: document
+    style.fill: "#f8bbd9"
+
+    code: |json
+    {
+      "method": "exec",
+      "params": [{
+        "url": "/securityconsole/install/package",
+        "data": {
+          "adom": "root",
+          "pkg": "default",
+          "scope": [{
+            "name": "FGT-01",
+            "vdom": "root"
+          }]
+        }
+      }]
+    }
+    |
+  }
+
+  response: |json
+  {
+    "result": [{
+      "data": {
+        "task": 123
+      },
+      "status": {"code": 0}
+    }]
+  }
+  |
+}
+
+# Step 5: Monitor Task
+step5: "Step 5: Monitor Installation Task" {
+  shape: step
+  style: {
+    fill: "#f3e5f5"
+    stroke: "#7b1fa2"
+  }
+
+  task: Check Task Status {
+    shape: document
+    style.fill: "#e1bee7"
+
+    code: |json
+    {
+      "method": "get",
+      "params": [{
+        "url": "/task/task/123"
+      }]
+    }
+    |
+  }
+
+  status: Task Status Response {
+    shape: document
+    style.fill: "#e1bee7"
+
+    code: |json
+    {
+      "data": {
+        "id": 123,
+        "percent": 100,
+        "num_done": 1,
+        "num_err": 0,
+        "state": "done"
+      }
+    }
+    |
+  }
+}
+
+# Flow
+step1 -> step2: Objects ready
+step2 -> step3: Policy created
+step3 -> step4: Changes verified
+step4 -> step5: Task started
+step5 -> success: Installation complete
+
+success: Success! {
+  shape: oval
+  style: {
+    fill: "#c8e6c9"
+    stroke: "#388e3c"
+    font-size: 18
+    bold: true
+  }
+
+  label: |md
+  Policy is now active on FortiGate!
+  Traffic matching the rule will be allowed.
+  |
+}

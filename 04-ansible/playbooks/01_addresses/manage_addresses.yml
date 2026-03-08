@@ -1,0 +1,97 @@
+---
+# manage_addresses.yml
+#
+# Playbook to manage FortiManager addresses
+#
+# Usage:
+#   ansible-playbook playbooks/01_addresses/manage_addresses.yml
+#   ansible-playbook playbooks/01_addresses/manage_addresses.yml --check  # dry-run
+#   ansible-playbook playbooks/01_addresses/manage_addresses.yml -e "fmg_adom=customer"
+
+- name: FortiManager Address Management
+  hosts: fortimanager
+  gather_facts: false
+  connection: httpapi
+
+  vars_files:
+    - ../../vars/addresses.yml
+
+  tasks:
+    # =========================================================================
+    # IPv4 Addresses
+    # =========================================================================
+    - name: Manage IPv4 addresses
+      fortinet.fortimanager.fmgr_firewall_address:
+        state: "{{ item.state | default('present') }}"
+        adom: "{{ fmg_adom }}"
+        firewall_address:
+          name: "{{ item.name }}"
+          type: "ipmask"
+          subnet: "{{ item.subnet }}"
+          comment: "{{ item.comment | default(omit) }}"
+          visibility: "enable"
+          allow-routing: "disable"
+      loop: "{{ addresses_ipv4 | default([]) }}"
+      register: result_ipv4
+      tags:
+        - addresses
+        - ipv4
+
+    - name: Display IPv4 results
+      ansible.builtin.debug:
+        msg: "{{ item.item.name }}: {{ 'Changed' if item.changed else 'OK' }}"
+      loop: "{{ result_ipv4.results | default([]) }}"
+      when: result_ipv4 is defined
+      loop_control:
+        label: "{{ item.item.name }}"
+      tags:
+        - addresses
+
+    # =========================================================================
+    # IPv6 Addresses
+    # =========================================================================
+    - name: Manage IPv6 addresses
+      fortinet.fortimanager.fmgr_firewall_address6:
+        state: "{{ item.state | default('present') }}"
+        adom: "{{ fmg_adom }}"
+        firewall_address6:
+          name: "{{ item.name }}"
+          type: "ipprefix"
+          ip6: "{{ item.ip6 }}"
+          comment: "{{ item.comment | default(omit) }}"
+      loop: "{{ addresses_ipv6 | default([]) }}"
+      tags:
+        - addresses
+        - ipv6
+
+    # =========================================================================
+    # Address Groups
+    # =========================================================================
+    - name: Manage address groups
+      fortinet.fortimanager.fmgr_firewall_addrgrp:
+        state: "{{ item.state | default('present') }}"
+        adom: "{{ fmg_adom }}"
+        firewall_addrgrp:
+          name: "{{ item.name }}"
+          member: "{{ item.members }}"
+          comment: "{{ item.comment | default(omit) }}"
+      loop: "{{ address_groups | default([]) }}"
+      tags:
+        - addresses
+        - groups
+
+    # =========================================================================
+    # Summary
+    # =========================================================================
+    - name: Summary
+      ansible.builtin.debug:
+        msg: |
+          ========================================
+          ADDRESS MANAGEMENT COMPLETED
+          ========================================
+          IPv4: {{ addresses_ipv4 | default([]) | length }}
+          IPv6: {{ addresses_ipv6 | default([]) | length }}
+          Groups: {{ address_groups | default([]) | length }}
+          ========================================
+      tags:
+        - always

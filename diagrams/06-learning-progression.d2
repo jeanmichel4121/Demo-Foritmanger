@@ -1,0 +1,178 @@
+# Learning Progression Path
+# Diagramme montrant la progression d'apprentissage recommandee
+
+direction: right
+
+title: {
+  label: Learning Progression - From Beginner to Expert
+  near: top-center
+  shape: text
+  style: {
+    font-size: 24
+    bold: true
+  }
+}
+
+# Level 1: PowerShell + cURL
+level1: "Level 1: Raw HTTP" {
+  shape: rectangle
+  style: {
+    fill: "#ffebee"
+    stroke: "#c62828"
+    font-size: 16
+  }
+}
+
+level1_details: |md
+**01-powershell-curl/**
+
+**You will learn:**
+- JSON-RPC structure
+- HTTP mechanics (POST, headers)
+- Authentication flow
+- Raw API responses
+- Error handling basics
+
+**Tools:** PowerShell, cURL
+**Difficulty:** Beginner
+**Time:** 2-4 hours
+|
+
+# Level 2: Python + requests
+level2: "Level 2: Abstraction" {
+  shape: rectangle
+  style: {
+    fill: "#fff3e0"
+    stroke: "#f57c00"
+    font-size: 16
+  }
+}
+
+level2_details: |md
+**02-python-requests/**
+
+**You will learn:**
+- Code organization
+- Class-based design
+- Error handling (exceptions)
+- Type hints
+- Reusable modules
+
+**Tools:** Python 3.8+, requests
+**Difficulty:** Intermediate
+**Time:** 3-5 hours
+|
+
+# Level 3: pyFMG
+level3: "Level 3: Official SDK" {
+  shape: rectangle
+  style: {
+    fill: "#e8f5e9"
+    stroke: "#388e3c"
+    font-size: 16
+  }
+}
+
+level3_details: |md
+**03-python-pyfmg/**
+
+**You will learn:**
+- Official library usage
+- Simplified API calls
+- Context managers
+- API Key authentication
+- Production patterns
+
+**Tools:** Python 3.8+, pyFMG
+**Difficulty:** Intermediate
+**Time:** 2-3 hours
+|
+
+# Level 4: Ansible
+level4: "Level 4: Infrastructure as Code" {
+  shape: rectangle
+  style: {
+    fill: "#e3f2fd"
+    stroke: "#1976d2"
+    font-size: 16
+  }
+}
+
+level4_details: |md
+**04-ansible/**
+
+**You will learn:**
+- Declarative configuration
+- Idempotent operations
+- Inventory management
+- Variable templating
+- CI/CD integration
+
+**Tools:** Ansible Core 2.15+
+**Difficulty:** Advanced
+**Time:** 4-6 hours
+|
+
+# Connections
+level1 -> level2: "Master HTTP basics"
+level2 -> level3: "Learn abstraction"
+level3 -> level4: "Production ready"
+
+level1 -> level1_details
+level2 -> level2_details
+level3 -> level3_details
+level4 -> level4_details
+
+# Prerequisites
+prereqs: Prerequisites {
+  shape: callout
+  style: {
+    fill: "#f3e5f5"
+    stroke: "#7b1fa2"
+  }
+}
+
+prereqs_text: |md
+**Before starting:**
+1. FortiManager access (7.2.x - 7.6.x)
+2. Admin credentials or API Key
+3. Basic networking knowledge
+4. Command line familiarity
+|
+
+# Goal
+goal: Expert Level {
+  shape: oval
+  style: {
+    fill: "#c8e6c9"
+    stroke: "#388e3c"
+    font-size: 18
+    bold: true
+  }
+}
+
+goal_text: |md
+**You can now:**
+- Automate FortiManager operations
+- Build custom tools
+- Integrate with CI/CD
+- Manage at scale
+|
+
+prereqs -> prereqs_text
+prereqs -> level1
+level4 -> goal
+goal -> goal_text
+
+# Fast path
+fast_path: Fast Path (Experienced) {
+  shape: parallelogram
+  style: {
+    fill: "#fff9c4"
+    stroke: "#f9a825"
+  }
+}
+
+level1 -> fast_path: "or" {style.stroke-dash: 3}
+fast_path -> level3 {style.stroke-dash: 3}
+fast_path -> level4 {style.stroke-dash: 3}

@@ -1,0 +1,265 @@
+# FortiManager Error Codes Reference
+# Diagramme montrant les codes d'erreur et comment les gerer
+
+direction: down
+
+title: {
+  label: FortiManager API Error Codes & Handling
+  near: top-center
+  shape: text
+  style: {
+    font-size: 24
+    bold: true
+  }
+}
+
+# Response Structure
+response: Response Structure {
+  shape: document
+  style: {
+    fill: "#e3f2fd"
+    stroke: "#1976d2"
+  }
+
+  code: |json
+  {
+    "id": 1,
+    "result": [{
+      "status": {
+        "code": 0,
+        "message": "OK"
+      },
+      "url": "/pm/config/...",
+      "data": [...]
+    }]
+  }
+  |
+}
+
+# Error Categories
+errors: Error Codes {
+  style: {
+    fill: "#fafafa"
+    stroke: "#424242"
+  }
+
+  # Success
+  success: "Code 0: Success" {
+    shape: rectangle
+    style: {
+      fill: "#c8e6c9"
+      stroke: "#388e3c"
+    }
+
+    message: "OK"
+    meaning: "Operation completed successfully"
+    action: "Process the data in response"
+  }
+
+  # Not Found
+  not_found: "Code -2: Not Found" {
+    shape: rectangle
+    style: {
+      fill: "#fff3e0"
+      stroke: "#f57c00"
+    }
+
+    message: "Object does not exist"
+    meaning: "The requested object was not found"
+
+    causes: |md
+    **Causes:**
+    - Wrong object name
+    - Wrong ADOM
+    - Object deleted
+    |
+
+    action: |md
+    **Action:**
+    - Verify object name/path
+    - Check ADOM setting
+    - Create object if needed
+    |
+  }
+
+  # Already Exists
+  exists: "Code -3: Already Exists" {
+    shape: rectangle
+    style: {
+      fill: "#fff9c4"
+      stroke: "#f9a825"
+    }
+
+    message: "Object already exists"
+    meaning: "Cannot create, object with same name exists"
+
+    causes: |md
+    **Causes:**
+    - Duplicate name
+    - Previous creation succeeded
+    |
+
+    action: |md
+    **Action:**
+    - Use 'set' instead of 'add'
+    - Use 'update' to modify
+    - Choose different name
+    |
+  }
+
+  # Permission Denied
+  permission: "Code -6: Permission Denied" {
+    shape: rectangle
+    style: {
+      fill: "#ffebee"
+      stroke: "#c62828"
+    }
+
+    message: "No permission for the resource"
+    meaning: "User lacks required permissions"
+
+    causes: |md
+    **Causes:**
+    - Insufficient privileges
+    - Wrong ADOM access
+    - Read-only user
+    |
+
+    action: |md
+    **Action:**
+    - Check user permissions
+    - Verify ADOM assignment
+    - Use admin account
+    |
+  }
+
+  # Object in Use
+  in_use: "Code -10: Object in Use" {
+    shape: rectangle
+    style: {
+      fill: "#fce4ec"
+      stroke: "#c2185b"
+    }
+
+    message: "Entry is referenced by other objects"
+    meaning: "Cannot delete, object is referenced"
+
+    causes: |md
+    **Causes:**
+    - Address used in policy
+    - Service used in policy
+    - Object in group
+    |
+
+    action: |md
+    **Action:**
+    - Find references first
+    - Remove from policies/groups
+    - Then delete object
+    |
+  }
+
+  # Session Invalid
+  session: "Code -11 / -20: Auth Error" {
+    shape: rectangle
+    style: {
+      fill: "#f3e5f5"
+      stroke: "#7b1fa2"
+    }
+
+    message: "Invalid or expired session"
+    meaning: "Authentication failed or session expired"
+
+    causes: |md
+    **Causes:**
+    - Wrong credentials
+    - Session timeout
+    - Invalid API key
+    |
+
+    action: |md
+    **Action:**
+    - Re-authenticate
+    - Check credentials
+    - Verify API key
+    |
+  }
+
+  # Generic Error
+  generic: "Code -1: Generic Error" {
+    shape: rectangle
+    style: {
+      fill: "#eceff1"
+      stroke: "#607d8b"
+    }
+
+    message: "Various error messages"
+    meaning: "Catch-all for other errors"
+
+    causes: |md
+    **Causes:**
+    - Invalid parameters
+    - Syntax error
+    - Internal error
+    |
+
+    action: |md
+    **Action:**
+    - Check request syntax
+    - Verify parameters
+    - Check FMG logs
+    |
+  }
+}
+
+# Best Practices
+best_practices: Error Handling Best Practices {
+  shape: callout
+  style: {
+    fill: "#e8f5e9"
+    stroke: "#388e3c"
+  }
+
+  label: |md
+  **Best Practices:**
+
+  1. **Always check status.code** before processing data
+  2. **Log the full response** for debugging
+  3. **Implement retry logic** for -11/-20 errors
+  4. **Use try/except** in Python for clean error handling
+  5. **Provide user-friendly messages** based on error code
+  |
+}
+
+# Python Example
+python_example: Python Error Handling Example {
+  shape: document
+  style: {
+    fill: "#fff3e0"
+    stroke: "#f57c00"
+  }
+
+  code: |python
+  # Error code to exception mapping
+  ERROR_MAP = {
+      -2: ObjectNotFoundError,
+      -3: ObjectExistsError,
+      -6: PermissionError,
+      -10: ObjectInUseError,
+      -11: AuthError,
+      -20: SessionExpiredError,
+  }
+
+  def handle_response(response):
+      code = response["result"][0]["status"]["code"]
+      if code == 0:
+          return response["result"][0].get("data")
+
+      error_class = ERROR_MAP.get(code, GenericError)
+      raise error_class(response["result"][0]["status"]["message"])
+  |
+}
+
+response -> errors
+errors -> best_practices
+errors -> python_example

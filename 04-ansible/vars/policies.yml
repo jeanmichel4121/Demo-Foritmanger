@@ -1,0 +1,42 @@
+---
+# Firewall policy definitions
+
+# =============================================================================
+# Firewall Policies
+# =============================================================================
+firewall_policies:
+  - name: "Allow_Web_to_Servers"
+    srcintf: ["any"]
+    dstintf: ["any"]
+    srcaddr: ["all"]
+    dstaddr: ["GRP_SERVERS_ALL"]
+    service: ["GRP_WEB_SERVICES"]
+    action: "accept"
+    nat: "disable"
+    logtraffic: "all"
+    comments: "Web access to servers"
+    state: present
+
+  - name: "Allow_Admin_to_Mgmt"
+    srcintf: ["any"]
+    dstintf: ["any"]
+    srcaddr: ["NET_MGMT"]
+    dstaddr: ["GRP_SERVERS_ALL"]
+    service: ["GRP_ADMIN_SERVICES"]
+    action: "accept"
+    nat: "disable"
+    logtraffic: "all"
+    comments: "Server administration"
+    state: present
+
+  - name: "Allow_DNS"
+    srcintf: ["any"]
+    dstintf: ["any"]
+    srcaddr: ["all"]
+    dstaddr: ["GRP_DNS"]
+    service: ["DNS"]
+    action: "accept"
+    nat: "disable"
+    logtraffic: "utm"
+    comments: "DNS resolution"
+    state: present

@@ -1,0 +1,33 @@
+---
+# Variables pour le groupe 'fortimanager'
+#
+# IMPORTANT: Ne pas commiter de secrets!
+# Utiliser ansible-vault pour les mots de passe/API keys
+
+# =============================================================================
+# CONNEXION
+# =============================================================================
+ansible_host: "{{ lookup('env', 'FMG_HOST') | default('192.168.1.100', true) }}"
+
+# Authentification par username/password
+ansible_user: "{{ lookup('env', 'FMG_USERNAME') | default('admin', true) }}"
+ansible_password: "{{ lookup('env', 'FMG_PASSWORD') | default('', true) }}"
+
+# OU Authentification par API Key (decommenter et commenter ci-dessus)
+# ansible_httpapi_key: "{{ lookup('env', 'FMG_API_KEY') }}"
+
+# =============================================================================
+# CONFIGURATION FMG
+# =============================================================================
+fmg_adom: "{{ lookup('env', 'FMG_ADOM') | default('root', true) }}"
+fmg_package: "default"
+
+# =============================================================================
+# OPTIONS
+# =============================================================================
+# Workspace mode (FMG 7.0+)
+fmg_workspace_locking_adom: "{{ fmg_adom }}"
+fmg_workspace_locking_timeout: 300
+
+# Debug
+fmg_debug: false

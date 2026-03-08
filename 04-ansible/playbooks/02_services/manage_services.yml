@@ -1,0 +1,61 @@
+---
+# manage_services.yml
+#
+# Playbook pour gerer les services FortiManager
+#
+# Usage:
+#   ansible-playbook playbooks/02_services/manage_services.yml
+
+- name: Gestion des Services FortiManager
+  hosts: fortimanager
+  gather_facts: false
+  connection: httpapi
+
+  vars_files:
+    - ../../vars/services.yml
+
+  tasks:
+    # =========================================================================
+    # Services custom
+    # =========================================================================
+    - name: Gerer les services custom
+      fortinet.fortimanager.fmgr_firewall_service_custom:
+        state: "{{ item.state | default('present') }}"
+        adom: "{{ fmg_adom }}"
+        firewall_service_custom:
+          name: "{{ item.name }}"
+          protocol: "TCP/UDP/SCTP"
+          tcp-portrange: "{{ item.tcp_portrange | default(omit) }}"
+          udp-portrange: "{{ item.udp_portrange | default(omit) }}"
+          comment: "{{ item.comment | default(omit) }}"
+      loop: "{{ services_custom | default([]) }}"
+      tags:
+        - services
+        - custom
+
+    # =========================================================================
+    # Groupes de services
+    # =========================================================================
+    - name: Gerer les groupes de services
+      fortinet.fortimanager.fmgr_firewall_service_group:
+        state: "{{ item.state | default('present') }}"
+        adom: "{{ fmg_adom }}"
+        firewall_service_group:
+          name: "{{ item.name }}"
+          member: "{{ item.members }}"
+          comment: "{{ item.comment | default(omit) }}"
+      loop: "{{ service_groups | default([]) }}"
+      tags:
+        - services
+        - groups
+
+    # =========================================================================
+    # Recap
+    # =========================================================================
+    - name: Recapitulatif
+      ansible.builtin.debug:
+        msg: |
+          Services custom: {{ services_custom | default([]) | length }}
+          Groupes: {{ service_groups | default([]) | length }}
+      tags:
+        - always

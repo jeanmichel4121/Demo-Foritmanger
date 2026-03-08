@@ -1,0 +1,69 @@
+---
+# manage_policies.yml
+#
+# Playbook pour gerer les firewall policies FortiManager
+#
+# Usage:
+#   ansible-playbook playbooks/06_policies/manage_policies.yml
+
+- name: Gestion des Firewall Policies
+  hosts: fortimanager
+  gather_facts: false
+  connection: httpapi
+
+  vars_files:
+    - ../../vars/policies.yml
+
+  tasks:
+    # =========================================================================
+    # Firewall Policies
+    # =========================================================================
+    - name: Gerer les firewall policies
+      fortinet.fortimanager.fmgr_pkg_firewall_policy:
+        state: "{{ item.state | default('present') }}"
+        adom: "{{ fmg_adom }}"
+        pkg: "{{ fmg_package }}"
+        pkg_firewall_policy:
+          name: "{{ item.name }}"
+          srcintf: "{{ item.srcintf }}"
+          dstintf: "{{ item.dstintf }}"
+          srcaddr: "{{ item.srcaddr }}"
+          dstaddr: "{{ item.dstaddr }}"
+          service: "{{ item.service }}"
+          action: "{{ item.action | default('accept') }}"
+          schedule: "{{ item.schedule | default('always') }}"
+          nat: "{{ item.nat | default('disable') }}"
+          logtraffic: "{{ item.logtraffic | default('all') }}"
+          status: "{{ item.status | default('enable') }}"
+          comments: "{{ item.comments | default(omit) }}"
+      loop: "{{ firewall_policies | default([]) }}"
+      register: result_policies
+      tags:
+        - policies
+
+    - name: Afficher resultats
+      ansible.builtin.debug:
+        msg: "Policy '{{ item.item.name }}': {{ 'Changed' if item.changed else 'OK' }}"
+      loop: "{{ result_policies.results | default([]) }}"
+      loop_control:
+        label: "{{ item.item.name }}"
+      tags:
+        - policies
+
+    # =========================================================================
+    # Recap
+    # =========================================================================
+    - name: Recapitulatif
+      ansible.builtin.debug:
+        msg: |
+          ========================================
+          GESTION POLICIES TERMINEE
+          ========================================
+          Package: {{ fmg_package }}
+          Policies: {{ firewall_policies | default([]) | length }}
+          ========================================
+
+          Pour installer vers les FortiGate:
+          ansible-playbook playbooks/06_policies/install_package.yml
+      tags:
+        - always

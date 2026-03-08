@@ -1,0 +1,231 @@
+# Project Structure Overview
+# Diagramme montrant la structure complete du projet
+
+direction: right
+
+title: {
+  label: Demo-FortiManager Project Structure
+  near: top-center
+  shape: text
+  style: {
+    font-size: 24
+    bold: true
+  }
+}
+
+# Root
+root: "Demo-FortiManager/" {
+  shape: package
+  style: {
+    fill: "#e3f2fd"
+    stroke: "#1976d2"
+    font-size: 16
+    bold: true
+  }
+
+  # Config files
+  config: Configuration {
+    style: {
+      fill: "#fff9c4"
+      stroke: "#f9a825"
+    }
+
+    env: ".env" {
+      shape: document
+      desc: "Your credentials (gitignored)"
+    }
+
+    env_example: ".env.example" {
+      shape: document
+      desc: "Template for .env"
+    }
+
+    gitignore: ".gitignore" {
+      shape: document
+      desc: "Git ignore rules"
+    }
+
+    readme: "README.md" {
+      shape: document
+      desc: "Main documentation"
+    }
+  }
+
+  # Level 1
+  level1: "01-powershell-curl/" {
+    shape: package
+    style: {
+      fill: "#ffebee"
+      stroke: "#c62828"
+    }
+
+    purpose: "Level 1: Raw HTTP"
+
+    config_ps: "config/" {
+      fmg_config: "fmg-config.ps1"
+    }
+
+    utils_ps: "utils/" {
+      invoke: "Invoke-FMGRequest.ps1"
+    }
+
+    auth_ps: "01-auth/" {
+      login: "login-session.ps1"
+      bearer: "login-bearer.ps1"
+      logout: "logout.ps1"
+    }
+
+    addresses_ps: "02-addresses/" {
+      create: "create-address.ps1"
+      read: "read-addresses.ps1"
+      update: "update-address.ps1"
+      delete: "delete-address.ps1"
+      groups: "manage-groups.ps1"
+    }
+
+    more: "03-07: services, schedules, nat, profiles, policies"
+  }
+
+  # Level 2
+  level2: "02-python-requests/" {
+    shape: package
+    style: {
+      fill: "#fff3e0"
+      stroke: "#f57c00"
+    }
+
+    purpose: "Level 2: Abstraction"
+
+    config_py: "config/" {
+      settings: "settings.py"
+    }
+
+    utils_py: "utils/" {
+      client: "fmg_client.py"
+      exceptions: "exceptions.py"
+    }
+
+    demos_py: "01-07_*/" {
+      demo_auth: "demo_auth.py"
+      crud: "crud_*.py"
+    }
+  }
+
+  # Level 3
+  level3: "03-python-pyfmg/" {
+    shape: package
+    style: {
+      fill: "#e8f5e9"
+      stroke: "#388e3c"
+    }
+
+    purpose: "Level 3: Official SDK"
+
+    auth_pyfmg: "01_auth/" {
+      demo: "demo_auth.py"
+    }
+
+    addr_pyfmg: "02_addresses/" {
+      crud: "crud_addresses.py"
+    }
+
+    policy_pyfmg: "07_firewall_policies/" {
+      workflow: "complete_workflow.py"
+    }
+  }
+
+  # Level 4
+  level4: "04-ansible/" {
+    shape: package
+    style: {
+      fill: "#e3f2fd"
+      stroke: "#1976d2"
+    }
+
+    purpose: "Level 4: Infrastructure as Code"
+
+    inventory: "inventory/" {
+      hosts: "hosts.yml"
+      group_vars: "group_vars/fortimanager.yml"
+    }
+
+    playbooks: "playbooks/" {
+      addresses: "01_addresses/manage_addresses.yml"
+      services: "02_services/manage_services.yml"
+      policies: "06_policies/manage_policies.yml"
+      install: "06_policies/install_package.yml"
+      full: "full_deployment.yml"
+    }
+
+    vars: "vars/" {
+      addr_vars: "addresses.yml"
+      svc_vars: "services.yml"
+      pol_vars: "policies.yml"
+    }
+
+    requirements: "requirements.yml"
+  }
+
+  # Documentation
+  docs: "docs/" {
+    shape: package
+    style: {
+      fill: "#f3e5f5"
+      stroke: "#7b1fa2"
+    }
+
+    intro: "00-introduction.md"
+    concepts: "01-concepts-json-rpc.md"
+    auth: "02-authentication.md"
+  }
+
+  # Cheatsheets
+  cheatsheets: "cheatsheets/" {
+    shape: package
+    style: {
+      fill: "#fce4ec"
+      stroke: "#c2185b"
+    }
+
+    endpoints: "api-endpoints.md"
+    errors: "common-errors.md"
+    curl: "curl-examples.md"
+  }
+
+  # Diagrams
+  diagrams: "diagrams/" {
+    shape: package
+    style: {
+      fill: "#e0f7fa"
+      stroke: "#00838f"
+    }
+
+    d2_files: "*.d2 source files"
+    png_files: "*.png generated images"
+  }
+}
+
+# Learning Flow
+flow: Learning Flow {
+  shape: parallelogram
+  style: {
+    fill: "#c8e6c9"
+    stroke: "#388e3c"
+  }
+
+  label: |md
+  **Recommended Order:**
+  1. Read docs/ and README.md
+  2. Start with 01-powershell-curl
+  3. Progress to 02-python-requests
+  4. Master 03-python-pyfmg
+  5. Apply with 04-ansible
+  |
+}
+
+root.level1 -> root.level2: "After mastering HTTP"
+root.level2 -> root.level3: "After understanding abstraction"
+root.level3 -> root.level4: "For production automation"
+root.docs -> root.level1: "Read first"
+root.cheatsheets -> flow: "Reference"
+root.diagrams -> flow: "Visual learning"

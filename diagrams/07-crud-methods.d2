@@ -1,0 +1,252 @@
+# CRUD Methods Overview
+# Diagramme montrant les methodes JSON-RPC et leur utilisation
+
+direction: down
+
+title: {
+  label: JSON-RPC Methods - CRUD Operations
+  near: top-center
+  shape: text
+  style: {
+    font-size: 24
+    bold: true
+  }
+}
+
+# Methods Grid
+methods: Available Methods {
+  style: {
+    fill: "#fafafa"
+    stroke: "#424242"
+  }
+
+  # GET
+  get: GET {
+    shape: rectangle
+    style: {
+      fill: "#e3f2fd"
+      stroke: "#1976d2"
+      bold: true
+    }
+
+    purpose: "Read objects"
+    rest: "REST equivalent: GET"
+
+    example: |json
+    {
+      "method": "get",
+      "params": [{
+        "url": "/pm/config/adom/root/obj/firewall/address",
+        "filter": [["name", "like", "NET_%"]],
+        "fields": ["name", "subnet"]
+      }]
+    }
+    |
+
+    options: |md
+    **Options:**
+    - filter: Filter results
+    - fields: Select fields
+    - loadsub: Load sub-objects
+    - sortings: Sort results
+    |
+  }
+
+  # ADD
+  add: ADD {
+    shape: rectangle
+    style: {
+      fill: "#e8f5e9"
+      stroke: "#388e3c"
+      bold: true
+    }
+
+    purpose: "Create new objects"
+    rest: "REST equivalent: POST"
+
+    example: |json
+    {
+      "method": "add",
+      "params": [{
+        "url": "/pm/config/adom/root/obj/firewall/address",
+        "data": {
+          "name": "NEW_ADDR",
+          "type": "ipmask",
+          "subnet": "10.0.0.0 255.0.0.0"
+        }
+      }]
+    }
+    |
+
+    note: |md
+    **Fails if object exists!**
+    Use "set" for upsert behavior.
+    |
+  }
+
+  # SET
+  set: SET {
+    shape: rectangle
+    style: {
+      fill: "#fff3e0"
+      stroke: "#f57c00"
+      bold: true
+    }
+
+    purpose: "Create or replace (full)"
+    rest: "REST equivalent: PUT"
+
+    example: |json
+    {
+      "method": "set",
+      "params": [{
+        "url": "/pm/config/adom/root/obj/firewall/address/MY_ADDR",
+        "data": {
+          "name": "MY_ADDR",
+          "type": "ipmask",
+          "subnet": "192.168.0.0 255.255.0.0",
+          "comment": "Updated"
+        }
+      }]
+    }
+    |
+
+    warning: |md
+    **Warning:** Overwrites ALL fields!
+    Unspecified fields reset to default.
+    |
+  }
+
+  # UPDATE
+  update: UPDATE {
+    shape: rectangle
+    style: {
+      fill: "#f3e5f5"
+      stroke: "#7b1fa2"
+      bold: true
+    }
+
+    purpose: "Partial update"
+    rest: "REST equivalent: PATCH"
+
+    example: |json
+    {
+      "method": "update",
+      "params": [{
+        "url": "/pm/config/adom/root/obj/firewall/address/MY_ADDR",
+        "data": {
+          "comment": "Only this field changes"
+        }
+      }]
+    }
+    |
+
+    note: |md
+    **Recommended for modifications!**
+    Only specified fields are updated.
+    |
+  }
+
+  # DELETE
+  delete: DELETE {
+    shape: rectangle
+    style: {
+      fill: "#ffebee"
+      stroke: "#c62828"
+      bold: true
+    }
+
+    purpose: "Remove objects"
+    rest: "REST equivalent: DELETE"
+
+    example: |json
+    {
+      "method": "delete",
+      "params": [{
+        "url": "/pm/config/adom/root/obj/firewall/address/MY_ADDR"
+      }]
+    }
+    |
+
+    warning: |md
+    **Cannot delete if in use!**
+    Remove references first.
+    |
+  }
+
+  # EXEC
+  exec: EXEC {
+    shape: rectangle
+    style: {
+      fill: "#fce4ec"
+      stroke: "#c2185b"
+      bold: true
+    }
+
+    purpose: "Execute actions"
+    rest: "REST equivalent: POST (action)"
+
+    example: |json
+    {
+      "method": "exec",
+      "params": [{
+        "url": "/securityconsole/install/package",
+        "data": {
+          "adom": "root",
+          "pkg": "default"
+        }
+      }]
+    }
+    |
+
+    actions: |md
+    **Common actions:**
+    - /sys/login/user
+    - /sys/logout
+    - /securityconsole/install/package
+    - /securityconsole/install/preview
+    |
+  }
+}
+
+# Decision Helper
+decision: Which Method to Use? {
+  shape: diamond
+  style: {
+    fill: "#fff9c4"
+    stroke: "#f9a825"
+    font-size: 14
+  }
+}
+
+# Decision paths
+create_new: "Creating new?" {
+  shape: oval
+  style.fill: "#e8f5e9"
+}
+
+modify_existing: "Modifying existing?" {
+  shape: oval
+  style.fill: "#f3e5f5"
+}
+
+remove: "Removing?" {
+  shape: oval
+  style.fill: "#ffebee"
+}
+
+action: "Running action?" {
+  shape: oval
+  style.fill: "#fce4ec"
+}
+
+decision -> create_new: Yes
+decision -> modify_existing: No
+create_new -> methods.add: "Use ADD"
+create_new -> methods.set: "or SET (upsert)"
+modify_existing -> methods.update: "Partial? UPDATE"
+modify_existing -> methods.set: "Full? SET"
+modify_existing -> remove: No
+remove -> methods.delete: "Use DELETE"
+remove -> action: No
+action -> methods.exec: "Use EXEC"

@@ -1,0 +1,3 @@
+# Dependencies for FortiManager API with pyFMG
+pyfmg>=0.8.6.3
+python-dotenv>=1.0.0

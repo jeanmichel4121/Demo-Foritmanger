@@ -1,0 +1,46 @@
+---
+# Service definitions to create/manage
+
+# =============================================================================
+# Custom Services
+# =============================================================================
+services_custom:
+  - name: "SVC_HTTPS_8443"
+    tcp_portrange: "8443"
+    comment: "Alternative HTTPS"
+    state: present
+
+  - name: "SVC_SSH_2222"
+    tcp_portrange: "2222"
+    comment: "Alternative SSH"
+    state: present
+
+  - name: "SVC_DNS_ALT"
+    udp_portrange: "5353"
+    comment: "Alternative DNS (mDNS)"
+    state: present
+
+  - name: "SVC_APP_RANGE"
+    tcp_portrange: "8080-8090"
+    comment: "Application ports"
+    state: present
+
+# =============================================================================
+# Service Groups
+# =============================================================================
+service_groups:
+  - name: "GRP_WEB_SERVICES"
+    members:
+      - "HTTP"
+      - "HTTPS"
+      - "SVC_HTTPS_8443"
+    comment: "Web services"
+    state: present
+
+  - name: "GRP_ADMIN_SERVICES"
+    members:
+      - "SSH"
+      - "SVC_SSH_2222"
+      - "PING"
+    comment: "Administration services"
+    state: present

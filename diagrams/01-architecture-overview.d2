@@ -1,0 +1,147 @@
+# FortiManager Architecture Overview
+# Diagramme montrant l'architecture globale et les composants
+
+direction: right
+
+title: {
+  label: FortiManager Architecture
+  near: top-center
+  shape: text
+  style: {
+    font-size: 24
+    bold: true
+  }
+}
+
+# Client Layer
+clients: Clients {
+  style: {
+    fill: "#e3f2fd"
+    stroke: "#1976d2"
+  }
+
+  powershell: PowerShell/cURL {
+    shape: rectangle
+    style.fill: "#bbdefb"
+  }
+
+  python: Python Scripts {
+    shape: rectangle
+    style.fill: "#bbdefb"
+  }
+
+  ansible: Ansible Playbooks {
+    shape: rectangle
+    style.fill: "#bbdefb"
+  }
+
+  webui: Web UI {
+    shape: rectangle
+    style.fill: "#bbdefb"
+  }
+}
+
+# API Layer
+api: FortiManager API {
+  style: {
+    fill: "#fff3e0"
+    stroke: "#f57c00"
+  }
+
+  endpoint: "/jsonrpc" {
+    shape: hexagon
+    style.fill: "#ffe0b2"
+  }
+
+  auth: Authentication {
+    shape: rectangle
+    style.fill: "#ffe0b2"
+
+    session: Session Token
+    bearer: Bearer API Key
+  }
+
+  methods: JSON-RPC Methods {
+    shape: rectangle
+    style.fill: "#ffe0b2"
+
+    get: get
+    add: add
+    set: set
+    update: update
+    delete: delete
+    exec: exec
+  }
+}
+
+# FortiManager Core
+fmg: FortiManager {
+  shape: cloud
+  style: {
+    fill: "#e8f5e9"
+    stroke: "#388e3c"
+    font-size: 18
+    bold: true
+  }
+
+  adom: ADOMs {
+    shape: cylinder
+    style.fill: "#c8e6c9"
+
+    root: root
+    customer1: customer1
+    customer2: customer2
+  }
+
+  objects: Objects Database {
+    shape: cylinder
+    style.fill: "#c8e6c9"
+
+    addresses: Addresses
+    services: Services
+    policies: Policies
+    profiles: Security Profiles
+  }
+
+  packages: Policy Packages {
+    shape: package
+    style.fill: "#c8e6c9"
+  }
+}
+
+# FortiGate Devices
+devices: Managed Devices {
+  style: {
+    fill: "#fce4ec"
+    stroke: "#c2185b"
+  }
+
+  fgt1: FortiGate-01 {
+    shape: rectangle
+    style.fill: "#f8bbd9"
+  }
+
+  fgt2: FortiGate-02 {
+    shape: rectangle
+    style.fill: "#f8bbd9"
+  }
+
+  fgt3: FortiGate-N {
+    shape: rectangle
+    style.fill: "#f8bbd9"
+  }
+}
+
+# Connections
+clients.powershell -> api.endpoint: HTTPS POST
+clients.python -> api.endpoint: HTTPS POST
+clients.ansible -> api.endpoint: HTTPS POST
+clients.webui -> api.endpoint: HTTPS
+
+api.endpoint -> api.auth: Validate
+api.auth -> api.methods: Authorized
+api.methods -> fmg: Execute
+
+fmg.packages -> devices.fgt1: Install
+fmg.packages -> devices.fgt2: Install
+fmg.packages -> devices.fgt3: Install

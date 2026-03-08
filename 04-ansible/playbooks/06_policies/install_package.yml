@@ -1,0 +1,96 @@
+---
+# install_package.yml
+#
+# Playbook pour installer un policy package vers les FortiGate
+#
+# Usage:
+#   # Installer sur tous les devices du package
+#   ansible-playbook playbooks/06_policies/install_package.yml
+#
+#   # Installer sur un device specifique
+#   ansible-playbook playbooks/06_policies/install_package.yml -e "target_device=FGT-01"
+#
+#   # Preview seulement (dry-run)
+#   ansible-playbook playbooks/06_policies/install_package.yml -e "preview_only=true"
+
+- name: Installation Policy Package
+  hosts: fortimanager
+  gather_facts: false
+  connection: httpapi
+
+  vars:
+    target_device: ""  # Vide = tous les devices du package
+    preview_only: false
+
+  tasks:
+    # =========================================================================
+    # Preview (optionnel)
+    # =========================================================================
+    - name: Preview des changements
+      fortinet.fortimanager.fmgr_securityconsole_install_preview:
+        securityconsole_install_preview:
+          adom: "{{ fmg_adom }}"
+          device: "{{ target_device | default(omit) }}"
+          flags:
+            - "none"
+      register: preview_result
+      when: preview_only | bool
+      tags:
+        - preview
+
+    - name: Afficher preview
+      ansible.builtin.debug:
+        var: preview_result
+      when: preview_only | bool
+      tags:
+        - preview
+
+    # =========================================================================
+    # Installation
+    # =========================================================================
+    - name: Installer le policy package
+      fortinet.fortimanager.fmgr_securityconsole_install_package:
+        securityconsole_install_package:
+          adom: "{{ fmg_adom }}"
+          pkg: "{{ fmg_package }}"
+          scope:
+            - name: "{{ target_device }}"
+              vdom: "root"
+      register: install_result
+      when:
+        - not (preview_only | bool)
+        - target_device | length > 0
+      tags:
+        - install
+
+    - name: Installer sur tous les devices du package
+      fortinet.fortimanager.fmgr_securityconsole_install_package:
+        securityconsole_install_package:
+          adom: "{{ fmg_adom }}"
+          pkg: "{{ fmg_package }}"
+      register: install_result_all
+      when:
+        - not (preview_only | bool)
+        - target_device | length == 0
+      tags:
+        - install
+
+    # =========================================================================
+    # Resultat
+    # =========================================================================
+    - name: Afficher resultat installation
+      ansible.builtin.debug:
+        msg: |
+          ========================================
+          INSTALLATION LANCEE
+          ========================================
+          ADOM: {{ fmg_adom }}
+          Package: {{ fmg_package }}
+          Device: {{ target_device | default('Tous') }}
+
+          L'installation s'execute en arriere-plan.
+          Consultez FortiManager pour le suivi.
+          ========================================
+      when: not (preview_only | bool)
+      tags:
+        - install
