@@ -108,17 +108,7 @@ FMG_DEBUG=false
 
 ### 3. Test Connection
 
-**PowerShell:**
-```powershell
-cd 01-powershell-curl/01-auth
-.\login-session.ps1
-```
-
-**Python:**
-```bash
-cd 02-python-requests/01_auth
-python demo_auth.py
-```
+See the Quick Start section in each level's README for connection testing instructions.
 
 ---
 
