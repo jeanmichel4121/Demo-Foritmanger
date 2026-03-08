@@ -13,11 +13,16 @@ title: {
   }
 }
 
-# Client Layer
-clients: Clients {
+# Client Layer - Local Environment
+clients: Local Environment {
   style: {
     fill: "#e3f2fd"
     stroke: "#1976d2"
+  }
+
+  bash: Bash/cURL {
+    shape: rectangle
+    style.fill: "#bbdefb"
   }
 
   powershell: PowerShell/cURL {
@@ -133,6 +138,7 @@ devices: Managed Devices {
 }
 
 # Connections
+clients.bash -> api.endpoint: HTTPS POST
 clients.powershell -> api.endpoint: HTTPS POST
 clients.python -> api.endpoint: HTTPS POST
 clients.ansible -> api.endpoint: HTTPS POST
