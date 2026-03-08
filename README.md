@@ -66,7 +66,10 @@ FortiManager serves as a centralized management platform for FortiGate devices. 
 
 | Tool | Version | Required For |
 |------|---------|--------------|
-| **PowerShell** | *7.0+* | Section 01 |
+| **Bash** | *4.0+* | Section 01 (Linux/macOS) |
+| **PowerShell** | *7.0+* | Section 01 (Windows) |
+| **curl** | *7.0+* | Section 01 |
+| **jq** | *1.6+* | Section 01 (JSON parsing) |
 | **Python** | *3.8+* | Sections 02-03 |
 | **Ansible** | *2.15+* | Section 04 |
 | **pip** | *Latest* | Python dependencies |
