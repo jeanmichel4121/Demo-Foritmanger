@@ -62,31 +62,7 @@ FortiManager serves as a centralized management platform for FortiGate devices. 
 | **API Access** | *Admin with API permissions or API Key* |
 | **Network** | *HTTPS access (port 443)* |
 
-### Local Environment
-
-| Tool | Version | Required For |
-|------|---------|--------------|
-| **Bash** | *4.0+* | Section 01 (Linux/macOS) |
-| **PowerShell** | *7.0+* | Section 01 (Windows) |
-| **curl** | *7.0+* | Section 01 |
-| **jq** | *1.6+* | Section 01 (JSON parsing) |
-| **Python** | *3.8+* | Sections 02-03 |
-| **Ansible** | *2.15+* | Section 04 |
-| **pip** | *Latest* | Python dependencies |
-
-### Python Dependencies
-
-```bash
-# For section 02
-pip install requests python-dotenv
-
-# For section 03
-pip install pyfmg python-dotenv
-
-# For section 04
-pip install ansible
-ansible-galaxy collection install fortinet.fortimanager
-```
+> **Note:** Each section has its own specific tool requirements documented in its README file.
 
 ---
 
