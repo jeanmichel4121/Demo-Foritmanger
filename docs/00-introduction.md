@@ -2,45 +2,24 @@
 
 > **Understand FortiManager's role and why API automation matters.**
 
+[Home](../README.md) > [Docs](./) > Introduction
+
 ---
 
-## What is FortiManager?
+## 📋 What is FortiManager?
 
-FortiManager is Fortinet's **centralized management platform** for FortiGate firewalls and other Fortinet devices. It serves as the single point of control for:
+FortiManager is Fortinet's **centralized management platform** for FortiGate firewalls. It serves as the single point of control for:
 
 - **Configuration Management** - Centralized policies, objects, and security profiles
 - **Multi-Device Control** - Manage hundreds of FortiGates from one interface
 - **Change Deployment** - Push configurations in controlled, auditable workflows
 - **Compliance** - Maintain consistent security posture across your organization
 
-```
-                    ┌─────────────────────────────────────┐
-                    │          FortiManager               │
-                    │  ┌─────────┐  ┌─────────────────┐   │
-                    │  │ Objects │  │ Policy Packages │   │
-                    │  │ Address │  │    ┌───────┐    │   │
-                    │  │ Service │  │    │Policy │    │   │
-                    │  │   VIP   │  │    │ Rules │    │   │
-                    │  └─────────┘  │    └───────┘    │   │
-                    │               └─────────────────┘   │
-                    └──────────────────┬──────────────────┘
-                                       │ Install
-                    ┌──────────────────┼──────────────────┐
-                    │                  │                  │
-                    ▼                  ▼                  ▼
-              ┌──────────┐       ┌──────────┐       ┌──────────┐
-              │FortiGate │       │FortiGate │       │FortiGate │
-              │    01    │       │    02    │       │    03    │
-              └──────────┘       └──────────┘       └──────────┘
-```
-
 ---
 
-## Why Use the API?
+## 💡 Why Use the API?
 
-Manual configuration through the GUI becomes impractical at scale. The FortiManager API enables:
-
-### Automation Use Cases
+Manual configuration through the GUI becomes impractical at scale.
 
 | Use Case | Description |
 |----------|-------------|
@@ -51,21 +30,17 @@ Manual configuration through the GUI becomes impractical at scale. The FortiMana
 | **Audit & Compliance** | Automated configuration validation |
 | **Disaster Recovery** | Rapid re-deployment from code |
 
-### Benefits of API Automation
+### API vs GUI
 
-```
-Manual (GUI)                    API Automation
-─────────────────              ─────────────────
-Hours of clicking    →         Seconds of execution
-Human errors         →         Consistent results
-No audit trail       →         Git version control
-Knowledge in heads   →         Documentation in code
-Single operator      →         Team collaboration
-```
+| Operation | GUI Time | API Time | Benefit |
+|-----------|----------|----------|---------|
+| Create 100 addresses | ~30 min | ~5 sec | 360x faster |
+| Update policy comment | ~2 min | ~1 sec | Consistent |
+| Audit all objects | ~1 hour | ~10 sec | Complete |
 
 ---
 
-## Key Concepts
+## 🔑 Key Concepts
 
 ### ADOM (Administrative Domain)
 
@@ -81,16 +56,8 @@ FortiManager
 │   ├── Objects (addresses, services, etc.)
 │   ├── Policy Packages
 │   └── Devices (FortiGates)
-│
 ├── ADOM: Production
-│   ├── Objects
-│   ├── Policy Packages
-│   └── Production FortiGates
-│
 └── ADOM: Development
-    ├── Objects
-    ├── Policy Packages
-    └── Dev/Test FortiGates
 ```
 
 ### Policy Package
@@ -102,70 +69,17 @@ A **container for firewall policies** that can be assigned to devices:
 - Must be **installed** to apply changes to FortiGates
 - Changes in FortiManager don't affect FortiGates until installed
 
-### Object Types
-
-| Category | Objects |
-|----------|---------|
-| **Addresses** | IPv4/IPv6 addresses, FQDNs, address groups |
-| **Services** | TCP/UDP ports, service groups |
-| **Schedules** | Time-based access control |
-| **NAT** | VIPs (DNAT), IP Pools (SNAT) |
-| **Security Profiles** | Antivirus, IPS, Web Filter, App Control |
-
 ### Installation Workflow
 
 ```
-1. Create/Modify    2. Review          3. Preview         4. Install
-   Objects &           Changes            Config             to
-   Policies            in FMG             Diff              FortiGates
-
-   ┌─────────┐      ┌─────────┐       ┌─────────┐       ┌─────────┐
-   │ address │      │  Check  │       │  View   │       │  Push   │
-   │ service │  →   │  diff   │   →   │ changes │   →   │ config  │
-   │ policy  │      │ history │       │ preview │       │ install │
-   └─────────┘      └─────────┘       └─────────┘       └─────────┘
+1. Create/Modify    2. Review         3. Preview        4. Install
+   Objects &           Changes           Config            to
+   Policies            in FMG            Diff             FortiGates
 ```
 
 ---
 
-## API Architecture
-
-FortiManager uses **JSON-RPC** over HTTPS:
-
-```
-┌───────────────────────────────────────────────────────────────────┐
-│                         Your Automation                           │
-│  ┌─────────────┐  ┌─────────────┐  ┌─────────────┐  ┌──────────┐ │
-│  │ PowerShell  │  │   Python    │  │   Ansible   │  │  CI/CD   │ │
-│  │   Scripts   │  │   pyFMG     │  │  Playbooks  │  │ Pipeline │ │
-│  └──────┬──────┘  └──────┬──────┘  └──────┬──────┘  └────┬─────┘ │
-└─────────┼────────────────┼────────────────┼──────────────┼───────┘
-          │                │                │              │
-          └────────────────┴────────────────┴──────────────┘
-                                   │
-                           HTTPS POST /jsonrpc
-                           (JSON-RPC Protocol)
-                                   │
-                                   ▼
-                    ┌─────────────────────────────┐
-                    │       FortiManager          │
-                    │       API Server            │
-                    │        (Port 443)           │
-                    └─────────────────────────────┘
-```
-
-### JSON-RPC Key Points
-
-| Aspect | Description |
-|--------|-------------|
-| **Single Endpoint** | All requests go to `/jsonrpc` |
-| **Always POST** | HTTP method is always POST |
-| **Method in Body** | Action specified in JSON payload |
-| **Session or Bearer** | Authenticate via session token or API key |
-
----
-
-## Supported Versions
+## 📦 Supported Versions
 
 This repository targets **FortiManager 7.2.x - 7.6.x**.
 
@@ -175,72 +89,13 @@ This repository targets **FortiManager 7.2.x - 7.6.x**.
 | 7.4.x | Partial install, enhanced API |
 | 7.6.x | Latest features and improvements |
 
-### Version Compatibility Notes
-
-- **Core API** structure is consistent across versions
-- **New endpoints** may be added in newer versions
-- **Authentication** methods vary (Bearer token requires 7.2.2+)
-- Always verify endpoint availability in your FMG version
-
 ---
 
-## Learning Path
-
-This repository provides a **progressive learning experience**:
-
-```
-Level 1                Level 2                Level 3               Level 4
-PowerShell/cURL   →    Python + requests  →   Python + pyFMG   →   Ansible
-
-┌─────────────┐       ┌─────────────┐       ┌─────────────┐      ┌─────────────┐
-│ Raw HTTP    │       │ Structured  │       │ Official    │      │ Declarative │
-│ Requests    │       │ Code        │       │ SDK         │      │ IaC         │
-│             │       │             │       │             │      │             │
-│ Understand  │       │ Build       │       │ Production  │      │ Team        │
-│ the basics  │       │ abstractions│       │ ready       │      │ workflows   │
-└─────────────┘       └─────────────┘       └─────────────┘      └─────────────┘
-```
-
-### Recommended Order
-
-1. **Start Here** - Read this introduction
-2. **JSON-RPC Concepts** - [01-concepts-json-rpc.md](01-concepts-json-rpc.md)
-3. **Authentication** - [02-authentication.md](02-authentication.md)
-4. **Hands-On** - Begin with `01-powershell-curl/` folder
-
----
-
-## API vs GUI
-
-| Operation | GUI Time | API Time | Benefit |
-|-----------|----------|----------|---------|
-| Create 100 addresses | ~30 min | ~5 sec | 360x faster |
-| Update policy comment | ~2 min | ~1 sec | Consistent |
-| Audit all objects | ~1 hour | ~10 sec | Complete |
-| Disaster recovery | Hours | Minutes | Automated |
-
----
-
-## Next Steps
+## ⏭️ Next Steps
 
 | Document | Description |
 |----------|-------------|
-| [01-concepts-json-rpc.md](01-concepts-json-rpc.md) | Deep dive into JSON-RPC |
-| [02-authentication.md](02-authentication.md) | Authentication methods |
-| [../cheatsheets/api-endpoints.md](../cheatsheets/api-endpoints.md) | Quick reference |
-| [../01-powershell-curl/](../01-powershell-curl/) | Start hands-on learning |
-
----
-
-## Quick Reference
-
-```bash
-# Test API connectivity
-curl -k -X POST https://<fmg-ip>/jsonrpc \
-  -H "Content-Type: application/json" \
-  -d '{"id":1,"method":"get","params":[{"url":"/sys/status"}],"session":"<token>"}'
-```
-
----
-
-**Ready to learn?** Continue to [JSON-RPC Concepts](01-concepts-json-rpc.md).
+| [JSON-RPC Concepts](01-concepts-json-rpc.md) | Request structure, methods, filtering |
+| [Authentication](02-authentication.md) | Session vs Bearer token |
+| [Covered Operations](03-covered-operations.md) | Supported objects and CRUD |
+| [Best Practices](04-best-practices.md) | Security and code quality |

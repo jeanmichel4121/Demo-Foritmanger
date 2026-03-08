@@ -2,9 +2,11 @@
 
 > **Understand session-based and API key authentication methods.**
 
+[Home](../README.md) > [Docs](./) > Authentication
+
 ---
 
-## Overview
+## 📋 Overview
 
 FortiManager supports two authentication methods:
 
@@ -28,7 +30,7 @@ FortiManager supports two authentication methods:
 
 ---
 
-## Method 1: Session-Based Authentication
+## 🔐 Method 1: Session-Based Authentication
 
 ### Workflow
 
@@ -137,7 +139,7 @@ Always logout to free server resources:
 
 ---
 
-## Method 2: Bearer Token (API Key)
+## 🔑 Method 2: Bearer Token (API Key)
 
 Available since **FortiManager 7.2.2**.
 
@@ -236,7 +238,7 @@ print(response.json())
 
 ---
 
-## Comparison
+## ⚖️ Comparison
 
 | Aspect | Session-Based | Bearer Token |
 |--------|---------------|--------------|
@@ -251,7 +253,7 @@ print(response.json())
 
 ---
 
-## Recommendations
+## 💡 Recommendations
 
 ### Development & Testing
 
@@ -275,7 +277,7 @@ Use Bearer Token (API Key)
 
 ---
 
-## Error Handling
+## ⚠️ Error Handling
 
 ### Session Expired (-11)
 
@@ -338,7 +340,7 @@ Content-Type: application/json
 
 ---
 
-## Best Practices
+## ✅ Best Practices
 
 ### 1. Never Commit Credentials
 
@@ -427,7 +429,7 @@ For production:
 
 ---
 
-## Code Examples
+## 💻 Code Examples
 
 ### PowerShell - Session-Based
 
@@ -514,7 +516,7 @@ print(result)
 
 ---
 
-## Troubleshooting
+## 🔍 Troubleshooting
 
 | Problem | Possible Cause | Solution |
 |---------|----------------|----------|
@@ -526,7 +528,7 @@ print(result)
 
 ---
 
-## See Also
+## 🔗 See Also
 
 | Document | Description |
 |----------|-------------|
@@ -536,4 +538,4 @@ print(result)
 
 ---
 
-**Ready to start?** Head to [01-powershell-curl/](../01-powershell-curl/) for hands-on examples.
+**Ready to start?** Head to [01-raw-http/](../01-raw-http/) for hands-on examples.

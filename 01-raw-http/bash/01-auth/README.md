@@ -1,4 +1,4 @@
-# Authentication Scripts
+# 🔐 Authentication Scripts
 
 > **Authenticate with FortiManager API using session tokens or API keys.**
 
@@ -6,63 +6,89 @@
 
 ---
 
-## Overview
+## 📋 Overview
 
-FortiManager supports two authentication methods. This section provides scripts to authenticate and manage sessions for subsequent API operations.
+FortiManager supports two authentication methods: **Session-based** (all versions) and **Bearer Token/API Key** (FMG 7.2.2+).
+
+For a complete understanding of authentication concepts, security best practices, and detailed workflows, see the **[Authentication Guide](../../../docs/02-authentication.md)**.
 
 ![Authentication Methods](../../../diagrams/03-authentication-methods.png)
 
 ---
 
-## Scripts
+## 📜 Scripts
 
 | Script | Method | Description |
 |--------|--------|-------------|
-| `login-session.sh` | **Session** | Login and return session token |
+| `login-session.sh` | **Session** | Login with username/password, returns session token |
 | `login-bearer.sh` | **Bearer** | Test API key connection |
 | `logout.sh` | **Session** | Close and invalidate session |
 
 ---
 
-## Authentication Methods
+## 🚀 Quick Start
 
-| Method | Best For | FMG Version |
-|--------|----------|-------------|
-| **Bearer Token** | *Automation, CI/CD* | 7.2.2+ |
-| **Session-based** | *Interactive scripts* | All versions |
-
----
-
-## Usage
-
-### Bearer Token *(Recommended)*
+### Bearer Token *(Recommended for automation)*
 
 ```bash
-# Set API key in .env
+# 1. Set API key in .env
 FMG_API_KEY=your_api_key_here
 
-# Test connection
+# 2. Test connection
 ./login-bearer.sh
 
-# No login/logout needed - all scripts auto-detect API key
+# 3. Use scripts directly - no login/logout needed
+../02-addresses/read-addresses.sh
 ```
 
 ### Session-Based
 
 ```bash
-# Login and capture session token
+# 1. Login and capture session token
 SESSION=$(./login-session.sh)
 
-# Use session in subsequent calls
+# 2. Use session in subsequent calls
 ../02-addresses/read-addresses.sh -S "$SESSION"
 
-# Always logout when done
+# 3. Always logout when done
 ./logout.sh "$SESSION"
 ```
 
 ---
 
-## Options
+## 💡 Examples
+
+### Test Connection with API Key
+
+```bash
+./login-bearer.sh
+
+# Expected output:
+# ✓ Connected to 192.168.1.100
+# ✓ FortiManager: FMG-01
+# ✓ Version: 7.4.10
+```
+
+### Session Workflow with Error Handling
+
+```bash
+#!/bin/bash
+SESSION=""
+trap './logout.sh "$SESSION" 2>/dev/null' EXIT
+
+SESSION=$(./login-session.sh)
+if [ -z "$SESSION" ]; then
+    echo "Login failed"
+    exit 1
+fi
+
+# Your operations here
+../02-addresses/read-addresses.sh -S "$SESSION"
+```
+
+---
+
+## ⚙️ Options Reference
 
 ### login-session.sh
 
@@ -79,9 +105,9 @@ SESSION=$(./login-session.sh)
 
 ---
 
-## See Also
+## 🔗 See Also
 
 - [PowerShell Equivalent](../../powershell/01-auth/)
 - [Next: Addresses](../02-addresses/)
-- [Authentication Guide](../../../docs/02-authentication.md)
-- [Authentication Diagram](../../../diagrams/03-authentication-methods.png)
+- [Authentication Guide](../../../docs/02-authentication.md) *(Complete reference)*
+- [Common Errors](../../../cheatsheets/common-errors.md)

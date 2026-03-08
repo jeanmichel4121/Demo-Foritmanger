@@ -1,4 +1,4 @@
-# Authentication Scripts
+# 🔐 Authentication Scripts
 
 > **Authenticate with FortiManager API using session tokens or API keys.**
 
@@ -6,15 +6,17 @@
 
 ---
 
-## Overview
+## 📋 Overview
 
-FortiManager supports two authentication methods. This section provides scripts to authenticate and manage sessions for subsequent API operations.
+FortiManager supports two authentication methods: **Session-based** (all versions) and **Bearer Token/API Key** (FMG 7.2.2+).
+
+For a complete understanding of authentication concepts, security best practices, and detailed workflows, see the **[Authentication Guide](../../../docs/02-authentication.md)**.
 
 ![Authentication Methods](../../../diagrams/03-authentication-methods.png)
 
 ---
 
-## Scripts
+## 📜 Scripts
 
 | Script | Method | Description |
 |--------|--------|-------------|
@@ -24,18 +26,9 @@ FortiManager supports two authentication methods. This section provides scripts 
 
 ---
 
-## Authentication Methods
+## 🚀 Quick Start
 
-| Method | Best For | FMG Version | State |
-|--------|----------|-------------|-------|
-| **Bearer Token** | Automation, CI/CD | 7.2.2+ | Stateless |
-| **Session-based** | Interactive scripts | All versions | Requires logout |
-
----
-
-## Quick Start
-
-### Bearer Token (Recommended)
+### Bearer Token *(Recommended for automation)*
 
 ```powershell
 # 1. Set API key in .env
@@ -63,12 +56,11 @@ $session = .\login-session.ps1
 
 ---
 
-## Usage Examples
+## 💡 Examples
 
-### Test Connection
+### Test Connection with API Key
 
 ```powershell
-# With API Key
 .\login-bearer.ps1
 
 # Expected output:
@@ -77,7 +69,7 @@ $session = .\login-session.ps1
 # Version: 7.4.10
 ```
 
-### Session Workflow
+### Session Workflow with Error Handling
 
 ```powershell
 $session = $null
@@ -97,52 +89,47 @@ try {
 }
 ```
 
----
+### Verbose Login for Debugging
 
-## API Reference
+```powershell
+# Enable debug mode
+$env:FMG_DEBUG = "true"
 
-### Login Endpoint
-
-| Field | Value |
-|-------|-------|
-| **URL** | `/sys/login/user` |
-| **Method** | `exec` |
-
-```json
-{
-    "method": "exec",
-    "params": [{
-        "url": "/sys/login/user",
-        "data": {
-            "user": "admin",
-            "passwd": "password"
-        }
-    }]
-}
+$session = .\login-session.ps1
+# Shows raw JSON-RPC request and response
 ```
 
-### Logout Endpoint
+---
 
-| Field | Value |
-|-------|-------|
-| **URL** | `/sys/logout` |
-| **Method** | `exec` |
+## ⚙️ Options Reference
+
+### login-session.ps1
+
+| Parameter | Description | Required |
+|-----------|-------------|----------|
+| `-Verbose` | Show detailed output | No |
+
+**Returns:** Session token string
+
+### login-bearer.ps1
+
+| Parameter | Description | Required |
+|-----------|-------------|----------|
+| `-Verbose` | Show detailed output | No |
+
+**Returns:** Connection test result
+
+### logout.ps1
+
+| Parameter | Description | Required |
+|-----------|-------------|----------|
+| `-Session` | Session token to invalidate | **Yes** |
 
 ---
 
-## Common Errors
-
-| Error | Cause | Solution |
-|-------|-------|----------|
-| `-11` | Invalid credentials | Check username/password |
-| `-6` | Permission denied | Verify API user permissions |
-| Connection refused | Network issue | Check FMG_HOST and firewall rules |
-
----
-
-## See Also
+## 🔗 See Also
 
 - [Bash Equivalent](../../bash/01-auth/)
 - [Next: Addresses](../02-addresses/)
-- [Authentication Guide](../../../docs/02-authentication.md)
-- [Authentication Diagram](../../../diagrams/03-authentication-methods.png)
+- [Authentication Guide](../../../docs/02-authentication.md) *(Complete reference)*
+- [Common Errors](../../../cheatsheets/common-errors.md)

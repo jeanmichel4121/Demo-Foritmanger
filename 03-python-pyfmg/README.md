@@ -6,7 +6,7 @@
 
 ---
 
-## Overview
+## 📋 Overview
 
 This section uses **pyFMG** (v0.8.6.3), the official Python library maintained by the Fortinet North America CSE Team. You'll learn:
 
@@ -19,7 +19,7 @@ This section uses **pyFMG** (v0.8.6.3), the official Python library maintained b
 
 ---
 
-## pyFMG Advantages
+## ✨ pyFMG Advantages
 
 | Feature | Manual (requests) | pyFMG |
 |---------|-------------------|-------|
@@ -31,7 +31,7 @@ This section uses **pyFMG** (v0.8.6.3), the official Python library maintained b
 
 ---
 
-## Prerequisites
+## 📦 Prerequisites
 
 - **Python 3.8+**
 - **pip** for package management
@@ -40,7 +40,7 @@ This section uses **pyFMG** (v0.8.6.3), the official Python library maintained b
 
 ---
 
-## Installation
+## ⚙️ Installation
 
 ```bash
 cd 03-python-pyfmg
@@ -63,7 +63,7 @@ python-dotenv>=1.0.0
 
 ---
 
-## Folder Structure
+## 📁 Folder Structure
 
 ```
 03-python-pyfmg/
@@ -79,7 +79,7 @@ python-dotenv>=1.0.0
 
 ---
 
-## Quick Start
+## 🚀 Quick Start
 
 ### 1. Configure Environment
 
@@ -111,7 +111,7 @@ FortiManager:
 
 ---
 
-## Core Usage
+## 🔧 Core Usage
 
 ### Basic Import
 
@@ -152,7 +152,7 @@ finally:
 
 ---
 
-## CRUD Operations
+## 💡 CRUD Operations
 
 ### Create (add)
 
@@ -229,7 +229,7 @@ elif code == -10:
 
 ---
 
-## Complete Workflow Example
+## 📝 Complete Workflow Example
 
 The `07_firewall_policies/complete_workflow.py` demonstrates a full automation scenario:
 
@@ -289,7 +289,7 @@ def complete_workflow():
 
 ---
 
-## Return Codes
+## ⚠️ Return Codes
 
 All pyFMG methods return a tuple: `(code, data)`
 
@@ -318,7 +318,7 @@ else:
 
 ---
 
-## pyFMG Constructor Options
+## ⚙️ pyFMG Constructor Options
 
 ```python
 from pyFMG.fortimgr import FortiManager
@@ -339,7 +339,7 @@ fmg = FortiManager(
 
 ---
 
-## Best Practices
+## ✅ Best Practices
 
 ### 1. Always Use Context Managers
 
@@ -375,7 +375,7 @@ fmg = FortiManager(host, user, password, debug=True)
 
 ---
 
-## Comparison: pyFMG vs Manual requests
+## ⚖️ Comparison: pyFMG vs Manual requests
 
 ```python
 # === Manual (requests library) ===
@@ -407,7 +407,7 @@ code, data = fmg.add(
 
 ---
 
-## Common Patterns
+## 🔄 Common Patterns
 
 ### Create or Update (Upsert)
 
@@ -445,7 +445,7 @@ with FortiManager(host, user, password, verify_ssl=False) as fmg:
 
 ---
 
-## Next Steps
+## ⏭️ Next Steps
 
 Once you've mastered pyFMG:
 
@@ -454,9 +454,24 @@ Once you've mastered pyFMG:
 
 ---
 
-## Reference
+## 🔗 Reference
+
+### Documentation
 
 - [Main README](../README.md)
+- [Introduction](../docs/00-introduction.md) - FortiManager overview
+- [JSON-RPC Concepts](../docs/01-concepts-json-rpc.md) - Request structure, methods
+- [Authentication](../docs/02-authentication.md) - Session vs Bearer token
+- [Covered Operations](../docs/03-covered-operations.md) - Supported objects
+- [Best Practices](../docs/04-best-practices.md) - Security and code quality
+
+### Quick Reference
+
+- [API Endpoints Cheatsheet](../cheatsheets/api-endpoints.md)
+- [Common Errors](../cheatsheets/common-errors.md)
+
+### External
+
 - [pyFMG on PyPI](https://pypi.org/project/pyfmg/)
 - [pyFMG on GitHub](https://github.com/p4r4n0y1ng/pyfmg)
 - [FortiManager API Best Practices](https://docs.fortinet.com/document/fortimanager/7.6.0/api-best-practices/500458/introduction)

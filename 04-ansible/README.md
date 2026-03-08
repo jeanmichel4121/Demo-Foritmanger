@@ -6,7 +6,7 @@
 
 ---
 
-## Overview
+## 📋 Overview
 
 This section uses the **fortinet.fortimanager** Ansible collection for declarative configuration management. You'll learn:
 
@@ -20,7 +20,7 @@ This section uses the **fortinet.fortimanager** Ansible collection for declarati
 
 ---
 
-## Ansible Advantages
+## ✨ Ansible Advantages
 
 | Feature | Python Scripts | Ansible |
 |---------|----------------|---------|
@@ -33,7 +33,7 @@ This section uses the **fortinet.fortimanager** Ansible collection for declarati
 
 ---
 
-## Prerequisites
+## 📦 Prerequisites
 
 - **Ansible Core 2.15+**
 - **Python 3.8+**
@@ -49,7 +49,7 @@ ansible --version
 
 ---
 
-## Installation
+## ⚙️ Installation
 
 ```bash
 cd 04-ansible
@@ -70,7 +70,7 @@ ansible-galaxy collection list | grep fortinet
 
 ---
 
-## Folder Structure
+## 📁 Folder Structure
 
 ```
 04-ansible/
@@ -98,7 +98,7 @@ ansible-galaxy collection list | grep fortinet
 
 ---
 
-## Configuration
+## ⚙️ Configuration
 
 ### 1. Inventory Setup (`inventory/hosts.yml`)
 
@@ -151,7 +151,7 @@ ansible_password: "{{ vault_fmg_password }}"
 
 ---
 
-## Quick Start
+## 🚀 Quick Start
 
 ### 1. Set Environment Variables
 
@@ -180,7 +180,7 @@ ansible-playbook playbooks/01_addresses/manage_addresses.yml
 
 ---
 
-## Core Concepts
+## 🔑 Core Concepts
 
 ### Playbook Structure
 
@@ -228,7 +228,7 @@ TASK [Create address] ok: [fmg01]
 
 ---
 
-## Detailed Examples
+## 💡 Detailed Examples
 
 ### Managing Addresses
 
@@ -351,7 +351,7 @@ address_groups:
 
 ---
 
-## Common Modules
+## 📦 Common Modules
 
 | Module | Purpose |
 |--------|---------|
@@ -366,7 +366,7 @@ address_groups:
 
 ---
 
-## Running Playbooks
+## ▶️ Running Playbooks
 
 ### Basic Execution
 
@@ -407,7 +407,7 @@ ansible-playbook full_deployment.yml --skip-tags install
 
 ---
 
-## Best Practices
+## ✅ Best Practices
 
 ### 1. Use Variables for Reusability
 
@@ -457,7 +457,7 @@ roles/
 
 ---
 
-## Troubleshooting
+## 🔍 Troubleshooting
 
 ### Connection Issues
 
@@ -501,7 +501,7 @@ ansible_httpapi_key: "your_api_key"
 
 ---
 
-## CI/CD Integration
+## 🔄 CI/CD Integration
 
 ### GitHub Actions Example
 
@@ -536,7 +536,7 @@ jobs:
 
 ---
 
-## Full Deployment Example
+## 📝 Full Deployment Example
 
 The `playbooks/full_deployment.yml` combines all operations:
 
@@ -569,9 +569,24 @@ The `playbooks/full_deployment.yml` combines all operations:
 
 ---
 
-## Reference
+## 🔗 Reference
+
+### Documentation
 
 - [Main README](../README.md)
+- [Introduction](../docs/00-introduction.md) - FortiManager overview
+- [JSON-RPC Concepts](../docs/01-concepts-json-rpc.md) - Request structure, methods
+- [Authentication](../docs/02-authentication.md) - Session vs Bearer token
+- [Covered Operations](../docs/03-covered-operations.md) - Supported objects
+- [Best Practices](../docs/04-best-practices.md) - Security and code quality
+
+### Quick Reference
+
+- [API Endpoints Cheatsheet](../cheatsheets/api-endpoints.md)
+- [Common Errors](../cheatsheets/common-errors.md)
+
+### External
+
 - [Ansible Collection Documentation](https://docs.ansible.com/ansible/latest/collections/fortinet/fortimanager/index.html)
 - [Fortinet FortiManager Ansible Collection (ReadTheDocs)](https://ansible-galaxy-fortimanager-docs.readthedocs.io/)
 - [FortiManager Administration Guide](https://docs.fortinet.com/document/fortimanager/7.6.0/administration-guide)

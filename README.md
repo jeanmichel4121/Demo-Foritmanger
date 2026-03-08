@@ -9,7 +9,7 @@
 
 ---
 
-## Overview
+## 📋 Overview
 
 This repository provides hands-on examples for automating FortiManager operations using its JSON-RPC API. Progress from raw HTTP requests to production-ready Ansible playbooks.
 
@@ -17,7 +17,7 @@ This repository provides hands-on examples for automating FortiManager operation
 
 ---
 
-## Quick Start
+## 🚀 Quick Start
 
 ### 1. Clone and Configure
 
@@ -43,7 +43,7 @@ FMG_VERIFY_SSL=false
 
 ---
 
-## Learning Path
+## 📚 Learning Path
 
 ![Learning Progression](diagrams/06-learning-progression.png)
 
@@ -58,7 +58,7 @@ FMG_VERIFY_SSL=false
 
 ---
 
-## Project Structure
+## 📁 Project Structure
 
 ```
 Demo-FortiManager/
@@ -79,7 +79,7 @@ Demo-FortiManager/
 
 ---
 
-## Documentation
+## 📖 Documentation
 
 | Document | Description |
 |----------|-------------|
@@ -99,7 +99,7 @@ Demo-FortiManager/
 
 ---
 
-## Prerequisites
+## 📦 Prerequisites
 
 | Requirement | Details |
 |-------------|---------|
@@ -111,7 +111,7 @@ See each level's README for platform-specific requirements.
 
 ---
 
-## References
+## 🔗 References
 
 ### Official Documentation
 

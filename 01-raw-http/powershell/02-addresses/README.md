@@ -1,18 +1,20 @@
-# Address Management
+# 🏠 Address Management Scripts
 
-> **CRUD scripts for FortiManager address objects.**
+> **CRUD operations for FortiManager firewall address objects.**
 
 [Home](../../../README.md) > [Level 1](../../README.md) > [PowerShell](../README.md) > Addresses
 
 ---
 
-## Overview
+## 📋 Overview
 
 This section provides PowerShell scripts for managing FortiManager firewall address objects. Addresses are the building blocks for firewall policies - they define source and destination endpoints.
 
+For complete API reference, see the [Covered Operations Guide](../../../docs/03-covered-operations.md).
+
 ---
 
-## API Endpoints
+## 🔗 API Endpoints
 
 | Type | Endpoint |
 |------|----------|
@@ -23,63 +25,142 @@ This section provides PowerShell scripts for managing FortiManager firewall addr
 
 ---
 
-## Scripts
+## 📜 Scripts
 
 | Script | Operation | Description |
 |--------|-----------|-------------|
-| `create-address.ps1` | **CREATE** | Create IPv4 address |
-| `read-addresses.ps1` | **READ** | List addresses |
-| `update-address.ps1` | **UPDATE** | Modify address |
-| `delete-address.ps1` | **DELETE** | Delete address |
-| `manage-groups.ps1` | **CRUD** | Group management |
+| `create-address.ps1` | **CREATE** | Create IPv4 address object |
+| `read-addresses.ps1` | **READ** | List and filter addresses |
+| `update-address.ps1` | **UPDATE** | Modify existing address |
+| `delete-address.ps1` | **DELETE** | Remove address object |
+| `manage-groups.ps1` | **CRUD** | Address group management |
 
 ---
 
-## Examples
+## 💡 Examples
 
-### Create an Address
+### Create Address
 
 ```powershell
-.\create-address.ps1 -Name "NET_SERVERS" -Subnet "10.10.10.0/24" -Comment "Servers"
+# Network (CIDR notation)
+.\create-address.ps1 -Name "NET_SERVERS" -Subnet "10.10.10.0/24" -Comment "Server network"
+
+# Single host
+.\create-address.ps1 -Name "HOST_WEB" -Subnet "192.168.1.10/32" -Comment "Web server"
+
+# FQDN address
+.\create-address.ps1 -Name "FQDN_GOOGLE" -FQDN "google.com" -Comment "Google DNS"
+
+# IP Range
+.\create-address.ps1 -Name "RANGE_DHCP" -StartIP "192.168.1.100" -EndIP "192.168.1.200" -Comment "DHCP range"
 ```
 
-### List Addresses
+### Read Addresses
 
 ```powershell
-# All addresses
+# List all addresses
 .\read-addresses.ps1
 
-# With filter
+# Filter by pattern
 .\read-addresses.ps1 -Filter "NET_*"
+
+# Get specific address
+.\read-addresses.ps1 -Name "HOST_WEB"
+
+# JSON output (for scripting)
+$addresses = .\read-addresses.ps1 -AsJson | ConvertFrom-Json
+$addresses | Select-Object name, subnet
 ```
 
-### Modify an Address
+### Update Address
 
 ```powershell
-.\update-address.ps1 -Name "NET_SERVERS" -Comment "New comment"
+# Update comment
+.\update-address.ps1 -Name "NET_SERVERS" -Comment "Production servers"
+
+# Update subnet
+.\update-address.ps1 -Name "NET_SERVERS" -Subnet "10.10.20.0/24"
 ```
 
-### Delete an Address
+### Delete Address
 
 ```powershell
+# Delete with confirmation
 .\delete-address.ps1 -Name "NET_SERVERS"
+
+# Force delete (no confirmation)
+.\delete-address.ps1 -Name "NET_SERVERS" -Force
+```
+
+### Address Groups
+
+```powershell
+# Create group
+.\manage-groups.ps1 -Action create -Name "GRP_ALL_SERVERS" `
+    -Members @("HOST_WEB", "HOST_DB", "HOST_APP")
+
+# List groups
+.\manage-groups.ps1 -Action read
+
+# Add member to group
+.\manage-groups.ps1 -Action update -Name "GRP_ALL_SERVERS" `
+    -Members @("HOST_WEB", "HOST_DB", "HOST_APP", "HOST_NEW")
+
+# Delete group
+.\manage-groups.ps1 -Action delete -Name "GRP_ALL_SERVERS"
 ```
 
 ---
 
-## Address Types
+## ⚙️ Options Reference
 
-| Type | Description | Example |
-|------|-------------|---------|
-| `ipmask` | *IP/Subnet mask* | `10.0.0.0 255.255.255.0` |
-| `iprange` | *IP range* | `startip: 10.0.0.1, endip: 10.0.0.100` |
-| `fqdn` | *DNS hostname* | `www.example.com` |
-| `geography` | *Country code* | `country: US` |
-| `wildcard` | *Wildcard mask* | `10.0.*.0 255.255.0.255` |
+### create-address.ps1
+
+| Parameter | Description | Required |
+|-----------|-------------|----------|
+| `-Name` | Address **name** | **Yes** |
+| `-Subnet` | **Subnet** (CIDR or mask) | **Yes** (ipmask) |
+| `-FQDN` | **FQDN** hostname | **Yes** (fqdn type) |
+| `-StartIP` | **Start IP** for range | **Yes** (iprange) |
+| `-EndIP` | **End IP** for range | **Yes** (iprange) |
+| `-Comment` | Description | No |
+
+### read-addresses.ps1
+
+| Parameter | Description | Required |
+|-----------|-------------|----------|
+| `-Name` | Specific address **name** | No |
+| `-Filter` | **Filter** pattern (wildcards) | No |
+| `-AsJson` | Output as **JSON** | No |
+| `-Session` | Session token | No |
+
+### update-address.ps1
+
+| Parameter | Description | Required |
+|-----------|-------------|----------|
+| `-Name` | Address **name** to update | **Yes** |
+| `-Subnet` | New **subnet** | No |
+| `-Comment` | New **comment** | No |
+
+### delete-address.ps1
+
+| Parameter | Description | Required |
+|-----------|-------------|----------|
+| `-Name` | Address **name** to delete | **Yes** |
+| `-Force` | Skip confirmation | No |
+
+### manage-groups.ps1
+
+| Parameter | Description | Required |
+|-----------|-------------|----------|
+| `-Action` | `create`, `read`, `update`, `delete` | **Yes** |
+| `-Name` | Group **name** | **Yes** (except read all) |
+| `-Members` | Array of **member** addresses | **Yes** (create/update) |
+| `-Comment` | Description | No |
 
 ---
 
-## See Also
+## 🔗 See Also
 
 - [Bash Equivalent](../../bash/02-addresses/)
 - [Previous: Authentication](../01-auth/)

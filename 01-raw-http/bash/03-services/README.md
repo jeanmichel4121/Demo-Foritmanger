@@ -1,14 +1,20 @@
-# Service Management Scripts
+# 🔌 Service Management Scripts
 
-[Home](../../../README.md) > [Raw HTTP](../../README.md) > [Bash](../README.md) > Services
+> **CRUD operations for FortiManager custom service objects.**
 
-## Overview
-
-CRUD operations for custom firewall services.
+[Home](../../../README.md) > [Level 1](../../README.md) > [Bash](../README.md) > Services
 
 ---
 
-## API Endpoints
+## 📋 Overview
+
+Services define TCP/UDP ports, protocols, and port ranges used in firewall policies. This section provides scripts for managing custom services and service groups.
+
+For complete API reference, see the [Covered Operations Guide](../../../docs/03-covered-operations.md).
+
+---
+
+## 🔗 API Endpoints
 
 | Type | Endpoint |
 |------|----------|
@@ -17,7 +23,7 @@ CRUD operations for custom firewall services.
 
 ---
 
-## Scripts
+## 📜 Scripts
 
 | Script | Description |
 |--------|-------------|
@@ -25,7 +31,7 @@ CRUD operations for custom firewall services.
 
 ---
 
-## Protocol Support
+## 🔧 Protocol Support
 
 | Protocol | Option | Example |
 |----------|--------|---------|
@@ -35,7 +41,7 @@ CRUD operations for custom firewall services.
 
 ---
 
-## Examples
+## 💡 Examples
 
 ### Create Services
 
@@ -84,7 +90,7 @@ CRUD operations for custom firewall services.
 
 ---
 
-## Options Reference
+## ⚙️ Options Reference
 
 | Option | Description | Required |
 |--------|-------------|----------|
@@ -97,7 +103,7 @@ CRUD operations for custom firewall services.
 
 ---
 
-## See Also
+## 🔗 See Also
 
 - [PowerShell Equivalent](../../powershell/03-services/)
 - [Previous: Addresses](../02-addresses/)

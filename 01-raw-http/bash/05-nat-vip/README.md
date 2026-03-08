@@ -1,14 +1,20 @@
-# NAT/VIP Management Scripts
+# 🔀 NAT/VIP Management Scripts
 
-[Home](../../../README.md) > [Raw HTTP](../../README.md) > [Bash](../README.md) > NAT/VIP
+> **CRUD operations for VIPs (DNAT) and IP Pools (SNAT).**
 
-## Overview
-
-CRUD operations for VIPs (DNAT) and IP Pools (SNAT).
+[Home](../../../README.md) > [Level 1](../../README.md) > [Bash](../README.md) > NAT/VIP
 
 ---
 
-## API Endpoints
+## 📋 Overview
+
+NAT configuration enables network address translation for inbound (DNAT/VIP) and outbound (SNAT/IP Pool) traffic flows. This section provides scripts for managing both VIPs and IP Pools.
+
+For complete API reference, see the [Covered Operations Guide](../../../docs/03-covered-operations.md).
+
+---
+
+## 🔗 API Endpoints
 
 | Type | Endpoint |
 |------|----------|
@@ -17,7 +23,7 @@ CRUD operations for VIPs (DNAT) and IP Pools (SNAT).
 
 ---
 
-## Scripts
+## 📜 Scripts
 
 | Script | NAT Type | Description |
 |--------|----------|-------------|
@@ -26,7 +32,7 @@ CRUD operations for VIPs (DNAT) and IP Pools (SNAT).
 
 ---
 
-## NAT Types Explained
+## 🔧 NAT Types Explained
 
 | Type | Direction | Use Case |
 |------|-----------|----------|
@@ -35,7 +41,7 @@ CRUD operations for VIPs (DNAT) and IP Pools (SNAT).
 
 ---
 
-## VIP Examples (DNAT)
+## 💡 VIP Examples (DNAT)
 
 ### Static NAT (1:1)
 
@@ -87,7 +93,7 @@ CRUD operations for VIPs (DNAT) and IP Pools (SNAT).
 
 ---
 
-## IP Pool Examples (SNAT)
+## 💡 IP Pool Examples (SNAT)
 
 ### Create Pool
 
@@ -123,7 +129,7 @@ CRUD operations for VIPs (DNAT) and IP Pools (SNAT).
 
 ---
 
-## Options Reference
+## ⚙️ Options Reference
 
 ### crud-vip.sh
 
@@ -151,7 +157,7 @@ CRUD operations for VIPs (DNAT) and IP Pools (SNAT).
 
 ---
 
-## See Also
+## 🔗 See Also
 
 - [PowerShell Equivalent](../../powershell/05-nat-vip/)
 - [Previous: Schedules](../04-schedules/)

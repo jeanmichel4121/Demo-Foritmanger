@@ -6,7 +6,7 @@
 
 ---
 
-## Security
+## 🔒 Security
 
 ### Credential Management
 
@@ -37,7 +37,7 @@ credentials.json
 
 ---
 
-## Code Quality
+## 💻 Code Quality
 
 ### Always Check Status Codes
 
@@ -101,7 +101,7 @@ def create_policy_with_dependencies(name: str, src_addr: str, dst_addr: str):
 
 ---
 
-## Operations
+## ⚙️ Operations
 
 ### Preview Before Install
 
@@ -150,7 +150,7 @@ while True:
 
 ---
 
-## Session Management
+## 🔐 Session Management
 
 ### Always Use Context Managers (Python)
 
@@ -192,7 +192,7 @@ trap "./logout.sh '$SESSION'" EXIT  # Logout on script exit
 
 ---
 
-## Naming Conventions
+## 🏷️ Naming Conventions
 
 ### Object Naming
 
@@ -218,7 +218,7 @@ PROD_NET_SERVERS    # Production
 
 ---
 
-## Error Handling
+## ⚠️ Error Handling
 
 ### Common Error Codes
 
@@ -255,7 +255,7 @@ def safe_delete(fmg, url, name):
 
 ---
 
-## Performance
+## 🚀 Performance
 
 ### Use Filtering
 
@@ -301,7 +301,7 @@ while True:
 
 ---
 
-## Workspace Mode
+## 📝 Workspace Mode
 
 When workspace mode is enabled on FortiManager:
 
@@ -323,7 +323,7 @@ If you get error `-10147` (no write permission):
 
 ---
 
-## CI/CD Integration
+## 🔄 CI/CD Integration
 
 ### Environment Variables
 
@@ -358,7 +358,7 @@ ansible-playbook playbook.yml
 
 ---
 
-## See Also
+## 🔗 See Also
 
 - [Common Errors Cheatsheet](../cheatsheets/common-errors.md)
 - [Authentication Guide](02-authentication.md)

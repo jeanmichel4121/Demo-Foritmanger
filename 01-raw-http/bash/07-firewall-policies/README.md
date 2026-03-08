@@ -1,4 +1,4 @@
-# Firewall Policy Scripts
+# 🔥 Firewall Policy Scripts
 
 > **CRUD operations for firewall policies and policy package installation.**
 
@@ -6,7 +6,7 @@
 
 ---
 
-## Overview
+## 📋 Overview
 
 Firewall policies are the core of FortiGate security - they control what traffic is allowed, denied, or inspected. This section covers policy CRUD operations and deployment to FortiGates.
 
@@ -14,7 +14,7 @@ Firewall policies are the core of FortiGate security - they control what traffic
 
 ---
 
-## API Endpoints
+## 🔗 API Endpoints
 
 | Type | Endpoint |
 |------|----------|
@@ -24,7 +24,7 @@ Firewall policies are the core of FortiGate security - they control what traffic
 
 ---
 
-## Scripts
+## 📜 Scripts
 
 | Script | Description |
 |--------|-------------|
@@ -33,7 +33,7 @@ Firewall policies are the core of FortiGate security - they control what traffic
 
 ---
 
-## Policy Actions
+## 🔧 Policy Actions
 
 | Action | Description |
 |--------|-------------|
@@ -43,7 +43,7 @@ Firewall policies are the core of FortiGate security - they control what traffic
 
 ---
 
-## Examples
+## 💡 Examples
 
 ### Create Policy
 
@@ -111,7 +111,7 @@ Firewall policies are the core of FortiGate security - they control what traffic
 
 ---
 
-## Policy Installation
+## 📦 Policy Installation
 
 ### Preview Changes
 
@@ -139,7 +139,7 @@ Firewall policies are the core of FortiGate security - they control what traffic
 
 ---
 
-## Options Reference
+## ⚙️ Options Reference
 
 ### crud-policies.sh
 
@@ -172,7 +172,7 @@ Firewall policies are the core of FortiGate security - they control what traffic
 
 ---
 
-## Best Practices
+## ✅ Best Practices
 
 | Practice | Reason |
 |----------|--------|
@@ -183,7 +183,7 @@ Firewall policies are the core of FortiGate security - they control what traffic
 
 ---
 
-## See Also
+## 🔗 See Also
 
 - [PowerShell Equivalent](../../powershell/07-firewall-policies/)
 - [Previous: Security Profiles](../06-security-profiles/)

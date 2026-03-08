@@ -1,14 +1,22 @@
-# Security Profile Scripts
+# 🛡️ Security Profile Scripts
 
-[Home](../../../README.md) > [Raw HTTP](../../README.md) > [Bash](../README.md) > Security Profiles
+> **CRUD operations for security profiles and application groups.**
 
-## Overview
-
-CRUD operations for security profiles and application groups.
+[Home](../../../README.md) > [Level 1](../../README.md) > [Bash](../README.md) > Security Profiles
 
 ---
 
-## API Endpoints
+## 📋 Overview
+
+Security profiles enable deep inspection and control of traffic - including application control, web filtering, and content inspection. This section covers application group management.
+
+> **Note**: For URL filtering examples, see the [PowerShell equivalent](../../powershell/06-security-profiles/) which includes `crud-url-filter.ps1`.
+
+For complete API reference, see the [Covered Operations Guide](../../../docs/03-covered-operations.md).
+
+---
+
+## 🔗 API Endpoints
 
 | Type | Endpoint |
 |------|----------|
@@ -18,7 +26,7 @@ CRUD operations for security profiles and application groups.
 
 ---
 
-## Scripts
+## 📜 Scripts
 
 | Script | Description |
 |--------|-------------|
@@ -26,7 +34,7 @@ CRUD operations for security profiles and application groups.
 
 ---
 
-## Application Categories
+## 🔧 Application Categories
 
 | Category | Examples |
 |----------|----------|
@@ -37,7 +45,7 @@ CRUD operations for security profiles and application groups.
 
 ---
 
-## Examples
+## 💡 Examples
 
 ### Create Application Group
 
@@ -86,7 +94,7 @@ CRUD operations for security profiles and application groups.
 
 ---
 
-## Options Reference
+## ⚙️ Options Reference
 
 | Option | Description | Required |
 |--------|-------------|----------|
@@ -98,8 +106,9 @@ CRUD operations for security profiles and application groups.
 
 ---
 
-## See Also
+## 🔗 See Also
 
 - [PowerShell Equivalent](../../powershell/06-security-profiles/)
 - [Previous: NAT/VIP](../05-nat-vip/)
+- [Next: Firewall Policies](../07-firewall-policies/)
 - [API Endpoints Cheatsheet](../../../cheatsheets/api-endpoints.md)

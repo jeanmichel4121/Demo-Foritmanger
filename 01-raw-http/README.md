@@ -6,20 +6,17 @@
 
 ---
 
-## Overview
+## 📋 Overview
 
-This section teaches you the **raw mechanics** of the FortiManager API. By working directly with HTTP requests, you'll understand:
-
-- How JSON-RPC differs from REST APIs
-- The exact structure of API requests and responses
-- Authentication flow (login -> operations -> logout)
-- Error handling at the HTTP level
+This section teaches you the **raw mechanics** of the FortiManager API. By working directly with HTTP requests, you'll understand exactly how the JSON-RPC protocol works.
 
 **This foundational knowledge will make you more effective when using higher-level tools like pyFMG or Ansible.**
 
+> For complete documentation on JSON-RPC concepts, see [JSON-RPC Concepts](../docs/01-concepts-json-rpc.md).
+
 ---
 
-## Choose Your Platform
+## 🖥️ Choose Your Platform
 
 | Platform | Folder | Best For |
 |----------|--------|----------|
@@ -30,33 +27,18 @@ Both implementations cover the same operations - choose based on your preferred 
 
 ---
 
-## What You'll Learn
+## 📚 What You'll Learn
 
-### Authentication
-- Session-based login/logout flow
-- Bearer token (API Key) authentication
-- When to use each method
-
-### CRUD Operations
-- **Create** - Add new firewall objects
-- **Read** - List and filter existing objects
-- **Update** - Modify object properties
-- **Delete** - Remove objects safely
-
-### Object Types Covered
-
-| Category | Objects |
-|----------|---------|
-| **Addresses** | IPv4, IPv6, Address Groups |
-| **Services** | Custom services, Service Groups |
-| **Schedules** | One-time, Recurring |
-| **NAT** | Virtual IPs (DNAT), IP Pools (SNAT) |
-| **Security** | Application Groups, Security Profiles |
-| **Policies** | Firewall rules, Policy installation |
+| Category | Topics |
+|----------|--------|
+| **Authentication** | Session-based login/logout, Bearer token (API Key) |
+| **CRUD Operations** | Create, Read, Update, Delete firewall objects |
+| **Object Types** | Addresses, Services, Schedules, NAT/VIP, Security Profiles, Policies |
+| **Deployment** | Policy package installation to FortiGates |
 
 ---
 
-## Quick Start
+## 🚀 Quick Start
 
 ### PowerShell (Windows)
 
@@ -86,7 +68,7 @@ SESSION=$(./login-session.sh)
 
 ---
 
-## Folder Structure
+## 📁 Folder Structure
 
 ```
 01-raw-http/
@@ -95,13 +77,7 @@ SESSION=$(./login-session.sh)
 │   ├── README.md           # PowerShell guide
 │   ├── config/             # Configuration loader
 │   ├── utils/              # Helper functions
-│   ├── 01-auth/            # Authentication scripts
-│   ├── 02-addresses/       # Address management
-│   ├── 03-services/        # Service management
-│   ├── 04-schedules/       # Schedule management
-│   ├── 05-nat-vip/         # NAT configuration
-│   ├── 06-security-profiles/
-│   └── 07-firewall-policies/
+│   └── 01-auth/ ... 07-firewall-policies/
 └── bash/                   # Linux/macOS implementation
     ├── README.md           # Bash guide
     └── [same structure]
@@ -109,67 +85,33 @@ SESSION=$(./login-session.sh)
 
 ---
 
-## Prerequisites
-
-### Common Requirements
+## 📦 Prerequisites
 
 | Requirement | Details |
 |-------------|---------|
 | **FortiManager** | 7.2.x - 7.6.x |
 | **Network** | HTTPS access (port 443) |
 | **Credentials** | API user or API Key |
-
-### Platform-Specific
-
-| Platform | Requirements |
-|----------|--------------|
-| **PowerShell** | PowerShell 7.0+ (recommended) or Windows PowerShell 5.1 |
+| **PowerShell** | 7.0+ (recommended) or Windows PowerShell 5.1 |
 | **Bash** | bash 4.0+, curl, jq |
 
 ---
 
-## Core Concepts
+## 📈 Learning Path
 
-### JSON-RPC vs REST
-
-FortiManager uses **JSON-RPC**, not REST:
-
-| Aspect | REST | JSON-RPC (FortiManager) |
-|--------|------|-------------------------|
-| **Endpoint** | Multiple URLs | Single `/jsonrpc` |
-| **HTTP Method** | GET, POST, PUT, DELETE | Always POST |
-| **Routing** | URL path | `method` field in body |
-
-### Request Structure
-
-```json
-{
-    "id": 1,
-    "method": "get",
-    "params": [{
-        "url": "/pm/config/adom/root/obj/firewall/address"
-    }],
-    "session": "your-session-token"
-}
-```
+| Step | Folder | Description |
+|------|--------|-------------|
+| 1 | `01-auth/` | Authentication fundamentals |
+| 2 | `02-addresses/` | Address CRUD operations |
+| 3 | `03-services/` | Service management |
+| 4 | `04-schedules/` | Time-based access control |
+| 5 | `05-nat-vip/` | NAT configuration (DNAT/SNAT) |
+| 6 | `06-security-profiles/` | Security features |
+| 7 | `07-firewall-policies/` | Policies and installation |
 
 ---
 
-## Learning Path
-
-```
-01-auth         ->  Authentication fundamentals
-02-addresses    ->  Address CRUD operations
-03-services     ->  Service management
-04-schedules    ->  Time-based access control
-05-nat-vip      ->  NAT configuration (DNAT/SNAT)
-06-security-profiles -> Security features
-07-firewall-policies -> Policies and installation
-```
-
----
-
-## Next Steps
+## ⏭️ Next Steps
 
 Once you're comfortable with raw HTTP requests:
 
@@ -181,9 +123,8 @@ Once you're comfortable with raw HTTP requests:
 
 ---
 
-## See Also
+## 🔗 See Also
 
-- [JSON-RPC Concepts](../docs/01-concepts-json-rpc.md)
-- [Authentication Guide](../docs/02-authentication.md)
-- [API Endpoints Cheatsheet](../cheatsheets/api-endpoints.md)
-- [Learning Progression Diagram](../diagrams/06-learning-progression.png)
+- [JSON-RPC Concepts](../docs/01-concepts-json-rpc.md) - Request structure, methods, filtering
+- [Authentication Guide](../docs/02-authentication.md) - Session vs Bearer token
+- [API Endpoints Cheatsheet](../cheatsheets/api-endpoints.md) - Quick reference

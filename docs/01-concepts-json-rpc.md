@@ -2,15 +2,17 @@
 
 > **Master the fundamentals of FortiManager's JSON-RPC protocol.**
 
+[Home](../README.md) > [Docs](./) > JSON-RPC Concepts
+
 ---
 
-## Introduction
+## 📋 Introduction
 
 FortiManager uses a **JSON-RPC** API, not a traditional REST API. Understanding this difference is essential for effective API automation.
 
 ---
 
-## REST vs JSON-RPC
+## 🔄 REST vs JSON-RPC
 
 | Aspect | REST API | JSON-RPC (FortiManager) |
 |--------|----------|-------------------------|
@@ -30,7 +32,7 @@ JSON-RPC provides:
 
 ---
 
-## Request Structure
+## 📤 Request Structure
 
 Every FortiManager API request follows this format:
 
@@ -78,7 +80,7 @@ Each element in `params` is an object with:
 
 ---
 
-## Available Methods
+## 🔧 Available Methods
 
 | Method | Description | REST Equivalent | When to Use |
 |--------|-------------|-----------------|-------------|
@@ -119,7 +121,7 @@ Each element in `params` is an object with:
 
 ---
 
-## URL Structure
+## 🔗 URL Structure
 
 FortiManager URLs follow a hierarchical pattern:
 
@@ -159,7 +161,7 @@ FortiManager URLs follow a hierarchical pattern:
 
 ---
 
-## Response Structure
+## 📥 Response Structure
 
 All responses follow this format:
 
@@ -199,7 +201,7 @@ All responses follow this format:
 
 ---
 
-## Status Codes
+## ⚠️ Status Codes
 
 | Code | Meaning | Description |
 |------|---------|-------------|
@@ -235,7 +237,7 @@ else:
 
 ---
 
-## Query Options
+## 🔍 Query Options
 
 ### Filtering
 
@@ -322,7 +324,7 @@ For large datasets:
 
 ---
 
-## Complete Examples
+## 💡 Complete Examples
 
 ### Example 1: List Filtered Addresses
 
@@ -458,7 +460,7 @@ For large datasets:
 
 ---
 
-## Batch Requests
+## 📦 Batch Requests
 
 Send multiple operations in one request:
 
@@ -499,7 +501,7 @@ Response contains status for each operation:
 
 ---
 
-## Best Practices
+## ✅ Best Practices
 
 ### 1. Always Check Status Code
 
@@ -546,7 +548,7 @@ For critical operations, wrap in workspace lock/unlock (if workspace mode enable
 
 ---
 
-## See Also
+## 🔗 See Also
 
 | Document | Description |
 |----------|-------------|

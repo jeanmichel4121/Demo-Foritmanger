@@ -1,4 +1,4 @@
-# Address Management Scripts
+# 🏠 Address Management Scripts
 
 > **CRUD operations for FortiManager firewall address objects.**
 
@@ -6,13 +6,13 @@
 
 ---
 
-## Overview
+## 📋 Overview
 
 This section provides Bash scripts for managing FortiManager firewall address objects. Addresses are the building blocks for firewall policies - they define source and destination endpoints.
 
 ---
 
-## API Endpoints
+## 🔗 API Endpoints
 
 | Type | Endpoint |
 |------|----------|
@@ -23,7 +23,7 @@ This section provides Bash scripts for managing FortiManager firewall address ob
 
 ---
 
-## Scripts
+## 📜 Scripts
 
 | Script | Operation | Description |
 |--------|-----------|-------------|
@@ -35,7 +35,7 @@ This section provides Bash scripts for managing FortiManager firewall address ob
 
 ---
 
-## Address Types
+## 🔧 Address Types
 
 | Type | Description | Example |
 |------|-------------|---------|
@@ -47,7 +47,7 @@ This section provides Bash scripts for managing FortiManager firewall address ob
 
 ---
 
-## Examples
+## 💡 Examples
 
 ### Create Address
 
@@ -116,7 +116,7 @@ This section provides Bash scripts for managing FortiManager firewall address ob
 
 ---
 
-## Options Reference
+## ⚙️ Options Reference
 
 ### create-address.sh
 
@@ -139,7 +139,7 @@ This section provides Bash scripts for managing FortiManager firewall address ob
 
 ---
 
-## See Also
+## 🔗 See Also
 
 - [PowerShell Equivalent](../../powershell/02-addresses/)
 - [Previous: Authentication](../01-auth/)

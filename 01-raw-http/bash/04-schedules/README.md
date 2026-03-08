@@ -1,14 +1,20 @@
-# Schedule Management Scripts
+# 📅 Schedule Management Scripts
 
-[Home](../../../README.md) > [Raw HTTP](../../README.md) > [Bash](../README.md) > Schedules
+> **CRUD operations for FortiManager schedule objects.**
 
-## Overview
-
-CRUD operations for firewall schedules.
+[Home](../../../README.md) > [Level 1](../../README.md) > [Bash](../README.md) > Schedules
 
 ---
 
-## API Endpoints
+## 📋 Overview
+
+Schedules define time windows for firewall policies - enabling time-based access control for maintenance windows, business hours, or special events.
+
+For complete API reference, see the [Covered Operations Guide](../../../docs/03-covered-operations.md).
+
+---
+
+## 🔗 API Endpoints
 
 | Type | Endpoint |
 |------|----------|
@@ -17,7 +23,7 @@ CRUD operations for firewall schedules.
 
 ---
 
-## Scripts
+## 📜 Scripts
 
 | Script | Description |
 |--------|-------------|
@@ -25,7 +31,7 @@ CRUD operations for firewall schedules.
 
 ---
 
-## Schedule Types
+## 🔧 Schedule Types
 
 | Type | Use Case | Example |
 |------|----------|---------|
@@ -34,7 +40,7 @@ CRUD operations for firewall schedules.
 
 ---
 
-## Examples
+## 💡 Examples
 
 ### Create Schedule
 
@@ -84,7 +90,7 @@ CRUD operations for firewall schedules.
 
 ---
 
-## Date Format
+## 📆 Date Format
 
 | Format | Example |
 |--------|---------|
@@ -95,7 +101,7 @@ CRUD operations for firewall schedules.
 
 ---
 
-## Options Reference
+## ⚙️ Options Reference
 
 | Option | Description | Required |
 |--------|-------------|----------|
@@ -108,7 +114,7 @@ CRUD operations for firewall schedules.
 
 ---
 
-## See Also
+## 🔗 See Also
 
 - [PowerShell Equivalent](../../powershell/04-schedules/)
 - [Previous: Services](../03-services/)

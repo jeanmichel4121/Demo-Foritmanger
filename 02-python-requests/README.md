@@ -6,7 +6,7 @@
 
 ---
 
-## Overview
+## 📋 Overview
 
 This section demonstrates how to structure Python code for FortiManager automation. You'll learn:
 
@@ -19,7 +19,7 @@ This section demonstrates how to structure Python code for FortiManager automati
 
 ---
 
-## Prerequisites
+## 📦 Prerequisites
 
 - **Python 3.8+**
 - **pip** for dependency management
@@ -34,7 +34,7 @@ python --version  # Should be 3.8+
 
 ---
 
-## Installation
+## ⚙️ Installation
 
 ```bash
 cd 02-python-requests
@@ -57,7 +57,7 @@ python-dotenv>=1.0.0
 
 ---
 
-## Folder Structure
+## 📁 Folder Structure
 
 ```
 02-python-requests/
@@ -82,7 +82,7 @@ python-dotenv>=1.0.0
 
 ---
 
-## Quick Start
+## 🚀 Quick Start
 
 ### 1. Configure Environment
 
@@ -113,7 +113,7 @@ FortiManager:
 
 ---
 
-## Core Components
+## 🔧 Core Components
 
 ### Settings Management (`config/settings.py`)
 
@@ -167,7 +167,7 @@ except FMGPermissionError:
 
 ---
 
-## Detailed Examples
+## 💡 Detailed Examples
 
 ### Authentication
 
@@ -297,7 +297,7 @@ with FortiManagerClient() as fmg:
 
 ---
 
-## Error Handling
+## ⚠️ Error Handling
 
 ### Exception Hierarchy
 
@@ -343,7 +343,7 @@ with FortiManagerClient() as fmg:
 
 ---
 
-## Best Practices
+## ✅ Best Practices
 
 ### 1. Use Context Managers
 
@@ -399,7 +399,7 @@ This prints raw JSON requests and responses.
 
 ---
 
-## Comparison with Level 1 (PowerShell)
+## ⚖️ Comparison with Level 1 (PowerShell)
 
 | Aspect | PowerShell | Python + requests |
 |--------|------------|-------------------|
@@ -411,7 +411,7 @@ This prints raw JSON requests and responses.
 
 ---
 
-## Next Steps
+## ⏭️ Next Steps
 
 Once you're comfortable with this approach:
 
@@ -420,9 +420,22 @@ Once you're comfortable with this approach:
 
 ---
 
-## Reference
+## 🔗 Reference
+
+### Documentation
 
 - [Main README](../README.md)
-- [JSON-RPC Concepts](../docs/01-concepts-json-rpc.md)
+- [Introduction](../docs/00-introduction.md) - FortiManager overview
+- [JSON-RPC Concepts](../docs/01-concepts-json-rpc.md) - Request structure, methods
+- [Authentication](../docs/02-authentication.md) - Session vs Bearer token
+- [Covered Operations](../docs/03-covered-operations.md) - Supported objects
+- [Best Practices](../docs/04-best-practices.md) - Security and code quality
+
+### Quick Reference
+
 - [API Endpoints Cheatsheet](../cheatsheets/api-endpoints.md)
+- [Common Errors](../cheatsheets/common-errors.md)
+
+### External
+
 - [pyFMG Documentation](https://github.com/p4r4n0y1ng/pyfmg)

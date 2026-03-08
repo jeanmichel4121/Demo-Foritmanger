@@ -1,211 +1,224 @@
 # Covered Operations
 
-> **Complete reference of FortiManager objects and operations supported in this repository.**
+> **Complete reference of FortiManager objects and API paths supported in this repository.**
 
 [Home](../README.md) > [Docs](./) > Covered Operations
 
 ---
 
-## Overview
+## 📋 Overview
 
-This repository demonstrates CRUD (Create, Read, Update, Delete) operations on FortiManager objects. Each section covers specific object types with practical examples across all 4 learning levels.
+This repository demonstrates CRUD operations on FortiManager objects. Each section covers specific object types with practical examples across all 4 learning levels.
 
----
-
-## CRUD Methods
+For details on CRUD methods (`get`, `add`, `set`, `update`, `delete`), see [JSON-RPC Concepts](01-concepts-json-rpc.md#available-methods).
 
 ![CRUD Methods](../diagrams/07-crud-methods.png)
 
-| Method | Purpose | REST Equivalent | When to Use |
-|--------|---------|-----------------|-------------|
-| **`get`** | Read objects | GET | Retrieve data |
-| **`add`** | Create new object | POST | Create new, fail if exists |
-| **`set`** | Create or replace | PUT | Create or overwrite entirely |
-| **`update`** | Partial update | PATCH | Modify specific fields |
-| **`delete`** | Remove object | DELETE | Delete object |
-| **`exec`** | Execute action | POST (action) | Login, install, tasks |
+---
+
+## 🏠 Firewall Objects
+
+### Addresses
+
+Addresses are the building blocks for firewall policies - they define source and destination endpoints.
+
+| Object Type | API Path | Description |
+|-------------|----------|-------------|
+| **IPv4 Address** | `/pm/config/adom/{adom}/obj/firewall/address` | Single hosts, subnets, ranges |
+| **IPv6 Address** | `/pm/config/adom/{adom}/obj/firewall/address6` | IPv6 equivalents |
+| **Address Group** | `/pm/config/adom/{adom}/obj/firewall/addrgrp` | Logical grouping of addresses |
+| **Address Group (IPv6)** | `/pm/config/adom/{adom}/obj/firewall/addrgrp6` | IPv6 address groups |
+
+**Supported Address Types:**
+
+| Type | Description | Example |
+|------|-------------|---------|
+| `ipmask` | IP with subnet mask | `10.0.0.0 255.255.255.0` |
+| `iprange` | IP range | `startip: 10.0.0.1, endip: 10.0.0.100` |
+| `fqdn` | DNS hostname | `www.example.com` |
+| `wildcard` | Wildcard mask | `10.0.*.0 255.255.0.255` |
+| `geography` | Country code | `country: US` |
+| `dynamic` | Dynamic address | FortiClient EMS tags |
+
+### Services
+
+Services define TCP/UDP ports, protocols, and port ranges used in firewall policies.
+
+| Object Type | API Path | Description |
+|-------------|----------|-------------|
+| **Custom Service** | `/pm/config/adom/{adom}/obj/firewall/service/custom` | User-defined services |
+| **Service Group** | `/pm/config/adom/{adom}/obj/firewall/service/group` | Logical grouping |
+| **Service Category** | `/pm/config/adom/{adom}/obj/firewall/service/category` | Service categories |
+
+**Protocol Support:**
+
+| Protocol | Description |
+|----------|-------------|
+| `TCP/UDP/SCTP` | Layer 4 protocols with port ranges |
+| `ICMP` | ICMP types and codes |
+| `IP` | Raw IP protocol numbers |
+
+### Schedules
+
+Schedules define time windows for policy enforcement.
+
+| Object Type | API Path | Use Case |
+|-------------|----------|----------|
+| **One-time** | `/pm/config/adom/{adom}/obj/firewall/schedule/onetime` | Maintenance windows |
+| **Recurring** | `/pm/config/adom/{adom}/obj/firewall/schedule/recurring` | Business hours |
+| **Schedule Group** | `/pm/config/adom/{adom}/obj/firewall/schedule/group` | Combined schedules |
 
 ---
 
-## Firewall Objects
+## 🔀 NAT Configuration
 
-### IPv4 Addresses
+Network Address Translation for inbound and outbound traffic.
 
-| Property | Description | Example |
-|----------|-------------|---------|
-| **name** | Unique identifier | `"SRV_WEB_01"` |
-| **type** | Address type | `"ipmask"`, `"fqdn"`, `"iprange"` |
-| **subnet** | IP and mask | `"192.168.10.10 255.255.255.255"` |
-| **comment** | Description | `"Web Server"` |
+| Object Type | API Path | Direction | Purpose |
+|-------------|----------|-----------|---------|
+| **VIP (IPv4)** | `/pm/config/adom/{adom}/obj/firewall/vip` | Inbound | DNAT / Port forwarding |
+| **VIP (IPv6)** | `/pm/config/adom/{adom}/obj/firewall/vip6` | Inbound | IPv6 DNAT |
+| **VIP Group** | `/pm/config/adom/{adom}/obj/firewall/vipgrp` | Inbound | Grouped VIPs |
+| **IP Pool (IPv4)** | `/pm/config/adom/{adom}/obj/firewall/ippool` | Outbound | SNAT |
+| **IP Pool (IPv6)** | `/pm/config/adom/{adom}/obj/firewall/ippool6` | Outbound | IPv6 SNAT |
 
-**API Path:** `/pm/config/adom/{adom}/obj/firewall/address`
+**VIP Types:**
 
-**Supported Types:**
-- `ipmask` - IP with subnet mask
-- `iprange` - IP range (start-ip, end-ip)
-- `fqdn` - Fully qualified domain name
-- `wildcard` - Wildcard mask
-- `geography` - Country code
-- `dynamic` - SDN connector
+| Type | Description |
+|------|-------------|
+| `static-nat` | 1:1 NAT mapping |
+| `server-load-balance` | Load balancing across servers |
+| `dns-translation` | DNS-based translation |
 
-### IPv6 Addresses
+**IP Pool Types:**
 
-**API Path:** `/pm/config/adom/{adom}/obj/firewall/address6`
-
-Same operations as IPv4, with IPv6-specific fields.
-
-### Address Groups
-
-| Property | Description | Example |
-|----------|-------------|---------|
-| **name** | Group name | `"GRP_WEB_SERVERS"` |
-| **member** | Array of addresses | `["SRV_WEB_01", "SRV_WEB_02"]` |
-| **comment** | Description | `"All web servers"` |
-
-**API Path:** `/pm/config/adom/{adom}/obj/firewall/addrgrp`
+| Type | Description |
+|------|-------------|
+| `overload` | PAT - many-to-one |
+| `one-to-one` | 1:1 source NAT |
+| `fixed-port-range` | Deterministic NAT |
 
 ---
 
-## Services
+## 🛡️ Security Profiles
 
-### Custom Services
+Deep inspection and content control profiles.
 
-| Property | Description | Example |
-|----------|-------------|---------|
-| **name** | Service name | `"TCP_8443"` |
-| **protocol** | Protocol type | `"TCP/UDP/SCTP"` |
-| **tcp-portrange** | TCP ports | `"8443"`, `"8000-9000"` |
-| **udp-portrange** | UDP ports | `"53"`, `"161-162"` |
-
-**API Path:** `/pm/config/adom/{adom}/obj/firewall/service/custom`
-
-### Service Groups
-
-**API Path:** `/pm/config/adom/{adom}/obj/firewall/service/group`
+| Profile Type | API Path | Purpose |
+|--------------|----------|---------|
+| **Application Group** | `/pm/config/adom/{adom}/obj/application/group` | App control groups |
+| **Application List** | `/pm/config/adom/{adom}/obj/application/list` | App control policies |
+| **Antivirus** | `/pm/config/adom/{adom}/obj/antivirus/profile` | Malware scanning |
+| **Web Filter** | `/pm/config/adom/{adom}/obj/webfilter/profile` | URL/content filtering |
+| **URL Filter** | `/pm/config/adom/{adom}/obj/webfilter/urlfilter` | URL lists |
+| **IPS Sensor** | `/pm/config/adom/{adom}/obj/ips/sensor` | Intrusion prevention |
+| **SSL/SSH Inspection** | `/pm/config/adom/{adom}/obj/firewall/ssl-ssh-profile` | Deep inspection |
 
 ---
 
-## Schedules
+## 🔥 Firewall Policies
 
-### One-time Schedules
+The core of FortiGate security - controlling traffic flow.
 
-| Property | Description | Example |
-|----------|-------------|---------|
-| **name** | Schedule name | `"MAINT_WINDOW_2024"` |
-| **start** | Start datetime | `"00:00 2024/06/01"` |
-| **end** | End datetime | `"06:00 2024/06/01"` |
+| Object Type | API Path | Description |
+|-------------|----------|-------------|
+| **Firewall Policy** | `/pm/config/adom/{adom}/pkg/{pkg}/firewall/policy` | All policies in package |
+| **Policy by ID** | `/pm/config/adom/{adom}/pkg/{pkg}/firewall/policy/{id}` | Specific policy |
 
-**API Path:** `/pm/config/adom/{adom}/obj/firewall/schedule/onetime`
+**Policy Fields:**
 
-### Recurring Schedules
-
-| Property | Description | Example |
-|----------|-------------|---------|
-| **name** | Schedule name | `"BUSINESS_HOURS"` |
-| **day** | Days of week | `["monday", "tuesday", ...]` |
-| **start** | Start time | `"08:00"` |
-| **end** | End time | `"18:00"` |
-
-**API Path:** `/pm/config/adom/{adom}/obj/firewall/schedule/recurring`
-
----
-
-## NAT Configuration
-
-### Virtual IPs (DNAT - Inbound)
-
-| Property | Description | Example |
-|----------|-------------|---------|
-| **name** | VIP name | `"VIP_WEB_SERVER"` |
-| **extip** | External IP | `"203.0.113.10"` |
-| **mappedip** | Internal IP | `"192.168.10.10"` |
-| **extport** | External port | `"443"` |
-| **mappedport** | Internal port | `"8443"` |
-
-**API Path:** `/pm/config/adom/{adom}/obj/firewall/vip`
-
-### IP Pools (SNAT - Outbound)
-
-| Property | Description | Example |
-|----------|-------------|---------|
-| **name** | Pool name | `"POOL_OUTBOUND"` |
-| **startip** | First IP in pool | `"203.0.113.100"` |
-| **endip** | Last IP in pool | `"203.0.113.110"` |
-| **type** | Pool type | `"overload"`, `"one-to-one"` |
-
-**API Path:** `/pm/config/adom/{adom}/obj/firewall/ippool`
-
----
-
-## Security Profiles
-
-### Application Groups
-
-| Property | Description | Example |
-|----------|-------------|---------|
-| **name** | Group name | `"SOCIAL_MEDIA"` |
-| **application** | App IDs | `[16000, 16001, ...]` |
-| **comment** | Description | `"Social media apps"` |
-
-**API Path:** `/pm/config/adom/{adom}/obj/application/group`
-
-### Other Profiles
-
-| Profile Type | API Path |
-|--------------|----------|
-| **Antivirus** | `/pm/config/adom/{adom}/obj/antivirus/profile` |
-| **Web Filter** | `/pm/config/adom/{adom}/obj/webfilter/profile` |
-| **IPS Sensor** | `/pm/config/adom/{adom}/obj/ips/sensor` |
-| **SSL Inspection** | `/pm/config/adom/{adom}/obj/firewall/ssl-ssh-profile` |
-
----
-
-## Firewall Policies
-
-### Policy Structure
-
-| Property | Description | Example |
-|----------|-------------|---------|
-| **name** | Policy name | `"Allow-Web-Traffic"` |
-| **srcintf** | Source interfaces | `["port1"]` |
-| **dstintf** | Destination interfaces | `["port2"]` |
-| **srcaddr** | Source addresses | `["all"]` |
-| **dstaddr** | Destination addresses | `["SRV_WEB_01"]` |
-| **service** | Services | `["HTTP", "HTTPS"]` |
-| **action** | Action | `"accept"`, `"deny"` |
-| **logtraffic** | Logging | `"all"`, `"utm"`, `"disable"` |
-| **nat** | NAT enable | `"enable"`, `"disable"` |
-
-**API Path:** `/pm/config/adom/{adom}/pkg/{pkg}/firewall/policy`
+| Field | Type | Description |
+|-------|------|-------------|
+| `name` | String | Policy name |
+| `srcintf` | Array | Source interfaces |
+| `dstintf` | Array | Destination interfaces |
+| `srcaddr` | Array | Source addresses |
+| `dstaddr` | Array | Destination addresses |
+| `service` | Array | Services |
+| `action` | String | `accept`, `deny`, `reject` |
+| `schedule` | String | Time-based control |
+| `nat` | String | `enable`, `disable` |
+| `logtraffic` | String | `all`, `utm`, `disable` |
 
 ### Policy Installation
 
-![Policy Installation](../diagrams/05-policy-installation-workflow.png)
+| Action | Method | API Path | Description |
+|--------|--------|----------|-------------|
+| **Preview** | `exec` | `/securityconsole/install/preview` | Dry-run before install |
+| **Install** | `exec` | `/securityconsole/install/package` | Deploy to devices |
+| **Status** | `get` | `/task/task/{task_id}` | Check task progress |
 
-| Action | Method | API Path |
-|--------|--------|----------|
-| **Preview** | `exec` | `/securityconsole/install/preview` |
-| **Install** | `exec` | `/securityconsole/install/package` |
-| **Status** | `get` | `/task/task/{task_id}` |
+![Policy Installation Workflow](../diagrams/05-policy-installation-workflow.png)
 
 ---
 
-## Operations by Level
+## 📊 Operations Coverage by Level
 
-| Operation | Level 1 | Level 2 | Level 3 | Level 4 |
-|-----------|---------|---------|---------|---------|
+| Operation | Level 1 (Raw HTTP) | Level 2 (Python) | Level 3 (pyFMG) | Level 4 (Ansible) |
+|-----------|:------------------:|:----------------:|:---------------:|:-----------------:|
+| **Authentication** | Session + Bearer | Session + Bearer | Session + Bearer | httpapi |
 | **Addresses** | Full CRUD | Full CRUD | Full CRUD | Full CRUD |
+| **Address Groups** | Full CRUD | - | - | Full CRUD |
 | **Services** | Full CRUD | Full CRUD | - | Full CRUD |
+| **Service Groups** | - | - | - | Full CRUD |
 | **Schedules** | Full CRUD | - | - | - |
-| **NAT/VIP** | Full CRUD | - | - | - |
-| **Security Profiles** | Full CRUD | - | - | - |
-| **Policies** | Full CRUD | Full CRUD | Full CRUD | Full CRUD |
-| **Installation** | Yes | Yes | Yes | Yes |
+| **VIPs (DNAT)** | Full CRUD | - | - | - |
+| **IP Pools (SNAT)** | Full CRUD | - | - | - |
+| **App Groups** | Full CRUD | - | - | - |
+| **URL Filters** | PowerShell only | - | - | - |
+| **Policies** | Full CRUD + Move | Full CRUD | Full CRUD | Full CRUD |
+| **Installation** | Preview + Install | Preview + Install | Preview + Install | Preview + Install |
+
+> **Legend**: Full CRUD = Create, Read, Update, Delete operations demonstrated
 
 ---
 
-## See Also
+## 🔄 Common Patterns
 
-- [API Endpoints Cheatsheet](../cheatsheets/api-endpoints.md)
-- [JSON-RPC Concepts](01-concepts-json-rpc.md)
-- [Object Hierarchy Diagram](../diagrams/04-object-hierarchy.png)
+### Create or Update (Upsert)
+
+```python
+# Using 'set' method for idempotent operations
+fmg.set(url, data)  # Creates if not exists, replaces if exists
+
+# Or handle explicitly
+try:
+    fmg.add(url, data)
+except ObjectExistsError:
+    fmg.update(f"{url}/{name}", data)
+```
+
+### Bulk Operations
+
+```json
+{
+    "method": "add",
+    "params": [
+        {"url": "...", "data": {"name": "NET_A", ...}},
+        {"url": "...", "data": {"name": "NET_B", ...}},
+        {"url": "...", "data": {"name": "NET_C", ...}}
+    ]
+}
+```
+
+### Filtered Read
+
+```json
+{
+    "method": "get",
+    "params": [{
+        "url": "/pm/config/adom/root/obj/firewall/address",
+        "filter": [["name", "like", "NET_%"]],
+        "fields": ["name", "subnet", "comment"]
+    }]
+}
+```
+
+---
+
+## 🔗 See Also
+
+- [API Endpoints Cheatsheet](../cheatsheets/api-endpoints.md) - Complete endpoint reference
+- [JSON-RPC Concepts](01-concepts-json-rpc.md) - Request structure and methods
+- [Common Errors](../cheatsheets/common-errors.md) - Error codes and solutions
+- [Best Practices](04-best-practices.md) - Security and code quality guidelines
