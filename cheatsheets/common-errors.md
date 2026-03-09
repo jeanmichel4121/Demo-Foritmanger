@@ -1,32 +1,59 @@
-# Common FortiManager API Errors
+# ⚠️ FortiManager API Errors
 
-> **Troubleshooting guide for FortiManager JSON-RPC API errors.**
+<div align="center">
+
+**Troubleshooting guide for JSON-RPC API**
+
+*Quickly find the solution to your problem*
+
+[📋 Cheatsheets](README.md) • [🔗 Endpoints](api-endpoints.md) • [🔧 cURL Examples](curl-examples.md)
 
 ---
 
-## Error Code Reference
+</div>
+
+## 🚨 Quick Diagnosis
+
+> **Got an error?** Find it below and click to see the solution!
+
+| Code | Error | Quick Solution |
+|:----:|:------|:---------------|
+| `-10147` | [No write permission](#-error--10147--no-write-permission) | 🔒 Lock the ADOM! |
+| `-11` | [Session expired](#-error--11--session-expired) | 🔄 Reconnect |
+| `-3` | [Object exists](#-error--3--object-already-exists) | 📝 Use `set` instead of `add` |
+| `-2` | [Not found](#-error--2--object-not-found) | 🔍 Check the exact name |
+| `-10` | [Object in use](#-error--10--object-in-use) | 🔗 Remove dependencies |
+| `-6` | [Permission denied](#-error--6--permission-denied) | 👤 Check admin rights |
+| `-20` | [Invalid JSON](#-error--20--invalid-json) | ✏️ Validate your JSON |
+| `401` | [Unauthorized (HTTP)](#-http-error-401--unauthorized) | 🔑 Check API key |
+
+---
+
+## 📊 Error Code Table
 
 | Code | Name | Description | Common Cause |
-|------|------|-------------|--------------|
-| **0** | Success | Operation completed | - |
-| **-1** | Generic Error | Unspecified error | Check message for details |
-| **-2** | Object Not Found | Object doesn't exist | Wrong name, ADOM, or path |
-| **-3** | Object Exists | Duplicate object | Object already created |
-| **-4** | Invalid Input | Bad parameter | Malformed data |
-| **-5** | Invalid Value | Value out of range | Parameter validation failed |
-| **-6** | Permission Denied | Access forbidden | Insufficient privileges |
-| **-9** | Invalid URL | Endpoint not found | Typo in URL path |
-| **-10** | Object In Use | Referenced elsewhere | Remove dependencies first |
-| **-11** | Invalid Session | Auth failure | Session expired or invalid |
-| **-20** | Invalid Syntax | JSON parse error | Malformed JSON body |
-| **-21** | Invalid Method | Unknown method | Typo in method name |
-| **-10147** | No Write Permission | ADOM locked (workspace) | Lock ADOM before changes |
+|:----:|:-----|:------------|:-------------|
+| ✅ `0` | Success | Operation succeeded | - |
+| ❌ `-1` | Generic Error | Non-specific error | See detailed message |
+| 🔍 `-2` | Not Found | Object not found | Wrong name/ADOM/path |
+| 📋 `-3` | Object Exists | Object already exists | Duplication |
+| ⚙️ `-4` | Invalid Input | Incorrect parameter | Malformed data |
+| 📐 `-5` | Invalid Value | Value out of range | Validation failed |
+| 🔒 `-6` | Permission Denied | Access forbidden | Insufficient rights |
+| 🔗 `-9` | Invalid URL | Endpoint doesn't exist | Typo |
+| 📎 `-10` | Object In Use | Object referenced | Remove dependencies |
+| 🔑 `-11` | Invalid Session | Auth failed | Session expired |
+| 📝 `-20` | Invalid Syntax | Parse error | Malformed JSON |
+| ❓ `-21` | Invalid Method | Unknown method | Typo |
+| 🔒 `-10147` | No Write Permission | ADOM locked | Workspace mode |
 
 ---
 
-## Workspace Mode Errors
+## 🔒 Error `-10147` : No Write Permission
 
-### No Write Permission (-10147)
+> 🚨 **This is the most common error!** It means Workspace Mode is enabled.
+
+### 💬 Message received
 
 ```json
 {
@@ -39,32 +66,81 @@
 }
 ```
 
-**Causes:**
-- Trying to modify objects in a locked ADOM (workspace mode enabled)
-- ADOM not locked before making changes
+### 🎯 Cause
 
-**Solutions:**
+You're trying to modify objects **without having locked the ADOM** (workspace mode is enabled).
+
+### ✅ Solution: Follow this workflow
+
+```
+┌──────────────────────────────────────────────────────────────────┐
+│                     WORKSPACE MODE WORKFLOW                       │
+├──────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│   1️⃣ LOCK          2️⃣ CHANGES         3️⃣ COMMIT        4️⃣ UNLOCK │
+│   ┌─────┐          ┌─────────┐        ┌─────┐         ┌─────┐   │
+│   │ 🔒  │   ───►   │  ✏️     │  ───►  │ 💾  │  ───►   │ 🔓  │   │
+│   │LOCK │          │ADD/UPD/ │        │SAVE │         │FREE │   │
+│   │ADOM │          │DELETE   │        │     │         │ADOM │   │
+│   └─────┘          └─────────┘        └─────┘         └─────┘   │
+│                                                                  │
+└──────────────────────────────────────────────────────────────────┘
+```
+
+### 📝 Code to use
+
+<table>
+<tr>
+<td width="50%">
+
+**Step 1: Lock ADOM**
 
 ```json
-// 1. Lock ADOM before changes
 {
   "method": "exec",
   "params": [{
     "url": "/dvmdb/adom/root/workspace/lock"
   }]
 }
+```
 
-// 2. Make your changes...
+</td>
+<td width="50%">
 
-// 3. Commit changes
+**Step 2: Your modifications...**
+
+```json
+{
+  "method": "add",
+  "params": [{
+    "url": "/pm/config/adom/root/obj/...",
+    "data": { ... }
+  }]
+}
+```
+
+</td>
+</tr>
+<tr>
+<td width="50%">
+
+**Step 3: Commit**
+
+```json
 {
   "method": "exec",
   "params": [{
     "url": "/dvmdb/adom/root/workspace/commit"
   }]
 }
+```
 
-// 4. Unlock ADOM
+</td>
+<td width="50%">
+
+**Step 4: Unlock**
+
+```json
 {
   "method": "exec",
   "params": [{
@@ -73,16 +149,17 @@
 }
 ```
 
-**Workflow:**
-```
-Lock ADOM → Make Changes → Commit → Unlock ADOM
-```
+</td>
+</tr>
+</table>
+
+> 💡 **Tip:** Always unlock even in case of error, otherwise the ADOM stays locked!
 
 ---
 
-## Authentication Errors
+## 🔑 Error `-11` : Session Expired
 
-### Session Expired (-11)
+### 💬 Message received
 
 ```json
 {
@@ -95,86 +172,85 @@ Lock ADOM → Make Changes → Commit → Unlock ADOM
 }
 ```
 
-**Causes:**
-- Session token expired (default: 5 minutes inactivity)
-- Token was invalidated (logout called elsewhere)
-- Multiple logins with same credentials
+### 🎯 Possible causes
 
-**Solutions:**
+| Cause | Explanation |
+|:------|:------------|
+| ⏰ Timeout | Session inactive > 5 minutes |
+| 🔄 Logout elsewhere | Disconnected from another session |
+| 👥 Multi-login | Multiple connections with same account |
+
+### ✅ Solutions
+
+<table>
+<tr>
+<td width="50%">
+
+#### 🔄 Option 1: Reconnect
 
 ```python
-# Python: Implement session refresh
+# Python - Automatic refresh
 def ensure_session(fmg):
     try:
         fmg.get("/sys/status")
     except SessionError:
-        fmg.login()
-
-# Or use Bearer token (no expiration)
-fmg = FortiManager(host, apikey="your_api_key")
+        fmg.login()  # Reconnect
 ```
 
-```powershell
-# PowerShell: Handle in catch block
-try {
-    $result = Invoke-FMGRequest -Session $session -Method "get" -Url $url
-}
-catch {
-    if ($_.Exception -match "-11") {
-        $session = Login-FortiManager
-        $result = Invoke-FMGRequest -Session $session -Method "get" -Url $url
-    }
-}
+</td>
+<td width="50%">
+
+#### 🔑 Option 2: Bearer Token (Recommended)
+
+```bash
+# Never expires!
+curl -H "Authorization: Bearer $API_KEY" ...
 ```
 
-### Invalid API Key (HTTP 401)
+</td>
+</tr>
+</table>
 
-```
-HTTP/1.1 401 Unauthorized
-Content-Type: application/json
-
-{"error": "Unauthorized"}
-```
-
-**Causes:**
-- API key is incorrect
-- API user was deleted or disabled
-- API key was regenerated
-
-**Solutions:**
-1. Verify the API key in FortiManager GUI
-2. Check if the API user still exists
-3. Regenerate the API key if necessary
-4. Verify header format: `Authorization: Bearer <key>`
-
-### Bad Credentials (-1)
-
-```json
-{
-  "result": [{
-    "status": {
-      "code": -1,
-      "message": "Invalid username or password"
-    }
-  }]
-}
-```
-
-**Causes:**
-- Wrong username or password
-- Admin account locked
-- Admin account expired
-
-**Solutions:**
-1. Verify credentials
-2. Check admin account status in FMG GUI
-3. Reset password if needed
+> 💡 **Recommendation:** **Always** use a Bearer Token for automated scripts!
 
 ---
 
-## Object Errors
+## 🔑 HTTP Error 401 : Unauthorized
 
-### Object Already Exists (-3)
+### 💬 Message received
+
+```
+HTTP/1.1 401 Unauthorized
+{"error": "Unauthorized"}
+```
+
+### 🎯 Possible causes
+
+- ❌ Incorrect API key
+- ❌ API user deleted/disabled
+- ❌ Key regenerated
+
+### ✅ Verification checklist
+
+```
+□ 1. Check API key in FortiManager GUI
+     System Settings → Administrators → API User
+
+□ 2. Check header format
+     ✓ Correct: "Authorization: Bearer abc123..."
+     ✗ Wrong:   "Authorization: abc123..."
+     ✗ Wrong:   "Bearer: abc123..."
+
+□ 3. Check that API user is active
+
+□ 4. Regenerate key if necessary
+```
+
+---
+
+## 📋 Error `-3` : Object Already Exists
+
+### 💬 Message received
 
 ```json
 {
@@ -187,33 +263,63 @@ Content-Type: application/json
 }
 ```
 
-**Causes:**
-- Trying to `add` an existing object
-- Name conflict in same scope
+### 🎯 Cause
 
-**Solutions:**
+You're using `add` for an object that already exists.
 
-```python
-# Python: Create-or-update pattern
-def upsert_address(fmg, name, data):
-    code, _ = fmg.add(url, data)
-    if code == -3:  # Already exists
-        code, _ = fmg.update(f"{url}/{name}", data)
-    return code == 0
-```
+### ✅ Solutions
+
+<table>
+<tr>
+<td width="50%">
+
+#### 📝 Solution 1: Use `set`
+
+`set` = create OR replace
 
 ```json
-// Use 'set' instead of 'add' (creates or replaces)
 {
-  "method": "set",
+  "method": "set",  // ← Not "add"
   "params": [{
     "url": "/pm/config/adom/root/obj/firewall/address",
-    "data": {...}
+    "data": {
+      "name": "MY_OBJECT",
+      ...
+    }
   }]
 }
 ```
 
-### Object Not Found (-2)
+</td>
+<td width="50%">
+
+#### 🔄 Solution 2: Upsert Pattern
+
+```python
+# Python - Create or Update
+def upsert_address(fmg, name, data):
+    code, _ = fmg.add(url, data)
+
+    if code == -3:  # Already exists
+        code, _ = fmg.update(
+            f"{url}/{name}",
+            data
+        )
+
+    return code == 0
+```
+
+</td>
+</tr>
+</table>
+
+> 💡 **Tip:** Use `set` for idempotent operations!
+
+---
+
+## 🔍 Error `-2` : Object Not Found
+
+### 💬 Message received
 
 ```json
 {
@@ -226,33 +332,49 @@ def upsert_address(fmg, name, data):
 }
 ```
 
-**Causes:**
-- Object name is incorrect (case-sensitive!)
-- Object is in different ADOM
-- Object was deleted
-- Typo in URL path
+### 🎯 Common causes
 
-**Solutions:**
+| Cause | Solution |
+|:------|:---------|
+| Incorrect name | Names are **case-sensitive**! |
+| Wrong ADOM | Check `{adom}` in URL |
+| Object deleted | Object no longer exists |
+| Wrong type | `address` vs `address6` |
+
+### ✅ Verification checklist
+
+```
+□ 1. Is the name EXACTLY the same? (case-sensitive)
+     "SRV_Web_01" ≠ "srv_web_01" ≠ "SRV_WEB_01"
+
+□ 2. Right ADOM?
+     /pm/config/adom/ROOT/...  ← Check here
+
+□ 3. Right object type?
+     /obj/firewall/address      ← IPv4
+     /obj/firewall/address6     ← IPv6
+
+□ 4. Does the object really exist?
+```
+
+### 🔎 Search for the object
 
 ```bash
-# Verify object exists
-curl -X POST "$FMG_URL" -d '{
+# Search with pattern
+curl -X POST "$FMG/jsonrpc" -d '{
   "method": "get",
   "params": [{
     "url": "/pm/config/adom/root/obj/firewall/address",
     "filter": [["name", "like", "%SEARCHTERM%"]]
-  }],
-  "session": "..."
+  }]
 }'
 ```
 
-**Checklist:**
-- [ ] Object name matches exactly (case-sensitive)
-- [ ] Correct ADOM specified
-- [ ] URL path is correct
-- [ ] Object type is correct (address vs address6)
+---
 
-### Object In Use (-10)
+## 📎 Error `-10` : Object In Use
+
+### 💬 Message received
 
 ```json
 {
@@ -265,138 +387,66 @@ curl -X POST "$FMG_URL" -d '{
 }
 ```
 
-**Causes:**
-- Address referenced in policy
-- Address used in address group
-- Service used in service group
-- Object referenced elsewhere
+### 🎯 Cause
 
-**Solutions:**
+The object is referenced in:
+- 📜 A policy
+- 📁 A group
+- 🔀 A NAT rule
+- 📦 Another object
+
+### ✅ Solution: Find dependencies
+
+**Step 1: Identify what's using the object**
 
 ```json
-// Find what's using the object
 {
   "method": "get",
   "params": [{
-    "url": "/pm/config/adom/root/obj/firewall/address/MY_ADDR",
+    "url": "/pm/config/adom/root/obj/firewall/address/MY_OBJECT",
     "option": ["get used"]
   }]
 }
 ```
 
-**Response shows references:**
+**Response:**
+
 ```json
 {
   "data": {
-    "name": "MY_ADDR",
+    "name": "MY_OBJECT",
     "_used_by": [
-      {"path": "/pkg/default/firewall/policy/10", "name": "policy-10"}
+      {"path": "/pkg/default/firewall/policy/10", "name": "Policy-Web"},
+      {"path": "/obj/firewall/addrgrp/GRP_SERVERS", "name": "GRP_SERVERS"}
     ]
   }
 }
 ```
 
-**Resolution order:**
-1. Find all references using `"option": ["get used"]`
-2. Remove object from policies/groups
-3. Delete the object
+**Step 2: Deletion workflow**
+
+```
+┌─────────────────────────────────────────────────────┐
+│            OBJECT DELETION ORDER                     │
+├─────────────────────────────────────────────────────┤
+│                                                     │
+│   1️⃣ Remove from policies                          │
+│      └─► Policy-Web uses MY_OBJECT                 │
+│                                                     │
+│   2️⃣ Remove from groups                            │
+│      └─► GRP_SERVERS contains MY_OBJECT            │
+│                                                     │
+│   3️⃣ Delete the object                             │
+│      └─► MY_OBJECT can now be deleted              │
+│                                                     │
+└─────────────────────────────────────────────────────┘
+```
 
 ---
 
-## Syntax & Validation Errors
+## 🔒 Error `-6` : Permission Denied
 
-### Invalid JSON (-20)
-
-```json
-{
-  "result": [{
-    "status": {
-      "code": -20,
-      "message": "Invalid JSON syntax"
-    }
-  }]
-}
-```
-
-**Causes:**
-- Missing quotes around strings
-- Trailing commas
-- Missing commas between fields
-- Unescaped special characters
-- Wrong encoding
-
-**Solutions:**
-
-```bash
-# Validate JSON before sending
-echo '{"your": "json"}' | jq .
-
-# Use heredoc for complex JSON
-curl -X POST "$URL" -d "$(cat <<'EOF'
-{
-  "id": 1,
-  "method": "add",
-  "params": [{"url": "...", "data": {...}}]
-}
-EOF
-)"
-```
-
-### Missing Parameter
-
-```json
-{
-  "result": [{
-    "status": {
-      "code": -1,
-      "message": "Missing required parameter: name"
-    }
-  }]
-}
-```
-
-**Solutions:**
-1. Check required fields for object type
-2. Refer to API documentation
-3. Use `"option": ["syntax"]` to get field requirements:
-
-```json
-{
-  "method": "get",
-  "params": [{
-    "url": "/pm/config/adom/root/obj/firewall/address",
-    "option": ["syntax"]
-  }]
-}
-```
-
-### Invalid Value (-5)
-
-```json
-{
-  "result": [{
-    "status": {
-      "code": -5,
-      "message": "Invalid value for field: subnet"
-    }
-  }]
-}
-```
-
-**Common mistakes:**
-
-| Field | Wrong | Correct |
-|-------|-------|---------|
-| **subnet** | `"10.0.0.0/24"` | `"10.0.0.0 255.255.255.0"` |
-| **action** | `"allow"` | `"accept"` |
-| **srcaddr** | `"all"` | `["all"]` |
-| **logtraffic** | `"enable"` | `"all"` |
-
----
-
-## Permission Errors
-
-### Permission Denied (-6)
+### 💬 Message received
 
 ```json
 {
@@ -409,124 +459,153 @@ EOF
 }
 ```
 
-**Causes:**
-- Admin profile lacks required permissions
-- ADOM access not granted
-- Read-only profile trying to write
+### 🎯 Possible causes
 
-**Solutions:**
-1. Check admin profile in FMG GUI
-2. Verify ADOM access permissions
-3. Ensure write permissions for modify operations
+| Cause | Check |
+|:------|:------|
+| Read-only profile | Profile doesn't have write rights |
+| Unauthorized ADOM | Admin doesn't have access to this ADOM |
+| Protected resource | Some objects are read-only |
 
-**Required permissions by operation:**
+### ✅ Required permissions by operation
 
 | Operation | Required Permission |
-|-----------|---------------------|
-| **Read objects** | *Policy Objects (Read)* |
-| **Modify objects** | *Policy Objects (Read/Write)* |
-| **Install policies** | *Policy Package + Device Manager* |
-| **Manage devices** | *Device Manager (Read/Write)* |
+|:----------|:-------------------|
+| 📖 Read objects | *Policy Objects (Read)* |
+| ✏️ Modify objects | *Policy Objects (Read/Write)* |
+| 📤 Install policies | *Policy Package + Device Manager* |
+| 💻 Manage devices | *Device Manager (Read/Write)* |
+| 🔧 Administration | *Super_User or equivalent* |
+
+### 🔎 Check permissions
+
+```
+FortiManager GUI:
+├── System Settings
+│   └── Administrators
+│       └── [Your user]
+│           └── Admin Profile → Check rights
+```
 
 ---
 
-## Installation Errors
+## 📝 Error `-20` : Invalid JSON
 
-### Device Not Found
+### 💬 Message received
 
 ```json
 {
   "result": [{
     "status": {
-      "code": -2,
-      "message": "device not found"
+      "code": -20,
+      "message": "Invalid JSON syntax"
     }
   }]
 }
 ```
 
-**Causes:**
-- Device name incorrect
-- Device not in specified ADOM
-- Device not authorized
+### 🎯 Common errors
 
-**Solutions:**
+| Error | Incorrect Example | Correct Example |
+|:------|:------------------|:----------------|
+| Trailing comma | `{"a": 1,}` | `{"a": 1}` |
+| Missing quotes | `{name: "test"}` | `{"name": "test"}` |
+| Single quotes | `{'name': 'test'}` | `{"name": "test"}` |
+| Missing comma | `{"a": 1 "b": 2}` | `{"a": 1, "b": 2}` |
 
-```json
-// List devices to verify name
-{
-  "method": "get",
-  "params": [{
-    "url": "/dvmdb/adom/root/device",
-    "fields": ["name", "hostname", "conn_status"]
-  }]
-}
+### ✅ Solutions
+
+<table>
+<tr>
+<td width="50%">
+
+#### 🔍 Validate on command line
+
+```bash
+# With jq
+echo '{"your": "json"}' | jq .
+
+# If error, jq shows the line
 ```
 
-### Package Not Found
+</td>
+<td width="50%">
+
+#### 📝 Use a heredoc
+
+```bash
+curl -X POST "$URL" -d "$(cat <<'EOF'
+{
+  "id": 1,
+  "method": "get",
+  "params": [{"url": "..."}]
+}
+EOF
+)"
+```
+
+</td>
+</tr>
+</table>
+
+### 🛠️ JSON validation tools
+
+| Tool | Usage |
+|:-----|:------|
+| `jq .` | CLI validation |
+| [jsonlint.com](https://jsonlint.com) | Online validation |
+| VSCode | Syntax highlighting |
+
+---
+
+## 📐 Error `-5` : Invalid Value
+
+### 💬 Message received
 
 ```json
 {
   "result": [{
     "status": {
-      "code": -2,
-      "message": "pkg not found"
+      "code": -5,
+      "message": "Invalid value for field: subnet"
     }
   }]
 }
 ```
 
-**Solutions:**
+### 🎯 Common errors by field
 
-```json
-// List packages to verify name
-{
-  "method": "get",
-  "params": [{
-    "url": "/pm/pkg/adom/root"
-  }]
-}
-```
+| Field | ❌ Incorrect | ✅ Correct |
+|:------|:-------------|:-----------|
+| `subnet` | `"10.0.0.0/24"` | `"10.0.0.0 255.255.255.0"` |
+| `action` | `"allow"` | `"accept"` |
+| `srcaddr` | `"all"` | `["all"]` |
+| `logtraffic` | `"enable"` | `"all"` |
+| `nat` | `true` | `"enable"` |
 
-### Installation Failed
+> ⚠️ **Watch out for arrays!** `srcaddr`, `dstaddr`, `service` are **arrays** `["value"]`
 
-**Check task status:**
-
-```json
-{
-  "method": "get",
-  "params": [{
-    "url": "/task/task/12345"
-  }]
-}
-```
-
-**Task line details:**
+### ✅ Get correct syntax
 
 ```json
 {
   "method": "get",
   "params": [{
-    "url": "/task/task/12345/line",
-    "fields": ["detail", "state", "progress"]
+    "url": "/pm/config/adom/root/obj/firewall/address",
+    "option": ["syntax"]
   }]
 }
 ```
 
 ---
 
-## Connection Errors
+## 🔌 Connection Errors
 
-### Connection Timeout
+### ⏰ Timeout
 
 ```
 Error: Connection timed out after 30000ms
 ```
-
-**Causes:**
-- Network connectivity issues
-- Firewall blocking port 443
-- FortiManager not reachable
 
 **Solutions:**
 
@@ -537,11 +616,11 @@ curl -k -v https://$FMG_HOST/jsonrpc
 # Check port
 nc -zv $FMG_HOST 443
 
-# Increase timeout
+# Increase timeout (Python)
 requests.post(url, timeout=120)
 ```
 
-### SSL Certificate Error
+### 🔐 SSL Error
 
 ```
 Error: SSL certificate problem: unable to get local issuer certificate
@@ -550,70 +629,54 @@ Error: SSL certificate problem: unable to get local issuer certificate
 **Solutions:**
 
 | Environment | Solution |
-|-------------|----------|
-| **Lab/Dev** | *Disable verification* |
-| **Production** | *Add FMG CA certificate* |
-
-```python
-# Python (Lab only!)
-requests.post(url, verify=False)
-
-# Or with CA cert
-requests.post(url, verify='/path/to/fmg-ca.pem')
-```
-
-```powershell
-# PowerShell 7+
-Invoke-RestMethod -Uri $url -SkipCertificateCheck
-```
+|:------------|:---------|
+| 🧪 Lab/Dev | Disable verification |
+| 🏭 Production | Add CA certificate |
 
 ```bash
-# cURL
-curl -k https://$FMG_HOST/jsonrpc  # Insecure
-curl --cacert fmg-ca.pem https://$FMG_HOST/jsonrpc  # Secure
+# Lab (insecure)
+curl -k https://$FMG_HOST/jsonrpc
+
+# Production (secure)
+curl --cacert fmg-ca.pem https://$FMG_HOST/jsonrpc
 ```
 
 ---
 
-## Debugging Tips
+## 🛠️ Debugging Tips
 
-### Enable Debug Logging
+### 📋 Enable detailed logs
 
-**Python:**
-```python
-import logging
-import http.client
+<table>
+<tr>
+<td width="50%">
 
-# Enable HTTP debug
-http.client.HTTPConnection.debuglevel = 1
-logging.basicConfig(level=logging.DEBUG)
+**cURL**
 
-# Or for requests library
-import requests
-from requests_toolbelt.utils import dump
-
-response = requests.post(url, json=payload)
-print(dump.dump_all(response).decode('utf-8'))
-```
-
-**PowerShell:**
-```powershell
-$env:FMG_DEBUG = "true"
-
-# Or use Invoke-WebRequest with -Verbose
-Invoke-WebRequest -Uri $url -Method Post -Body $body -Verbose
-```
-
-**cURL:**
 ```bash
-curl -v -X POST https://$FMG_HOST/jsonrpc \
+curl -v -X POST https://$FMG/jsonrpc \
   -H "Content-Type: application/json" \
   -d '{...}'
 ```
 
-### Check Full Response
+</td>
+<td width="50%">
 
-Always examine the complete response:
+**Python**
+
+```python
+import logging
+import http.client
+
+http.client.HTTPConnection.debuglevel = 1
+logging.basicConfig(level=logging.DEBUG)
+```
+
+</td>
+</tr>
+</table>
+
+### 🔍 Examine complete response
 
 ```python
 import json
@@ -621,54 +684,100 @@ import json
 response = requests.post(url, json=payload)
 print(json.dumps(response.json(), indent=2))
 
-# Check for nested error details
-result = response.json()
-for r in result.get('result', []):
+# Check each result
+for r in response.json().get('result', []):
     if r['status']['code'] != 0:
-        print(f"Error: {r['status']}")
-```
-
-### Validate Request Structure
-
-```json
-// Minimal valid request
-{
-  "id": 1,
-  "method": "get",
-  "params": [{"url": "/sys/status"}],
-  "session": "your_session_token"
-}
-
-// Required fields:
-// - id: integer
-// - method: string
-// - params: array of objects
-// - session OR Authorization header
+        print(f"❌ Error: {r['status']}")
+    else:
+        print(f"✅ Success")
 ```
 
 ---
 
-## Quick Troubleshooting Checklist
+## ✅ Quick Troubleshooting Checklist
+
+Check in order until you find the problem:
 
 ```
-[ ] 1. Check credentials/API key
-[ ] 2. Verify ADOM is correct
-[ ] 3. Confirm object names (case-sensitive)
-[ ] 4. Validate JSON syntax
-[ ] 5. Check URL path spelling
-[ ] 6. Verify method name (get/add/set/update/delete)
-[ ] 7. Confirm required fields are present
-[ ] 8. Check array fields are arrays ["value"]
-[ ] 9. Review admin permissions
-[ ] 10. Test network connectivity
+□ 1. Valid credentials / API key?
+     → Test GET /sys/status
+
+□ 2. Correct ADOM?
+     → Check exact name
+
+□ 3. Exact object names? (case-sensitive)
+     → "SRV_Web" ≠ "srv_web"
+
+□ 4. Valid JSON?
+     → Test with: echo '...' | jq .
+
+□ 5. Correct URL?
+     → Check /pm/config vs /dvmdb vs /sys
+
+□ 6. Right method? (get/add/set/update/delete)
+     → add = create | set = create or replace
+
+□ 7. Required fields present?
+     → Use option: ["syntax"]
+
+□ 8. Arrays for srcaddr/dstaddr/service?
+     → ["value"] not "value"
+
+□ 9. Sufficient admin permissions?
+     → Check admin profile
+
+□ 10. Network connectivity OK?
+      → curl -k https://$FMG/jsonrpc
 ```
 
 ---
 
-## See Also
+## 📚 See Also
 
-| Resource | Link |
-|----------|------|
-| **API Endpoints** | [api-endpoints.md](api-endpoints.md) |
-| **cURL Examples** | [curl-examples.md](curl-examples.md) |
-| **Authentication** | [../docs/02-authentication.md](../docs/02-authentication.md) |
+<table>
+<tr>
+<td align="center" width="20%">
+
+🔗 **[API Endpoints](api-endpoints.md)**
+
+*URL reference*
+
+</td>
+<td align="center" width="20%">
+
+🔧 **[cURL Examples](curl-examples.md)**
+
+*CLI commands*
+
+</td>
+<td align="center" width="20%">
+
+🐍 **[Python Examples](python-examples.md)**
+
+*Scripts with requests*
+
+</td>
+<td align="center" width="20%">
+
+🎭 **[Ansible Examples](ansible-examples.md)**
+
+*IaC Playbooks*
+
+</td>
+<td align="center" width="20%">
+
+📖 **[Authentication](../docs/02-authentication.md)**
+
+*Detailed guide*
+
+</td>
+</tr>
+</table>
+
+---
+
+<div align="center">
+
+*An error not documented here? Check the complete message and consult the [documentation](../docs/README.md)!* 🔍
+
+</div>

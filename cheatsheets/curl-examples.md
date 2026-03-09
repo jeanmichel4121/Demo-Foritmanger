@@ -1,32 +1,106 @@
-# cURL FortiManager API Examples
+# 🔧 FortiManager cURL Examples
 
-> **Ready-to-use cURL commands for FortiManager JSON-RPC API.**
+<div align="center">
+
+**Ready-to-copy-paste commands**
+
+*Test the API in seconds*
+
+[📋 Cheatsheets](README.md) • [🔗 Endpoints](api-endpoints.md) • [⚠️ Errors](common-errors.md)
 
 ---
 
-## Setup
+</div>
 
-### Environment Variables
+## ⚡ Quick Start (2 minutes)
+
+> 🎯 **Goal:** Test your first API command!
+
+### 1️⃣ Configure your variables
 
 ```bash
-# Set these before running the examples
-export FMG_HOST="192.168.1.100"
-export FMG_USER="admin"
-export FMG_PASS="password"
-export FMG_ADOM="root"
-export FMG_PKG="default"
+# Copy and adapt these lines
+export FMG_HOST="192.168.1.100"     # IP of your FortiManager
+export FMG_API_KEY="your_api_key"   # Your API key
+export FMG_ADOM="root"              # ADOM name
+export FMG_PKG="default"            # Package name
 
-# For Bearer token authentication (recommended)
-export FMG_API_KEY="your_api_key_here"
-
-# cURL options for lab environments
+# Option to ignore SSL errors (lab only!)
 export CURL_OPTS="-k -s"
 ```
 
-### Helper Function (Bash)
+### 2️⃣ Test the connection
 
 ```bash
-# Add to ~/.bashrc or run before examples
+curl $CURL_OPTS -X POST "https://$FMG_HOST/jsonrpc" \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer $FMG_API_KEY" \
+  -d '{"id":1,"method":"get","params":[{"url":"/sys/status"}]}'
+```
+
+### 3️⃣ Expected result
+
+```json
+{
+  "result": [{
+    "status": { "code": 0, "message": "OK" },
+    "data": {
+      "Admin Domain Configuration": "Enabled",
+      "Version": "v7.4.x",
+      ...
+    }
+  }]
+}
+```
+
+> ✅ **Code 0?** Congratulations, your connection works!
+
+---
+
+## 📖 Table of Contents
+
+| Section | Description | Difficulty |
+|:--------|:------------|:-----------|
+| [🛠️ Configuration](#️-configuration) | Variables and helpers | ⭐ Easy |
+| [🔐 Authentication](#-authentication) | Login / Logout | ⭐ Easy |
+| [📍 Firewall Addresses](#-firewall-addresses) | CRUD addresses | ⭐⭐ Medium |
+| [🔌 Services](#-services) | Ports and protocols | ⭐⭐ Medium |
+| [📜 Policies](#-firewall-policies) | Security rules | ⭐⭐ Medium |
+| [🔀 VIP / NAT](#-vip--nat) | Address translation | ⭐⭐ Medium |
+| [🚀 Installation](#-installation) | Config deployment | ⭐⭐⭐ Advanced |
+| [💻 Devices](#-devices) | Device management | ⭐⭐ Medium |
+| [📦 Bulk Operations](#-bulk-operations) | Multiple operations | ⭐⭐⭐ Advanced |
+| [⚡ One-Liners](#-useful-one-liners) | Quick commands | ⭐⭐ Medium |
+
+---
+
+## 🛠️ Configuration
+
+### 📝 Environment Variables
+
+```bash
+# ═══════════════════════════════════════════════════════════
+# Basic configuration - Adapt to your environment
+# ═══════════════════════════════════════════════════════════
+
+export FMG_HOST="192.168.1.100"    # 🖥️ IP or FQDN of FortiManager
+export FMG_USER="admin"            # 👤 Username (for session)
+export FMG_PASS="password"         # 🔑 Password (for session)
+export FMG_ADOM="root"             # 🏢 ADOM name
+export FMG_PKG="default"           # 📦 Policy package name
+
+# 🔑 Bearer Token authentication (RECOMMENDED)
+export FMG_API_KEY="your_api_key_here"
+
+# ⚙️ cURL options
+export CURL_OPTS="-k -s"           # -k = ignore SSL, -s = silent
+```
+
+### 🔧 Helper Function (Optional)
+
+> 💡 Add this function to your `~/.bashrc` to simplify calls
+
+```bash
 fmg_curl() {
     curl $CURL_OPTS -X POST "https://$FMG_HOST/jsonrpc" \
         -H "Content-Type: application/json" \
@@ -34,18 +108,20 @@ fmg_curl() {
         -d "$1"
 }
 
-# Usage
+# Simplified usage:
 fmg_curl '{"id":1,"method":"get","params":[{"url":"/sys/status"}]}'
 ```
 
 ---
 
-## Authentication
+## 🔐 Authentication
 
-### Session Login
+### 🔓 Login (Session)
+
+> ⚠️ **Note:** Sessions expire after 5 min of inactivity. Prefer Bearer Token!
 
 ```bash
-# Login and get session token
+# Login and capture session token
 SESSION=$(curl $CURL_OPTS -X POST "https://$FMG_HOST/jsonrpc" \
   -H "Content-Type: application/json" \
   -d '{
@@ -60,10 +136,10 @@ SESSION=$(curl $CURL_OPTS -X POST "https://$FMG_HOST/jsonrpc" \
     }]
   }' | jq -r '.session')
 
-echo "Session: $SESSION"
+echo "✅ Session: $SESSION"
 ```
 
-### Session Logout
+### 🔒 Logout (Session)
 
 ```bash
 curl $CURL_OPTS -X POST "https://$FMG_HOST/jsonrpc" \
@@ -76,10 +152,12 @@ curl $CURL_OPTS -X POST "https://$FMG_HOST/jsonrpc" \
   }'
 ```
 
-### Bearer Token (API Key)
+### 🔑 Bearer Token (Recommended)
+
+> ✅ **Advantages:** No expiration, no login/logout, ideal for scripts!
 
 ```bash
-# No login/logout needed - just add header
+# Simple - just add the header
 curl $CURL_OPTS -X POST "https://$FMG_HOST/jsonrpc" \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer $FMG_API_KEY" \
@@ -90,7 +168,7 @@ curl $CURL_OPTS -X POST "https://$FMG_HOST/jsonrpc" \
   }'
 ```
 
-### Check System Status
+### 📊 Check System Status
 
 ```bash
 curl $CURL_OPTS -X POST "https://$FMG_HOST/jsonrpc" \
@@ -103,11 +181,29 @@ curl $CURL_OPTS -X POST "https://$FMG_HOST/jsonrpc" \
   }' | jq '.result[0].data'
 ```
 
+<details>
+<summary>📋 <b>Example response</b> (click to view)</summary>
+
+```json
+{
+  "Admin Domain Configuration": "Enabled",
+  "BIOS version": "04000024",
+  "Branch Point": "2454",
+  "Build": "2454",
+  "Current Time": "Sun Mar 08 10:30:00 UTC 2026",
+  "Hostname": "FMG-01",
+  "License Status": "Valid",
+  "Version": "v7.4.4"
+}
+```
+
+</details>
+
 ---
 
-## Firewall Addresses
+## 📍 Firewall Addresses
 
-### List All Addresses
+### 📋 List All Addresses
 
 ```bash
 curl $CURL_OPTS -X POST "https://$FMG_HOST/jsonrpc" \
@@ -122,7 +218,9 @@ curl $CURL_OPTS -X POST "https://$FMG_HOST/jsonrpc" \
   }' | jq '.result[0].data[] | {name, subnet, type}'
 ```
 
-### Filter Addresses by Name
+### 🔍 Filter by Name
+
+> 💡 `%` is the wildcard (like `*` in shell)
 
 ```bash
 curl $CURL_OPTS -X POST "https://$FMG_HOST/jsonrpc" \
@@ -139,7 +237,7 @@ curl $CURL_OPTS -X POST "https://$FMG_HOST/jsonrpc" \
   }'
 ```
 
-### Create IPv4 Address (ipmask)
+### ➕ Create an IP/Mask Address
 
 ```bash
 curl $CURL_OPTS -X POST "https://$FMG_HOST/jsonrpc" \
@@ -154,13 +252,15 @@ curl $CURL_OPTS -X POST "https://$FMG_HOST/jsonrpc" \
         "name": "NET_SERVERS",
         "type": "ipmask",
         "subnet": "192.168.10.0 255.255.255.0",
-        "comment": "Server network"
+        "comment": "Production server network"
       }
     }]
   }'
 ```
 
-### Create FQDN Address
+> ⚠️ **Subnet format:** `"IP MASK"` with **space**, not CIDR!
+
+### ➕ Create an FQDN Address
 
 ```bash
 curl $CURL_OPTS -X POST "https://$FMG_HOST/jsonrpc" \
@@ -172,16 +272,16 @@ curl $CURL_OPTS -X POST "https://$FMG_HOST/jsonrpc" \
     "params": [{
       "url": "/pm/config/adom/'$FMG_ADOM'/obj/firewall/address",
       "data": {
-        "name": "FQDN_EXAMPLE",
+        "name": "FQDN_GITHUB",
         "type": "fqdn",
-        "fqdn": "example.com",
-        "comment": "External website"
+        "fqdn": "github.com",
+        "comment": "GitHub for developers"
       }
     }]
   }'
 ```
 
-### Create IP Range Address
+### ➕ Create an IP Range
 
 ```bash
 curl $CURL_OPTS -X POST "https://$FMG_HOST/jsonrpc" \
@@ -203,7 +303,7 @@ curl $CURL_OPTS -X POST "https://$FMG_HOST/jsonrpc" \
   }'
 ```
 
-### Update Address
+### ✏️ Modify an Address
 
 ```bash
 curl $CURL_OPTS -X POST "https://$FMG_HOST/jsonrpc" \
@@ -215,13 +315,13 @@ curl $CURL_OPTS -X POST "https://$FMG_HOST/jsonrpc" \
     "params": [{
       "url": "/pm/config/adom/'$FMG_ADOM'/obj/firewall/address/NET_SERVERS",
       "data": {
-        "comment": "Updated: Production server network"
+        "comment": "Modified: Production servers DMZ zone"
       }
     }]
   }'
 ```
 
-### Delete Address
+### ❌ Delete an Address
 
 ```bash
 curl $CURL_OPTS -X POST "https://$FMG_HOST/jsonrpc" \
@@ -236,7 +336,9 @@ curl $CURL_OPTS -X POST "https://$FMG_HOST/jsonrpc" \
   }'
 ```
 
-### Create Address Group
+> ⚠️ **Error -10?** The object is in use elsewhere. See [error guide](common-errors.md#-error--10--object-in-use).
+
+### 📁 Create an Address Group
 
 ```bash
 curl $CURL_OPTS -X POST "https://$FMG_HOST/jsonrpc" \
@@ -250,7 +352,7 @@ curl $CURL_OPTS -X POST "https://$FMG_HOST/jsonrpc" \
       "data": {
         "name": "GRP_ALL_SERVERS",
         "member": ["NET_WEB_SERVERS", "NET_DB_SERVERS"],
-        "comment": "All server networks"
+        "comment": "All servers"
       }
     }]
   }'
@@ -258,9 +360,9 @@ curl $CURL_OPTS -X POST "https://$FMG_HOST/jsonrpc" \
 
 ---
 
-## Services
+## 🔌 Services
 
-### List Custom Services
+### 📋 List Custom Services
 
 ```bash
 curl $CURL_OPTS -X POST "https://$FMG_HOST/jsonrpc" \
@@ -276,7 +378,7 @@ curl $CURL_OPTS -X POST "https://$FMG_HOST/jsonrpc" \
   }'
 ```
 
-### Create TCP Service
+### ➕ Create a TCP Service
 
 ```bash
 curl $CURL_OPTS -X POST "https://$FMG_HOST/jsonrpc" \
@@ -291,13 +393,13 @@ curl $CURL_OPTS -X POST "https://$FMG_HOST/jsonrpc" \
         "name": "TCP_8443",
         "protocol": "TCP/UDP/SCTP",
         "tcp-portrange": "8443",
-        "comment": "Custom HTTPS port"
+        "comment": "Alternate HTTPS"
       }
     }]
   }'
 ```
 
-### Create UDP Service
+### ➕ Create a UDP Service
 
 ```bash
 curl $CURL_OPTS -X POST "https://$FMG_HOST/jsonrpc" \
@@ -309,16 +411,16 @@ curl $CURL_OPTS -X POST "https://$FMG_HOST/jsonrpc" \
     "params": [{
       "url": "/pm/config/adom/'$FMG_ADOM'/obj/firewall/service/custom",
       "data": {
-        "name": "UDP_CUSTOM",
+        "name": "UDP_VOIP",
         "protocol": "TCP/UDP/SCTP",
-        "udp-portrange": "5000-5100",
-        "comment": "Custom UDP range"
+        "udp-portrange": "5060-5065",
+        "comment": "VoIP SIP ports"
       }
     }]
   }'
 ```
 
-### Create Service Group
+### 📁 Create a Service Group
 
 ```bash
 curl $CURL_OPTS -X POST "https://$FMG_HOST/jsonrpc" \
@@ -330,9 +432,9 @@ curl $CURL_OPTS -X POST "https://$FMG_HOST/jsonrpc" \
     "params": [{
       "url": "/pm/config/adom/'$FMG_ADOM'/obj/firewall/service/group",
       "data": {
-        "name": "GRP_WEB_SERVICES",
+        "name": "GRP_WEB",
         "member": ["HTTP", "HTTPS", "TCP_8443"],
-        "comment": "Web services group"
+        "comment": "Web services"
       }
     }]
   }'
@@ -340,9 +442,9 @@ curl $CURL_OPTS -X POST "https://$FMG_HOST/jsonrpc" \
 
 ---
 
-## Firewall Policies
+## 📜 Firewall Policies
 
-### List All Policies
+### 📋 List Policies
 
 ```bash
 curl $CURL_OPTS -X POST "https://$FMG_HOST/jsonrpc" \
@@ -358,7 +460,9 @@ curl $CURL_OPTS -X POST "https://$FMG_HOST/jsonrpc" \
   }' | jq '.result[0].data'
 ```
 
-### Create Firewall Policy
+### ➕ Create an Allow Policy
+
+> ⚠️ **Important:** `srcaddr`, `dstaddr`, `service` are **arrays** `["value"]`!
 
 ```bash
 curl $CURL_OPTS -X POST "https://$FMG_HOST/jsonrpc" \
@@ -370,7 +474,7 @@ curl $CURL_OPTS -X POST "https://$FMG_HOST/jsonrpc" \
     "params": [{
       "url": "/pm/config/adom/'$FMG_ADOM'/pkg/'$FMG_PKG'/firewall/policy",
       "data": {
-        "name": "Allow-Web-Traffic",
+        "name": "Allow-Web-Servers",
         "srcintf": ["any"],
         "dstintf": ["any"],
         "srcaddr": ["all"],
@@ -380,13 +484,13 @@ curl $CURL_OPTS -X POST "https://$FMG_HOST/jsonrpc" \
         "logtraffic": "all",
         "nat": "enable",
         "status": "enable",
-        "comments": "Allow web access to servers"
+        "comments": "Web access to servers"
       }
     }]
   }'
 ```
 
-### Create Deny Policy
+### ➕ Create a Deny Policy
 
 ```bash
 curl $CURL_OPTS -X POST "https://$FMG_HOST/jsonrpc" \
@@ -412,10 +516,23 @@ curl $CURL_OPTS -X POST "https://$FMG_HOST/jsonrpc" \
   }'
 ```
 
-### Move Policy Position
+### 🔄 Move a Policy
+
+```
+┌─────────────────────────────────────────┐
+│  Before move:                           │
+│  ┌────┐ ┌────┐ ┌────┐ ┌────┐ ┌────┐   │
+│  │ 1  │ │ 2  │ │ 3  │ │ 4  │ │ 5  │   │
+│  └────┘ └────┘ └────┘ └────┘ └────┘   │
+│                                         │
+│  Move policy 5 BEFORE policy 2:         │
+│  ┌────┐ ┌────┐ ┌────┐ ┌────┐ ┌────┐   │
+│  │ 1  │ │ 5  │ │ 2  │ │ 3  │ │ 4  │   │
+│  └────┘ └────┘ └────┘ └────┘ └────┘   │
+└─────────────────────────────────────────┘
+```
 
 ```bash
-# Move policy ID 5 before policy ID 2
 curl $CURL_OPTS -X POST "https://$FMG_HOST/jsonrpc" \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer $FMG_API_KEY" \
@@ -430,7 +547,7 @@ curl $CURL_OPTS -X POST "https://$FMG_HOST/jsonrpc" \
   }'
 ```
 
-### Delete Policy
+### ❌ Delete a Policy
 
 ```bash
 curl $CURL_OPTS -X POST "https://$FMG_HOST/jsonrpc" \
@@ -447,9 +564,20 @@ curl $CURL_OPTS -X POST "https://$FMG_HOST/jsonrpc" \
 
 ---
 
-## VIP (NAT)
+## 🔀 VIP / NAT
 
-### Create Static NAT (1:1)
+### ➕ Create a Static NAT VIP (1:1)
+
+```
+┌─────────────────────────────────────────────────────┐
+│              STATIC NAT (1:1)                       │
+│                                                     │
+│  Internet              FortiGate           Internal │
+│  ─────────►  203.0.113.10  ────►  192.168.10.10    │
+│              (Public IP)          (Private IP)      │
+│                                                     │
+└─────────────────────────────────────────────────────┘
+```
 
 ```bash
 curl $CURL_OPTS -X POST "https://$FMG_HOST/jsonrpc" \
@@ -466,13 +594,24 @@ curl $CURL_OPTS -X POST "https://$FMG_HOST/jsonrpc" \
         "extip": "203.0.113.10",
         "mappedip": "192.168.10.10",
         "extintf": "any",
-        "comment": "Web server NAT"
+        "comment": "NAT to web server"
       }
     }]
   }'
 ```
 
-### Create Port Forwarding VIP
+### ➕ Create Port Forwarding
+
+```
+┌─────────────────────────────────────────────────────┐
+│              PORT FORWARDING                        │
+│                                                     │
+│  Internet              FortiGate           Internal │
+│  ───► :8080  ──►  203.0.113.10:8080 ──► :80        │
+│     (external)                       (internal)     │
+│                                                     │
+└─────────────────────────────────────────────────────┘
+```
 
 ```bash
 curl $CURL_OPTS -X POST "https://$FMG_HOST/jsonrpc" \
@@ -493,7 +632,7 @@ curl $CURL_OPTS -X POST "https://$FMG_HOST/jsonrpc" \
         "extintf": "any",
         "portforward": "enable",
         "protocol": "tcp",
-        "comment": "Port forward 8080 to 80"
+        "comment": "External port 8080 to internal port 80"
       }
     }]
   }'
@@ -501,9 +640,11 @@ curl $CURL_OPTS -X POST "https://$FMG_HOST/jsonrpc" \
 
 ---
 
-## Installation
+## 🚀 Installation
 
-### Preview Installation
+### 👁️ Preview (Simulation)
+
+> 💡 Check what will be deployed **before** installation!
 
 ```bash
 curl $CURL_OPTS -X POST "https://$FMG_HOST/jsonrpc" \
@@ -523,10 +664,11 @@ curl $CURL_OPTS -X POST "https://$FMG_HOST/jsonrpc" \
   }'
 ```
 
-### Install Policy Package
+### 📤 Install a Package
 
 ```bash
-curl $CURL_OPTS -X POST "https://$FMG_HOST/jsonrpc" \
+# Install and retrieve Task ID
+TASK_ID=$(curl $CURL_OPTS -X POST "https://$FMG_HOST/jsonrpc" \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer $FMG_API_KEY" \
   -d '{
@@ -542,13 +684,16 @@ curl $CURL_OPTS -X POST "https://$FMG_HOST/jsonrpc" \
         ]
       }
     }]
-  }' | tee /tmp/install.json | jq '.result[0].data.task'
+  }' | jq -r '.result[0].data.task')
+
+echo "📤 Installation started - Task ID: $TASK_ID"
 ```
 
-### Check Task Status
+### 📊 Check Task Status
 
 ```bash
 TASK_ID=12345
+
 curl $CURL_OPTS -X POST "https://$FMG_HOST/jsonrpc" \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer $FMG_API_KEY" \
@@ -558,40 +703,48 @@ curl $CURL_OPTS -X POST "https://$FMG_HOST/jsonrpc" \
     "params": [{
       "url": "/task/task/'$TASK_ID'"
     }]
-  }' | jq '.result[0].data | {state, percent, line: .line[]?.detail}'
+  }' | jq '.result[0].data | {state, percent, num_done, num_err}'
 ```
 
-### Wait for Task Completion
+### ⏳ Wait for Task Completion (Script)
 
 ```bash
 #!/bin/bash
+# Usage: ./wait_task.sh <task_id>
+
 TASK_ID=$1
 
+echo "⏳ Waiting for task $TASK_ID..."
+
 while true; do
-    STATUS=$(curl $CURL_OPTS -X POST "https://$FMG_HOST/jsonrpc" \
+    RESULT=$(curl $CURL_OPTS -X POST "https://$FMG_HOST/jsonrpc" \
       -H "Content-Type: application/json" \
       -H "Authorization: Bearer $FMG_API_KEY" \
       -d '{
         "id": 1,
         "method": "get",
         "params": [{"url": "/task/task/'$TASK_ID'"}]
-      }' | jq -r '.result[0].data.state')
+      }')
 
-    echo "Task status: $STATUS"
+    STATE=$(echo $RESULT | jq -r '.result[0].data.state')
+    PERCENT=$(echo $RESULT | jq -r '.result[0].data.percent')
 
-    case $STATUS in
-        4) echo "Done!"; break ;;
-        5|7) echo "Failed/Aborted!"; exit 1 ;;
-        *) sleep 5 ;;
+    echo "📊 State: $STATE | Progress: $PERCENT%"
+
+    case $STATE in
+        4) echo "✅ Task completed successfully!"; exit 0 ;;
+        5) echo "❌ Task failed!"; exit 1 ;;
+        7) echo "🛑 Task aborted!"; exit 1 ;;
+        *) sleep 3 ;;
     esac
 done
 ```
 
 ---
 
-## Device Management
+## 💻 Devices
 
-### List All Devices
+### 📋 List Devices
 
 ```bash
 curl $CURL_OPTS -X POST "https://$FMG_HOST/jsonrpc" \
@@ -607,7 +760,7 @@ curl $CURL_OPTS -X POST "https://$FMG_HOST/jsonrpc" \
   }' | jq '.result[0].data[] | {name, hostname, ip, conn_status}'
 ```
 
-### Get Device Details
+### 🔍 Device Details
 
 ```bash
 curl $CURL_OPTS -X POST "https://$FMG_HOST/jsonrpc" \
@@ -624,9 +777,11 @@ curl $CURL_OPTS -X POST "https://$FMG_HOST/jsonrpc" \
 
 ---
 
-## Bulk Operations
+## 📦 Bulk Operations
 
-### Create Multiple Addresses
+### ➕ Create Multiple Addresses in One Request
+
+> 💡 Use an array in `params` for multiple requests!
 
 ```bash
 curl $CURL_OPTS -X POST "https://$FMG_HOST/jsonrpc" \
@@ -652,29 +807,36 @@ curl $CURL_OPTS -X POST "https://$FMG_HOST/jsonrpc" \
   }'
 ```
 
-### Bulk Create from CSV
+### 📄 Import from CSV (Script)
+
+> 📁 **CSV Format:** `name,subnet,comment`
 
 ```bash
 #!/bin/bash
-# addresses.csv format: name,subnet,comment
-# NET_A,10.0.0.0/8,Network A
-# NET_B,172.16.0.0/16,Network B
+# Usage: ./import_addresses.sh addresses.csv
 
-# Convert CIDR to mask
+CSV_FILE=$1
+
+# CIDR to Mask conversion
 cidr_to_mask() {
-    local cidr=$1
-    local ip="${cidr%/*}"
-    local bits="${cidr#*/}"
+    local ip="${1%/*}"
+    local bits="${1#*/}"
     local mask=$((0xffffffff << (32 - bits)))
     printf "%s %d.%d.%d.%d" "$ip" \
         $((mask >> 24 & 255)) $((mask >> 16 & 255)) \
         $((mask >> 8 & 255)) $((mask & 255))
 }
 
-# Process CSV
+# Read CSV
+echo "📄 Importing from $CSV_FILE"
+
 while IFS=, read -r name subnet comment; do
-    [[ "$name" == "name" ]] && continue  # Skip header
+    # Skip header
+    [[ "$name" == "name" ]] && continue
+
     subnet_mask=$(cidr_to_mask "$subnet")
+
+    echo "➕ Creating: $name ($subnet_mask)"
 
     curl $CURL_OPTS -X POST "https://$FMG_HOST/jsonrpc" \
       -H "Content-Type: application/json" \
@@ -693,15 +855,16 @@ while IFS=, read -r name subnet comment; do
         }]
       }'
 
-    echo "Created: $name"
-done < addresses.csv
+done < "$CSV_FILE"
+
+echo "✅ Import complete!"
 ```
 
 ---
 
-## Useful One-Liners
+## ⚡ Useful One-Liners
 
-### List Address Names
+### 📋 List Address Names
 
 ```bash
 curl $CURL_OPTS -X POST "https://$FMG_HOST/jsonrpc" \
@@ -711,7 +874,7 @@ curl $CURL_OPTS -X POST "https://$FMG_HOST/jsonrpc" \
   | jq -r '.result[0].data[].name'
 ```
 
-### Count Objects
+### 🔢 Count Objects
 
 ```bash
 curl $CURL_OPTS -X POST "https://$FMG_HOST/jsonrpc" \
@@ -721,33 +884,86 @@ curl $CURL_OPTS -X POST "https://$FMG_HOST/jsonrpc" \
   | jq '.result[0].data | length'
 ```
 
-### Export Addresses to CSV
+### 📤 Export Addresses to CSV
 
 ```bash
 curl $CURL_OPTS -X POST "https://$FMG_HOST/jsonrpc" \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer $FMG_API_KEY" \
   -d '{"id":1,"method":"get","params":[{"url":"/pm/config/adom/root/obj/firewall/address","fields":["name","subnet","comment"]}]}' \
-  | jq -r '.result[0].data[] | [.name, (.subnet | join("/")), .comment] | @csv' > addresses.csv
+  | jq -r '.result[0].data[] | [.name, (.subnet // [] | if type == "array" then join("/") else . end), .comment] | @csv' > addresses_export.csv
+
+echo "✅ Exported to addresses_export.csv"
 ```
 
-### Find Unused Addresses
+### 🔍 Find Unused Addresses
 
 ```bash
-# Get addresses with "get used" option
 curl $CURL_OPTS -X POST "https://$FMG_HOST/jsonrpc" \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer $FMG_API_KEY" \
   -d '{"id":1,"method":"get","params":[{"url":"/pm/config/adom/root/obj/firewall/address","option":["get used"]}]}' \
-  | jq '.result[0].data[] | select(._used_by == null) | .name'
+  | jq -r '.result[0].data[] | select(._used_by == null) | .name'
+```
+
+### 📊 Policies Summary by Action
+
+```bash
+curl $CURL_OPTS -X POST "https://$FMG_HOST/jsonrpc" \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer $FMG_API_KEY" \
+  -d '{"id":1,"method":"get","params":[{"url":"/pm/config/adom/root/pkg/default/firewall/policy","fields":["action"]}]}' \
+  | jq '.result[0].data | group_by(.action) | map({action: .[0].action, count: length})'
 ```
 
 ---
 
-## See Also
+## 📚 See Also
 
-| Resource | Link |
-|----------|------|
-| API Endpoints | [api-endpoints.md](api-endpoints.md) |
-| Common Errors | [common-errors.md](common-errors.md) |
-| JSON-RPC Concepts | [../docs/01-concepts-json-rpc.md](../docs/01-concepts-json-rpc.md) |
+<table>
+<tr>
+<td align="center" width="20%">
+
+🔗 **[API Endpoints](api-endpoints.md)**
+
+*Find the right URL*
+
+</td>
+<td align="center" width="20%">
+
+🐍 **[Python Examples](python-examples.md)**
+
+*Scripts with requests*
+
+</td>
+<td align="center" width="20%">
+
+🎭 **[Ansible Examples](ansible-examples.md)**
+
+*IaC Playbooks*
+
+</td>
+<td align="center" width="20%">
+
+⚠️ **[Common Errors](common-errors.md)**
+
+*When things don't work*
+
+</td>
+<td align="center" width="20%">
+
+📖 **[Documentation](../docs/README.md)**
+
+*Detailed guides*
+
+</td>
+</tr>
+</table>
+
+---
+
+<div align="center">
+
+*Copy, paste, adapt - these commands are made to be used!* 🚀
+
+</div>
