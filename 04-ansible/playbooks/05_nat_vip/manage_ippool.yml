@@ -1,0 +1,45 @@
+---
+# manage_ippool.yml
+#
+# Playbook for managing FortiManager IP Pools (SNAT)
+#
+# Usage:
+#   ansible-playbook playbooks/05_nat_vip/manage_ippool.yml
+#   ansible-playbook playbooks/05_nat_vip/manage_ippool.yml --tags ippool
+
+- name: FortiManager IP Pool Management
+  hosts: fortimanager
+  gather_facts: false
+  connection: httpapi
+
+  vars_files:
+    - ../../vars/nat_vip.yml
+
+  tasks:
+    # =========================================================================
+    # IP Pools (SNAT)
+    # =========================================================================
+    - name: Manage IP Pools (SNAT)
+      fortinet.fortimanager.fmgr_firewall_ippool:
+        state: "{{ item.state | default('present') }}"
+        adom: "{{ fmg_adom }}"
+        firewall_ippool:
+          name: "{{ item.name }}"
+          type: "{{ item.type | default('overload') }}"
+          startip: "{{ item.startip }}"
+          endip: "{{ item.endip }}"
+          comment: "{{ item.comment | default(omit) }}"
+      loop: "{{ ippools | default([]) }}"
+      tags:
+        - nat
+        - ippool
+
+    # =========================================================================
+    # Summary
+    # =========================================================================
+    - name: Summary
+      ansible.builtin.debug:
+        msg: |
+          IP Pools: {{ ippools | default([]) | length }}
+      tags:
+        - always

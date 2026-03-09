@@ -1,0 +1,47 @@
+---
+# nat_vip.yml
+#
+# NAT/VIP definitions for FortiManager
+#
+
+# Virtual IPs (DNAT)
+vips:
+  - name: "VIP_WEB_SERVER"
+    extip: "203.0.113.10"
+    mappedip: "192.168.10.10"
+    extintf: "any"
+    comment: "Public web server"
+    state: present
+
+  - name: "VIP_SSH_JUMP"
+    extip: "203.0.113.10"
+    mappedip: "192.168.10.20"
+    portforward: "enable"
+    protocol: "tcp"
+    extport: "2222"
+    mappedport: "22"
+    comment: "SSH jump host"
+    state: present
+
+  - name: "VIP_MAIL_SERVER"
+    extip: "203.0.113.11"
+    mappedip: "192.168.10.25"
+    extintf: "any"
+    comment: "Mail server"
+    state: present
+
+# IP Pools (SNAT)
+ippools:
+  - name: "POOL_OUTBOUND"
+    startip: "203.0.113.100"
+    endip: "203.0.113.110"
+    type: "overload"
+    comment: "Outbound NAT pool"
+    state: present
+
+  - name: "POOL_DMZ"
+    startip: "203.0.113.120"
+    endip: "203.0.113.125"
+    type: "one-to-one"
+    comment: "DMZ NAT pool"
+    state: present

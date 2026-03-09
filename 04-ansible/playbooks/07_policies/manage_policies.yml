@@ -1,12 +1,12 @@
 ---
 # manage_policies.yml
 #
-# Playbook pour gerer les firewall policies FortiManager
+# Playbook for managing FortiManager firewall policies
 #
 # Usage:
-#   ansible-playbook playbooks/06_policies/manage_policies.yml
+#   ansible-playbook playbooks/07_policies/manage_policies.yml
 
-- name: Gestion des Firewall Policies
+- name: Firewall Policy Management
   hosts: fortimanager
   gather_facts: false
   connection: httpapi
@@ -18,7 +18,7 @@
     # =========================================================================
     # Firewall Policies
     # =========================================================================
-    - name: Gerer les firewall policies
+    - name: Manage firewall policies
       fortinet.fortimanager.fmgr_pkg_firewall_policy:
         state: "{{ item.state | default('present') }}"
         adom: "{{ fmg_adom }}"
@@ -41,7 +41,7 @@
       tags:
         - policies
 
-    - name: Afficher resultats
+    - name: Display results
       ansible.builtin.debug:
         msg: "Policy '{{ item.item.name }}': {{ 'Changed' if item.changed else 'OK' }}"
       loop: "{{ result_policies.results | default([]) }}"
@@ -51,19 +51,19 @@
         - policies
 
     # =========================================================================
-    # Recap
+    # Summary
     # =========================================================================
-    - name: Recapitulatif
+    - name: Summary
       ansible.builtin.debug:
         msg: |
           ========================================
-          GESTION POLICIES TERMINEE
+          POLICY MANAGEMENT COMPLETED
           ========================================
           Package: {{ fmg_package }}
           Policies: {{ firewall_policies | default([]) | length }}
           ========================================
 
-          Pour installer vers les FortiGate:
-          ansible-playbook playbooks/06_policies/install_package.yml
+          To install to FortiGate devices:
+          ansible-playbook playbooks/07_policies/install_package.yml
       tags:
         - always

@@ -84,13 +84,23 @@ ansible-galaxy collection list | grep fortinet
 ├── 📂 vars/
 │   ├── 📄 addresses.yml       # Address definitions
 │   ├── 📄 services.yml        # Service definitions
+│   ├── 📄 schedules.yml       # Schedule definitions
+│   ├── 📄 nat_vip.yml         # NAT/VIP definitions
+│   ├── 📄 security_profiles.yml # Security profile definitions
 │   └── 📄 policies.yml        # Policy definitions
 └── 📂 playbooks/
     ├── 📂 01_addresses/
     │   └── 🎭 manage_addresses.yml
     ├── 📂 02_services/
     │   └── 🎭 manage_services.yml
-    ├── 📂 06_policies/
+    ├── 📂 04_schedules/
+    │   └── 🎭 manage_schedules.yml
+    ├── 📂 05_nat_vip/
+    │   ├── 🎭 manage_vip.yml
+    │   └── 🎭 manage_ippool.yml
+    ├── 📂 06_security_profiles/
+    │   └── 🎭 manage_app_groups.yml
+    ├── 📂 07_policies/
     │   ├── 🎭 manage_policies.yml
     │   └── 🎭 install_package.yml
     └── 🎭 full_deployment.yml
@@ -560,10 +570,10 @@ The `playbooks/full_deployment.yml` combines all operations:
       ansible.builtin.include_tasks: 02_services/manage_services.yml
 
     - name: Deploy policies
-      ansible.builtin.include_tasks: 06_policies/manage_policies.yml
+      ansible.builtin.include_tasks: 07_policies/manage_policies.yml
 
     - name: Install to devices
-      ansible.builtin.include_tasks: 06_policies/install_package.yml
+      ansible.builtin.include_tasks: 07_policies/install_package.yml
       when: install_enabled | default(false)
 ```
 

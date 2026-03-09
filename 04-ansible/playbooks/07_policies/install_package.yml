@@ -1,32 +1,32 @@
 ---
 # install_package.yml
 #
-# Playbook pour installer un policy package vers les FortiGate
+# Playbook for installing a policy package to FortiGate devices
 #
 # Usage:
-#   # Installer sur tous les devices du package
-#   ansible-playbook playbooks/06_policies/install_package.yml
+#   # Install to all devices in the package
+#   ansible-playbook playbooks/07_policies/install_package.yml
 #
-#   # Installer sur un device specifique
-#   ansible-playbook playbooks/06_policies/install_package.yml -e "target_device=FGT-01"
+#   # Install to a specific device
+#   ansible-playbook playbooks/07_policies/install_package.yml -e "target_device=FGT-01"
 #
-#   # Preview seulement (dry-run)
-#   ansible-playbook playbooks/06_policies/install_package.yml -e "preview_only=true"
+#   # Preview only (dry-run)
+#   ansible-playbook playbooks/07_policies/install_package.yml -e "preview_only=true"
 
-- name: Installation Policy Package
+- name: Policy Package Installation
   hosts: fortimanager
   gather_facts: false
   connection: httpapi
 
   vars:
-    target_device: ""  # Vide = tous les devices du package
+    target_device: ""  # Empty = all devices in the package
     preview_only: false
 
   tasks:
     # =========================================================================
-    # Preview (optionnel)
+    # Preview (optional)
     # =========================================================================
-    - name: Preview des changements
+    - name: Preview changes
       fortinet.fortimanager.fmgr_securityconsole_install_preview:
         securityconsole_install_preview:
           adom: "{{ fmg_adom }}"
@@ -38,7 +38,7 @@
       tags:
         - preview
 
-    - name: Afficher preview
+    - name: Display preview
       ansible.builtin.debug:
         var: preview_result
       when: preview_only | bool
@@ -48,7 +48,7 @@
     # =========================================================================
     # Installation
     # =========================================================================
-    - name: Installer le policy package
+    - name: Install policy package to specific device
       fortinet.fortimanager.fmgr_securityconsole_install_package:
         securityconsole_install_package:
           adom: "{{ fmg_adom }}"
@@ -63,7 +63,7 @@
       tags:
         - install
 
-    - name: Installer sur tous les devices du package
+    - name: Install to all devices in the package
       fortinet.fortimanager.fmgr_securityconsole_install_package:
         securityconsole_install_package:
           adom: "{{ fmg_adom }}"
@@ -76,20 +76,20 @@
         - install
 
     # =========================================================================
-    # Resultat
+    # Result
     # =========================================================================
-    - name: Afficher resultat installation
+    - name: Display installation result
       ansible.builtin.debug:
         msg: |
           ========================================
-          INSTALLATION LANCEE
+          INSTALLATION STARTED
           ========================================
           ADOM: {{ fmg_adom }}
           Package: {{ fmg_package }}
-          Device: {{ target_device | default('Tous') }}
+          Device: {{ target_device | default('All') }}
 
-          L'installation s'execute en arriere-plan.
-          Consultez FortiManager pour le suivi.
+          Installation is running in the background.
+          Check FortiManager for progress.
           ========================================
       when: not (preview_only | bool)
       tags:

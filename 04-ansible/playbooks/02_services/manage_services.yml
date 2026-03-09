@@ -1,12 +1,12 @@
 ---
 # manage_services.yml
 #
-# Playbook pour gerer les services FortiManager
+# Playbook for managing FortiManager services
 #
 # Usage:
 #   ansible-playbook playbooks/02_services/manage_services.yml
 
-- name: Gestion des Services FortiManager
+- name: FortiManager Service Management
   hosts: fortimanager
   gather_facts: false
   connection: httpapi
@@ -16,9 +16,9 @@
 
   tasks:
     # =========================================================================
-    # Services custom
+    # Custom Services
     # =========================================================================
-    - name: Gerer les services custom
+    - name: Manage custom services
       fortinet.fortimanager.fmgr_firewall_service_custom:
         state: "{{ item.state | default('present') }}"
         adom: "{{ fmg_adom }}"
@@ -34,9 +34,9 @@
         - custom
 
     # =========================================================================
-    # Groupes de services
+    # Service Groups
     # =========================================================================
-    - name: Gerer les groupes de services
+    - name: Manage service groups
       fortinet.fortimanager.fmgr_firewall_service_group:
         state: "{{ item.state | default('present') }}"
         adom: "{{ fmg_adom }}"
@@ -50,12 +50,12 @@
         - groups
 
     # =========================================================================
-    # Recap
+    # Summary
     # =========================================================================
-    - name: Recapitulatif
+    - name: Summary
       ansible.builtin.debug:
         msg: |
-          Services custom: {{ services_custom | default([]) | length }}
-          Groupes: {{ service_groups | default([]) | length }}
+          Custom services: {{ services_custom | default([]) | length }}
+          Groups: {{ service_groups | default([]) | length }}
       tags:
         - always

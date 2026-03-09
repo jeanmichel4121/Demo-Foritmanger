@@ -1,0 +1,44 @@
+---
+# manage_schedules.yml
+#
+# Playbook for managing FortiManager schedules
+#
+# Usage:
+#   ansible-playbook playbooks/04_schedules/manage_schedules.yml
+#   ansible-playbook playbooks/04_schedules/manage_schedules.yml --tags onetime
+
+- name: FortiManager Schedule Management
+  hosts: fortimanager
+  gather_facts: false
+  connection: httpapi
+
+  vars_files:
+    - ../../vars/schedules.yml
+
+  tasks:
+    # =========================================================================
+    # One-time schedules
+    # =========================================================================
+    - name: Manage one-time schedules
+      fortinet.fortimanager.fmgr_firewall_schedule_onetime:
+        state: "{{ item.state | default('present') }}"
+        adom: "{{ fmg_adom }}"
+        firewall_schedule_onetime:
+          name: "{{ item.name }}"
+          start: "{{ item.start }}"
+          end: "{{ item.end }}"
+          comment: "{{ item.comment | default(omit) }}"
+      loop: "{{ schedules_onetime | default([]) }}"
+      tags:
+        - schedules
+        - onetime
+
+    # =========================================================================
+    # Summary
+    # =========================================================================
+    - name: Summary
+      ansible.builtin.debug:
+        msg: |
+          One-time schedules: {{ schedules_onetime | default([]) | length }}
+      tags:
+        - always

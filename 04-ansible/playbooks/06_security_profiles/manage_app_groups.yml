@@ -1,0 +1,43 @@
+---
+# manage_app_groups.yml
+#
+# Playbook for managing FortiManager Application Groups
+#
+# Usage:
+#   ansible-playbook playbooks/06_security_profiles/manage_app_groups.yml
+#   ansible-playbook playbooks/06_security_profiles/manage_app_groups.yml --tags app_groups
+
+- name: FortiManager Application Group Management
+  hosts: fortimanager
+  gather_facts: false
+  connection: httpapi
+
+  vars_files:
+    - ../../vars/security_profiles.yml
+
+  tasks:
+    # =========================================================================
+    # Application Groups
+    # =========================================================================
+    - name: Manage Application Groups
+      fortinet.fortimanager.fmgr_application_group:
+        state: "{{ item.state | default('present') }}"
+        adom: "{{ fmg_adom }}"
+        application_group:
+          name: "{{ item.name }}"
+          application: "{{ item.applications | default(omit) }}"
+          comment: "{{ item.comment | default(omit) }}"
+      loop: "{{ app_groups | default([]) }}"
+      tags:
+        - security
+        - app_groups
+
+    # =========================================================================
+    # Summary
+    # =========================================================================
+    - name: Summary
+      ansible.builtin.debug:
+        msg: |
+          Application Groups: {{ app_groups | default([]) | length }}
+      tags:
+        - always

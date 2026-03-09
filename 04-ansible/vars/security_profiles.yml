@@ -1,0 +1,42 @@
+---
+# security_profiles.yml
+#
+# Security profile definitions for FortiManager
+#
+
+# Application Groups
+app_groups:
+  - name: "APP_GRP_SOCIAL"
+    applications:
+      - "Facebook"
+      - "Twitter"
+      - "Instagram"
+      - "LinkedIn"
+    comment: "Social media applications"
+    state: present
+
+  - name: "APP_GRP_STREAMING"
+    applications:
+      - "Netflix"
+      - "YouTube"
+      - "Spotify"
+      - "Disney.Plus"
+    comment: "Streaming applications"
+    state: present
+
+  - name: "APP_GRP_PRODUCTIVITY"
+    applications:
+      - "Microsoft.Office.365"
+      - "Google.Workspace"
+      - "Slack"
+      - "Zoom"
+    comment: "Productivity applications"
+    state: present
+
+  - name: "APP_GRP_GAMING"
+    applications:
+      - "Steam"
+      - "PlayStation.Network"
+      - "Xbox.Live"
+    comment: "Gaming platforms"
+    state: present

@@ -1,0 +1,25 @@
+---
+# schedules.yml
+#
+# Schedule definitions for FortiManager
+#
+# Datetime format: "HH:MM YYYY/MM/DD"
+
+schedules_onetime:
+  - name: "MAINT_MONTHLY"
+    start: "00:00 2024/12/15"
+    end: "06:00 2024/12/15"
+    comment: "Monthly maintenance window"
+    state: present
+
+  - name: "MAINT_EMERGENCY"
+    start: "22:00 2024/12/20"
+    end: "02:00 2024/12/21"
+    comment: "Emergency maintenance"
+    state: present
+
+  - name: "MAINT_QUARTERLY"
+    start: "01:00 2025/01/01"
+    end: "05:00 2025/01/01"
+    comment: "Q1 quarterly maintenance"
+    state: present

@@ -1,0 +1,50 @@
+---
+# manage_vip.yml
+#
+# Playbook for managing FortiManager Virtual IPs (DNAT)
+#
+# Usage:
+#   ansible-playbook playbooks/05_nat_vip/manage_vip.yml
+#   ansible-playbook playbooks/05_nat_vip/manage_vip.yml --tags vip
+
+- name: FortiManager VIP Management
+  hosts: fortimanager
+  gather_facts: false
+  connection: httpapi
+
+  vars_files:
+    - ../../vars/nat_vip.yml
+
+  tasks:
+    # =========================================================================
+    # Virtual IPs (DNAT)
+    # =========================================================================
+    - name: Manage Virtual IPs (DNAT)
+      fortinet.fortimanager.fmgr_firewall_vip:
+        state: "{{ item.state | default('present') }}"
+        adom: "{{ fmg_adom }}"
+        firewall_vip:
+          name: "{{ item.name }}"
+          type: "{{ item.type | default('static-nat') }}"
+          extip: "{{ item.extip }}"
+          mappedip: "{{ item.mappedip }}"
+          extintf: "{{ item.extintf | default('any') }}"
+          portforward: "{{ item.portforward | default('disable') }}"
+          extport: "{{ item.extport | default(omit) }}"
+          mappedport: "{{ item.mappedport | default(omit) }}"
+          protocol: "{{ item.protocol | default(omit) }}"
+          comment: "{{ item.comment | default(omit) }}"
+      loop: "{{ vips | default([]) }}"
+      tags:
+        - nat
+        - vip
+
+    # =========================================================================
+    # Summary
+    # =========================================================================
+    - name: Summary
+      ansible.builtin.debug:
+        msg: |
+          Virtual IPs: {{ vips | default([]) | length }}
+      tags:
+        - always
