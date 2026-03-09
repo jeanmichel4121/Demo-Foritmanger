@@ -4,9 +4,9 @@
 # Playbook to manage FortiManager addresses
 #
 # Usage:
-#   ansible-playbook playbooks/01_addresses/manage_addresses.yml
-#   ansible-playbook playbooks/01_addresses/manage_addresses.yml --check  # dry-run
-#   ansible-playbook playbooks/01_addresses/manage_addresses.yml -e "fmg_adom=customer"
+#   ansible-playbook playbooks/02_addresses/manage_addresses.yml
+#   ansible-playbook playbooks/02_addresses/manage_addresses.yml --check  # dry-run
+#   ansible-playbook playbooks/02_addresses/manage_addresses.yml -e "fmg_adom=customer"
 
 - name: FortiManager Address Management
   hosts: fortimanager

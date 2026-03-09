@@ -89,9 +89,9 @@ ansible-galaxy collection list | grep fortinet
 │   ├── 📄 security_profiles.yml # Security profile definitions
 │   └── 📄 policies.yml        # Policy definitions
 └── 📂 playbooks/
-    ├── 📂 01_addresses/
+    ├── 📂 02_addresses/
     │   └── 🎭 manage_addresses.yml
-    ├── 📂 02_services/
+    ├── 📂 03_services/
     │   └── 🎭 manage_services.yml
     ├── 📂 04_schedules/
     │   └── 🎭 manage_schedules.yml
@@ -182,10 +182,10 @@ ansible -i inventory/hosts.yml fortimanager -m ping
 
 ```bash
 # Dry-run (check mode)
-ansible-playbook playbooks/01_addresses/manage_addresses.yml --check
+ansible-playbook playbooks/02_addresses/manage_addresses.yml --check
 
 # Actual run
-ansible-playbook playbooks/01_addresses/manage_addresses.yml
+ansible-playbook playbooks/02_addresses/manage_addresses.yml
 ```
 
 ---
@@ -264,7 +264,7 @@ address_groups:
       - "NET_DB_SERVERS"
 ```
 
-**Playbook (`playbooks/01_addresses/manage_addresses.yml`):**
+**Playbook (`playbooks/02_addresses/manage_addresses.yml`):**
 ```yaml
 - name: Manage Addresses
   hosts: fortimanager
@@ -382,19 +382,19 @@ address_groups:
 
 ```bash
 # Run playbook
-ansible-playbook playbooks/01_addresses/manage_addresses.yml
+ansible-playbook playbooks/02_addresses/manage_addresses.yml
 
 # With custom ADOM
-ansible-playbook playbooks/01_addresses/manage_addresses.yml -e "fmg_adom=customer"
+ansible-playbook playbooks/02_addresses/manage_addresses.yml -e "fmg_adom=customer"
 
 # Check mode (dry-run)
-ansible-playbook playbooks/01_addresses/manage_addresses.yml --check
+ansible-playbook playbooks/02_addresses/manage_addresses.yml --check
 
 # Verbose output
-ansible-playbook playbooks/01_addresses/manage_addresses.yml -vvv
+ansible-playbook playbooks/02_addresses/manage_addresses.yml -vvv
 
 # With vault password
-ansible-playbook playbooks/01_addresses/manage_addresses.yml --ask-vault-pass
+ansible-playbook playbooks/02_addresses/manage_addresses.yml --ask-vault-pass
 ```
 
 ### Using Tags
@@ -564,10 +564,10 @@ The `playbooks/full_deployment.yml` combines all operations:
 
   tasks:
     - name: Deploy addresses
-      ansible.builtin.include_tasks: 01_addresses/manage_addresses.yml
+      ansible.builtin.include_tasks: 02_addresses/manage_addresses.yml
 
     - name: Deploy services
-      ansible.builtin.include_tasks: 02_services/manage_services.yml
+      ansible.builtin.include_tasks: 03_services/manage_services.yml
 
     - name: Deploy policies
       ansible.builtin.include_tasks: 07_policies/manage_policies.yml

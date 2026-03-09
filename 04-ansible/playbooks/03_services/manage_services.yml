@@ -4,7 +4,7 @@
 # Playbook for managing FortiManager services
 #
 # Usage:
-#   ansible-playbook playbooks/02_services/manage_services.yml
+#   ansible-playbook playbooks/03_services/manage_services.yml
 
 - name: FortiManager Service Management
   hosts: fortimanager

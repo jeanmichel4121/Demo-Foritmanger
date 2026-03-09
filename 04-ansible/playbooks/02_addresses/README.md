@@ -35,23 +35,23 @@ This section provides Ansible playbooks for managing FortiManager firewall addre
 ### Run All Address Tasks
 
 ```bash
-ansible-playbook playbooks/01_addresses/manage_addresses.yml
+ansible-playbook playbooks/02_addresses/manage_addresses.yml
 ```
 
 ### Run Specific Tags
 
 ```bash
 # Only IPv4 addresses
-ansible-playbook playbooks/01_addresses/manage_addresses.yml --tags ipv4
+ansible-playbook playbooks/02_addresses/manage_addresses.yml --tags ipv4
 
 # Only groups
-ansible-playbook playbooks/01_addresses/manage_addresses.yml --tags groups
+ansible-playbook playbooks/02_addresses/manage_addresses.yml --tags groups
 ```
 
 ### Dry Run (Check Mode)
 
 ```bash
-ansible-playbook playbooks/01_addresses/manage_addresses.yml --check
+ansible-playbook playbooks/02_addresses/manage_addresses.yml --check
 ```
 
 ---
@@ -97,4 +97,4 @@ address_groups:
 
 - [Python Requests Equivalent](../../02-python-requests/02_addresses/)
 - [pyFMG Equivalent](../../03-python-pyfmg/02_addresses/)
-- [Next: Services](../02_services/)
+- [Next: Services](../03_services/)

@@ -117,5 +117,5 @@
           ============================================
 
           To install to FortiGate devices:
-          ansible-playbook playbooks/06_policies/install_package.yml
+          ansible-playbook playbooks/07_policies/install_package.yml
       tags: [always]

@@ -98,5 +98,5 @@ Examples:
 
 - [Python Requests Equivalent](../../02-python-requests/04_schedules/)
 - [pyFMG Equivalent](../../03-python-pyfmg/04_schedules/)
-- [Previous: Services](../02_services/)
+- [Previous: Services](../03_services/)
 - [Next: NAT/VIP](../05_nat_vip/)

@@ -34,23 +34,23 @@ This section provides Ansible playbooks for managing FortiManager custom service
 ### Run All Service Tasks
 
 ```bash
-ansible-playbook playbooks/02_services/manage_services.yml
+ansible-playbook playbooks/03_services/manage_services.yml
 ```
 
 ### Run Specific Tags
 
 ```bash
 # Only custom services
-ansible-playbook playbooks/02_services/manage_services.yml --tags custom
+ansible-playbook playbooks/03_services/manage_services.yml --tags custom
 
 # Only groups
-ansible-playbook playbooks/02_services/manage_services.yml --tags groups
+ansible-playbook playbooks/03_services/manage_services.yml --tags groups
 ```
 
 ### Dry Run (Check Mode)
 
 ```bash
-ansible-playbook playbooks/02_services/manage_services.yml --check
+ansible-playbook playbooks/03_services/manage_services.yml --check
 ```
 
 ---
@@ -96,5 +96,5 @@ service_groups:
 
 - [Python Requests Equivalent](../../02-python-requests/03_services/)
 - [pyFMG Equivalent](../../03-python-pyfmg/03_services/)
-- [Previous: Addresses](../01_addresses/)
+- [Previous: Addresses](../02_addresses/)
 - [Next: Schedules](../04_schedules/)
